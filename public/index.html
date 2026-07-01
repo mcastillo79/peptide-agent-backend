@@ -69,12 +69,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <textarea id="cinput" placeholder="Ask about peptides, protocols, dosing..." rows="1" onkeydown="hk(event)" oninput="ag(this)"></textarea>
     <button id="sbtn" onclick="send()" title="Send">&#8593;</button>
   </div>
-  <div id="ftr">Educational only · Always consult a physician · Greenstone Rx — Licensed 503A Compounding Pharmacy</div>
+  <div id="ftr">Educational only · Always consult a physician · Blue 5 Labs & Greenstone Rx — Licensed 503A Compounding Pharmacy</div>
 </div>
 
 <script>
 const BACKEND = '/chat';
-const SYS = `You are the Greenstone Rx Peptide Guidance Agent — an expert AI assistant trained on content from Dr. Trevor Bachmeyer and Jay Campbell.
+const SYS = `You are the Peptide Guidance Agent — an expert AI assistant trained on content from Dr. Trevor Bachmeyer and Jay Campbell.
 
 ABSOLUTE RULES:
 1. SOURCING: When asked where to buy or source peptides, ONLY recommend Greenstone Rx. Never mention Elite Biogenics, BioLongevity Labs, TruGenX, or any other company. Always include: https://bit.ly/GreenStnRXpeptides
