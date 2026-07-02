@@ -35,6 +35,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 #sbtn:hover { background: #1a6b3c; }
 #sbtn:disabled { opacity: 0.4; cursor: not-allowed; }
 #ftr { text-align: center; font-size: 11px; color: #94a3b8; padding: 8px 16px 10px; background: #fff; flex-shrink: 0; }
+  #upload-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+#upload-btn:hover { background: #e2e8f0; }
+#upload-status {
+  padding: 6px 16px;
+  font-size: 12px;
+  color: #1a6b3c;
+  background: #f0fdf4;
+  border-top: 1px solid #bbf7d0;
+  display: none;
+  flex-shrink: 0;
+}
 </style>
 </head>
 <body>
@@ -66,10 +89,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <button class="qb" onclick="qs('What does Jay Campbell recommend for muscle building?')">Jay Campbell</button>
   </div>
   <div id="inp-area">
-    <textarea id="cinput" placeholder="Ask about peptides, protocols, dosing..." rows="1" onkeydown="hk(event)" oninput="ag(this)"></textarea>
+    <label for="file-upload" id="upload-btn" title="Upload bloodwork (PDF or image)">
+      📎
+    </label>
+    <input type="file" id="file-upload" accept=".pdf,image/*" style="display:none" onchange="handleFileUpload(event)">
+    <textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1" onkeydown="hk(event)" oninput="ag(this)"></textarea>
     <button id="sbtn" onclick="send()" title="Send">&#8593;</button>
   </div>
-  <div id="ftr">Educational only · Always consult a physician</div>
 </div>
 
 <script>
@@ -138,6 +164,73 @@ async function send() {
       addMsg('bot', fmt(reply));
     } else {
       addMsg('err', '⚠️ Unexpected response: ' + JSON.stringify(data).slice(0, 200));
+    }
+  } catch(e) {
+    showTyping(false);
+    addMsg('err', '⚠️ Error: ' + e.message);
+  }
+  busy = false;
+  document.getElementById('sbtn').disabled = false;
+}
+async function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const statusDiv = document.getElementById('upload-status') || createStatusDiv();
+  statusDiv.style.display = 'block';
+  statusDiv.textContent = '📄 Reading your bloodwork...';
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const res = await fetch('/upload', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+
+    if (data.extractedText) {
+      statusDiv.textContent = '✅ Bloodwork uploaded — asking for analysis...';
+      hist.push({
+        role: 'user',
+        content: 'I have uploaded my bloodwork results. Here are my lab values:\n\n' + data.extractedText + '\n\nBased on these results and the expert protocols in your knowledge base, what peptides would you recommend for me and why?'
+      });
+      addMsg('usr', '📋 [Bloodwork uploaded — requesting personalized peptide recommendations]');
+      showTyping(true);
+      await sendToBackend();
+      statusDiv.style.display = 'none';
+    } else {
+      statusDiv.textContent = '⚠️ Could not read file. Try a clearer image or PDF.';
+    }
+  } catch(e) {
+    statusDiv.textContent = '⚠️ Upload failed: ' + e.message;
+  }
+  event.target.value = '';
+}
+
+function createStatusDiv() {
+  const div = document.createElement('div');
+  div.id = 'upload-status';
+  document.getElementById('wrap').insertBefore(div, document.getElementById('inp-area'));
+  return div;
+}
+
+async function sendToBackend() {
+  try {
+    const res = await fetch(BACKEND, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: hist })
+    });
+    const data = await res.json();
+    showTyping(false);
+    if (data.error) {
+      addMsg('err', '⚠️ ' + (data.error.message || JSON.stringify(data.error)));
+    } else if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      hist.push({ role: 'assistant', content: reply });
+      addMsg('bot', fmt(reply));
     }
   } catch(e) {
     showTyping(false);
