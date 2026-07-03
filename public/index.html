@@ -128,7 +128,9 @@ function addMsg(cls, html) {
 function fmt(t) {
   return t
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/https:\/\/bit\.ly\/GreenStnRXpeptides/g, '<a href="https://bit.ly/GreenStnRXpeptides" target="_blank">https://bit.ly/GreenStnRXpeptides</a>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>')
     .replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
 }
 
