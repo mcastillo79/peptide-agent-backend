@@ -150,27 +150,59 @@ async function send() {
   addMsg('usr', txt);
   hist.push({ role: 'user', content: txt });
   showTyping(true);
+
   try {
-    const res = await fetch(BACKEND, {
+    const response = await fetch(BACKEND, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, system: SYS, messages: hist })
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1000, messages: hist })
     });
-    const data = await res.json();
+
     showTyping(false);
-    if (data.error) {
-      addMsg('err', '⚠️ ' + (data.error.message || JSON.stringify(data.error)));
-    } else if (data.content && data.content[0]) {
-      const reply = data.content[0].text;
-      hist.push({ role: 'assistant', content: reply });
-      addMsg('bot', fmt(reply));
-    } else {
-      addMsg('err', '⚠️ Unexpected response: ' + JSON.stringify(data).slice(0, 200));
+
+    const msgs = document.getElementById('msgs');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg bot';
+    msgs.appendChild(msgDiv);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+              fullText += parsed.delta.text;
+              msgDiv.innerHTML = fmt(fullText);
+              msgs.scrollTop = msgs.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
     }
+
+    if (fullText) {
+      hist.push({ role: 'assistant', content: fullText });
+    }
+
   } catch(e) {
     showTyping(false);
     addMsg('err', '⚠️ Error: ' + e.message);
   }
+
   busy = false;
   document.getElementById('sbtn').disabled = false;
 }
@@ -220,24 +252,57 @@ function createStatusDiv() {
 
 async function sendToBackend() {
   try {
-    const res = await fetch(BACKEND, {
+    const response = await fetch(BACKEND, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: hist })
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1500, messages: hist })
     });
-    const data = await res.json();
+
     showTyping(false);
-    if (data.error) {
-      addMsg('err', '⚠️ ' + (data.error.message || JSON.stringify(data.error)));
-    } else if (data.content && data.content[0]) {
-      const reply = data.content[0].text;
-      hist.push({ role: 'assistant', content: reply });
-      addMsg('bot', fmt(reply));
+
+    const msgs = document.getElementById('msgs');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg bot';
+    msgs.appendChild(msgDiv);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+              fullText += parsed.delta.text;
+              msgDiv.innerHTML = fmt(fullText);
+              msgs.scrollTop = msgs.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
     }
+
+    if (fullText) {
+      hist.push({ role: 'assistant', content: fullText });
+    }
+
   } catch(e) {
     showTyping(false);
     addMsg('err', '⚠️ Error: ' + e.message);
   }
+
   busy = false;
   document.getElementById('sbtn').disabled = false;
 }
