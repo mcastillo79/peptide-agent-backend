@@ -129,6 +129,12 @@ app.post('/chat', async (req, res) => {
     const question = lastUserMessage ? (typeof lastUserMessage.content === 'string' ? lastUserMessage.content : lastUserMessage.content.map(c => c.text || '').join(' ')) : '';
     const context = await getRelevantContext(question);
     const systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -138,11 +144,30 @@ app.post('/chat', async (req, res) => {
       },
       body: JSON.stringify({
         model: model || 'claude-haiku-4-5-20251001',
-        max_tokens: max_tokens || 1500,
+        max_tokens: max_tokens || 1000,
+        stream: true,
         system: systemWithContext,
         messages: messages
       })
     });
+
+    response.body.on('data', chunk => {
+      res.write(chunk);
+    });
+
+    response.body.on('end', () => {
+      res.end();
+    });
+
+    response.body.on('error', err => {
+      console.error('Stream error:', err);
+      res.end();
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: { message: err.message } });
+  }
+});
     const data = await response.json();
     res.json(data);
   } catch (err) {
