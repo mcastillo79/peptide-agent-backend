@@ -39,14 +39,14 @@ async function getRelevantContext(question) {
     const questionEmbedding = embeddingResponse.data[0].embedding;
     const results = await index.query({
       vector: questionEmbedding,
-      topK: 5,
+      topK: 8,
       includeMetadata: true
     });
     if (!results.matches || results.matches.length === 0) return '';
     const contextChunks = results.matches.map(match => {
       const source = match.metadata.source || 'Unknown source';
       const text = match.metadata.text || '';
-      return `[From: ${source}]\n${text}`;
+      return '[From: ' + source + ']\n' + text;
     });
     return contextChunks.join('\n\n---\n\n');
   } catch (err) {
