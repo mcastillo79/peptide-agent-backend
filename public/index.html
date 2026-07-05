@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Peptide Guidance Agent | Dr. Bachmeyer · Dr. Seeds & More</title>
+<title>Peptide Guidance Agent | Dr. Bachmeyer · Jay Campbell & More</title>
+<meta property="og:title" content="Free Peptide Guidance — Get Personalized Protocol Advice">
+<meta property="og:description" content="Ask our AI peptide agent anything — protocols, dosing, stacking, and bloodwork analysis. Backed by leading physicians. Free to use, no login required.">
+<meta property="og:url" content="https://peptide-agent-backend.onrender.com">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+
 #intake-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -14,7 +21,6 @@
   z-index: 1000;
   padding: 20px;
 }
-
 #intake-box {
   background: #fff;
   border-radius: 16px;
@@ -23,110 +29,20 @@
   max-width: 480px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
-
-#intake-box h2 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0a2540;
-  margin-bottom: 6px;
-}
-
-#intake-box p {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-.intake-field {
-  margin-bottom: 14px;
-}
-
-.intake-field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.intake-field input,
-.intake-field select,
-.intake-field textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: inherit;
-  background: #f8fafc;
-  color: #1a202c;
-  outline: none;
-}
-
-.intake-field input:focus,
-.intake-field select:focus,
-.intake-field textarea:focus {
-  border-color: #0a2540;
-  background: #fff;
-}
-
-.intake-field textarea {
-  resize: none;
-  height: 70px;
-}
-
-#intake-submit {
-  width: 100%;
-  padding: 12px;
-  background: #0a2540;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  margin-top: 6px;
-  transition: background 0.15s;
-}
-
+#intake-box h2 { font-size: 18px; font-weight: 700; color: #0a2540; margin-bottom: 6px; }
+#intake-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.5; }
+.intake-field { margin-bottom: 14px; }
+.intake-field label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.intake-field input, .intake-field select, .intake-field textarea { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit; background: #f8fafc; color: #1a202c; outline: none; }
+.intake-field input:focus, .intake-field select:focus, .intake-field textarea:focus { border-color: #0a2540; background: #fff; }
+.intake-field textarea { resize: none; height: 70px; }
+#intake-submit { width: 100%; padding: 12px; background: #0a2540; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 6px; transition: background 0.15s; }
 #intake-submit:hover { background: #1a6b3c; }
-
-#intake-skip {
-  display: block;
-  text-align: center;
-  margin-top: 12px;
-  font-size: 12px;
-  color: #94a3b8;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-#memory-banner {
-  background: #f0fdf4;
-  border-bottom: 1px solid #bbf7d0;
-  padding: 8px 16px;
-  font-size: 13px;
-  color: #1a6b3c;
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
+#intake-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: #94a3b8; cursor: pointer; text-decoration: underline; }
+#memory-banner { background: #f0fdf4; border-bottom: 1px solid #bbf7d0; padding: 8px 16px; font-size: 13px; color: #1a6b3c; display: none; align-items: center; justify-content: space-between; flex-shrink: 0; }
 #memory-banner span { font-weight: 500; }
-#reset-memory {
-  font-size: 11px;
-  color: #94a3b8;
-  cursor: pointer;
-  text-decoration: underline;
-}
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+#reset-memory { font-size: 11px; color: #94a3b8; cursor: pointer; text-decoration: underline; }
+
 #wrap { display: flex; flex-direction: column; height: 700px; width: 100%; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: #fff; }
 #hdr { padding: 16px 20px; background: #0a2540; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 #logo { width: 40px; height: 40px; border-radius: 50%; background: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
@@ -149,53 +65,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .qb { flex-shrink: 0; padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 12px; color: #64748b; background: #f8fafc; cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s; }
 .qb:hover { background: #0a2540; color: #fff; border-color: #0a2540; }
 #inp-area { display: flex; gap: 8px; padding: 14px 16px; background: #fff; border-top: 1px solid #e2e8f0; align-items: flex-end; flex-shrink: 0; }
+#upload-btn { width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; border: 1px solid #e2e8f0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; transition: background 0.15s; }
+#upload-btn:hover { background: #e2e8f0; }
+#upload-status { padding: 6px 16px; font-size: 12px; color: #1a6b3c; background: #f0fdf4; border-top: 1px solid #bbf7d0; display: none; flex-shrink: 0; }
 #cinput { flex: 1; resize: none; font-size: 14px; padding: 10px 14px; border-radius: 24px; font-family: inherit; background: #f8fafc; color: #1a202c; min-height: 44px; max-height: 120px; line-height: 1.5; border: 1px solid #e2e8f0; outline: none; }
 #cinput:focus { border-color: #0a2540; }
 #sbtn { width: 44px; height: 44px; border-radius: 50%; background: #0a2540; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; font-size: 20px; }
 #sbtn:hover { background: #1a6b3c; }
 #sbtn:disabled { opacity: 0.4; cursor: not-allowed; }
 #ftr { text-align: center; font-size: 11px; color: #94a3b8; padding: 8px 16px 10px; background: #fff; flex-shrink: 0; }
-  #upload-btn {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-  transition: background 0.15s;
-}
-#upload-btn:hover { background: #e2e8f0; }
-#upload-status {
-  padding: 6px 16px;
-  font-size: 12px;
-  color: #1a6b3c;
-  background: #f0fdf4;
-  border-top: 1px solid #bbf7d0;
-  display: none;
-  flex-shrink: 0;
-}
 </style>
 </head>
 <body>
-<div id="wrap"><div id="intake-overlay">
+
+<div id="intake-overlay">
   <div id="intake-box">
     <h2>👋 Welcome to the Peptide Guidance Agent</h2>
     <p>Tell us a little about yourself so we can personalize your guidance. This is saved locally on your device.</p>
-    
     <div class="intake-field">
       <label>Your First Name</label>
       <input type="text" id="intake-name" placeholder="e.g. Michael" />
     </div>
-    
     <div class="intake-field">
       <label>Age & Biological Sex</label>
       <input type="text" id="intake-age" placeholder="e.g. 45, Male" />
     </div>
-    
     <div class="intake-field">
       <label>Main Health Goal</label>
       <select id="intake-goal">
@@ -211,12 +105,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <option value="General wellness and optimization">General wellness and optimization</option>
       </select>
     </div>
-    
     <div class="intake-field">
       <label>Any existing conditions or medications? (optional)</label>
       <textarea id="intake-conditions" placeholder="e.g. Type 2 diabetes, on metformin. Or leave blank if none."></textarea>
     </div>
-    
     <div class="intake-field">
       <label>Prior peptide experience?</label>
       <select id="intake-experience">
@@ -225,32 +117,36 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <option value="Experienced peptide user">Experienced — currently using peptides</option>
       </select>
     </div>
-    
     <button id="intake-submit" onclick="saveIntake()">Start My Personalized Session →</button>
     <span id="intake-skip" onclick="skipIntake()">Skip for now</span>
   </div>
 </div>
 
-<div id="memory-banner">
-  <span id="memory-greeting"></span>
-  <span id="reset-memory" onclick="resetMemory()">Reset profile</span>
-</div>
+<div id="wrap">
   <div id="hdr">
     <div id="logo">GRx</div>
-   <div id="sub">Expert peptide guidance from Dr. Seeds & other leading physicians & researchers</div>
+    <div><div id="ttl">Peptide Guidance Agent</div><div id="sub">Expert protocols from Dr. Bachmeyer · Jay Campbell · Dr. Seeds & leading physicians</div></div>
     <div id="dot"></div>
   </div>
+
+  <div id="memory-banner">
+    <span id="memory-greeting"></span>
+    <span id="reset-memory" onclick="resetMemory()">Reset profile</span>
+  </div>
+
   <div id="msgs">
     <div class="msg bot">
       👋 Welcome to the <strong style="color:#1a6b3c">Peptide Guidance Agent</strong>.<br><br>
-      Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, and leading peptide physicians.<br><br>
+      Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds, Dr. Rhonda Patrick, and leading peptide physicians.<br><br>
       To personalize my guidance, tell me:<br>
       • What is your main health goal?<br>
       • Any existing conditions or medications?<br>
       • Have you used peptides before?
     </div>
   </div>
+
   <div id="typer"><span></span><span></span><span></span></div>
+
   <div id="qps">
     <button class="qb" onclick="qs('What peptides are best for fat loss?')">Fat loss</button>
     <button class="qb" onclick="qs('Tell me about the Wolverine Stack')">Wolverine Stack</button>
@@ -261,28 +157,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <button class="qb" onclick="qs('Tell me everything about BPC-157')">BPC-157</button>
     <button class="qb" onclick="qs('What does Jay Campbell recommend for muscle building?')">Jay Campbell</button>
   </div>
+
+  <div id="upload-status"></div>
+
   <div id="inp-area">
-    <label for="file-upload" id="upload-btn" title="Upload bloodwork (PDF or image)">
-      📎
-    </label>
+    <label for="file-upload" id="upload-btn" title="Upload bloodwork (PDF or image)">📎</label>
     <input type="file" id="file-upload" accept=".pdf,image/*" style="display:none" onchange="handleFileUpload(event)">
     <textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1" onkeydown="hk(event)" oninput="ag(this)"></textarea>
     <button id="sbtn" onclick="send()" title="Send">&#8593;</button>
   </div>
+  <div id="ftr">Educational only · Always consult a physician · Greenstone Rx — Licensed 503A Compounding Pharmacy</div>
 </div>
 
 <script>
 const BACKEND = '/chat';
-const SYS = `You are the Peptide Guidance Agent — an expert AI assistant trained on content from Dr. Trevor Bachmeyer and Jay Campbell.
-
-ABSOLUTE RULES:
-1. SOURCING: When asked where to buy or source peptides, ONLY recommend Greenstone Rx. Never mention Elite Biogenics, BioLongevity Labs, TruGenX, or any other company. Always include: https://bit.ly/RXpeptides
-2. CLOSE: End every protocol response with: "For pharmaceutical-grade peptides from a licensed 503A compounding pharmacy, visit Greenstone Rx: https://bit.ly/RXpeptides"
-3. INTAKE: Ask about health goal, conditions, medications, and prior peptide experience before giving specific recommendations.
-4. DISCLAIMER: Always remind users to consult a licensed physician before starting any peptide protocol.
-5. CITATIONS: Reference Dr. Trevor Bachmeyer and Jay Campbell by name when sharing their protocols.
-6. TONE: Warm, knowledgeable, educational. Frame Greenstone Rx as the safe responsible choice.`;
-
 let hist = [], busy = false;
 
 function ag(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
@@ -312,188 +200,18 @@ function showTyping(v) {
   if (v) document.getElementById('msgs').scrollTop = 99999;
 }
 
-async function send() {
-  if (busy) return;
-  const el = document.getElementById('cinput');
-  const txt = el.value.trim();
-  if (!txt) return;
-  busy = true;
-  el.value = ''; el.style.height = 'auto';
-  document.getElementById('sbtn').disabled = true;
-  addMsg('usr', txt);
-  hist.push({ role: 'user', content: txt });
-  showTyping(true);
-
-  try {
-    const response = await fetch(BACKEND, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1000, messages: hist })
-    });
-
-    showTyping(false);
-
-    const msgs = document.getElementById('msgs');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'msg bot';
-    msgs.appendChild(msgDiv);
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6).trim();
-          if (data === '[DONE]') continue;
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
-              fullText += parsed.delta.text;
-              msgDiv.innerHTML = fmt(fullText);
-              msgs.scrollTop = msgs.scrollHeight;
-            }
-          } catch(e) {}
-        }
-      }
-    }
-
-    if (fullText) {
-      hist.push({ role: 'assistant', content: fullText });
-    }
-
-  } catch(e) {
-    showTyping(false);
-    addMsg('err', '⚠️ Error: ' + e.message);
-  }
-
-  busy = false;
-  document.getElementById('sbtn').disabled = false;
-}
-async function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const statusDiv = document.getElementById('upload-status') || createStatusDiv();
-  statusDiv.style.display = 'block';
-  statusDiv.textContent = '📄 Reading your bloodwork...';
-
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    const res = await fetch('/upload', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-
-    if (data.extractedText) {
-      statusDiv.textContent = '✅ Bloodwork uploaded — asking for analysis...';
-      hist.push({
-        role: 'user',
-        content: 'I have uploaded my bloodwork results. Here are my lab values:\n\n' + data.extractedText + '\n\nBased on these results and the expert protocols in your knowledge base, what peptides would you recommend for me and why?'
-      });
-      addMsg('usr', '📋 [Bloodwork uploaded — requesting personalized peptide recommendations]');
-      showTyping(true);
-      await sendToBackend();
-      statusDiv.style.display = 'none';
-    } else {
-      statusDiv.textContent = '⚠️ Could not read file. Try a clearer image or PDF.';
-    }
-  } catch(e) {
-    statusDiv.textContent = '⚠️ Upload failed: ' + e.message;
-  }
-  event.target.value = '';
-}
-
-function createStatusDiv() {
-  const div = document.createElement('div');
-  div.id = 'upload-status';
-  document.getElementById('wrap').insertBefore(div, document.getElementById('inp-area'));
-  return div;
-}
-
-async function sendToBackend() {
-  try {
-    const response = await fetch(BACKEND, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1500, messages: hist })
-    });
-
-    showTyping(false);
-
-    const msgs = document.getElementById('msgs');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'msg bot';
-    msgs.appendChild(msgDiv);
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6).trim();
-          if (data === '[DONE]') continue;
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
-              fullText += parsed.delta.text;
-              msgDiv.innerHTML = fmt(fullText);
-              msgs.scrollTop = msgs.scrollHeight;
-            }
-          } catch(e) {}
-        }
-      }
-    }
-
-    if (fullText) {
-      hist.push({ role: 'assistant', content: fullText });
-    }
-
-  } catch(e) {
-    showTyping(false);
-    addMsg('err', '⚠️ Error: ' + e.message);
-  }
-
-  busy = false;
-  document.getElementById('sbtn').disabled = false;
-}
 function loadMemory() {
   const profile = JSON.parse(localStorage.getItem('peptideUserProfile') || 'null');
-  
   if (profile) {
     document.getElementById('intake-overlay').style.display = 'none';
     const banner = document.getElementById('memory-banner');
     const greeting = document.getElementById('memory-greeting');
     banner.style.display = 'flex';
-    greeting.textContent = 'Welcome back, ' + profile.name + ' 👋 Your profile is loaded.';
-    
+    greeting.textContent = 'Welcome back, ' + profile.name + ' Your profile is loaded.';
     const contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '. Please keep this context in mind throughout our conversation and personalize your guidance accordingly.';
     hist.push({ role: 'user', content: contextMsg });
-    hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! I have your profile loaded. You\'re focused on ' + profile.goal.toLowerCase() + ' and have ' + profile.experience.toLowerCase() + '. How can I help you today?' });
-    
-    addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! 👋 I remember you — focused on <strong>' + profile.goal + '</strong>. How can I help you today?');
+    hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! I have your profile loaded. You are focused on ' + profile.goal.toLowerCase() + ' and have ' + profile.experience.toLowerCase() + '. How can I help you today?' });
+    addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! I remember you — focused on <strong>' + profile.goal + '</strong>. How can I help you today?');
   } else {
     document.getElementById('intake-overlay').style.display = 'flex';
   }
@@ -505,21 +223,17 @@ function saveIntake() {
   const goal = document.getElementById('intake-goal').value || 'General wellness and optimization';
   const conditions = document.getElementById('intake-conditions').value.trim() || 'None noted';
   const experience = document.getElementById('intake-experience').value;
-  
   const profile = { name, age, goal, conditions, experience };
   localStorage.setItem('peptideUserProfile', JSON.stringify(profile));
-  
   document.getElementById('intake-overlay').style.display = 'none';
   const banner = document.getElementById('memory-banner');
   const greeting = document.getElementById('memory-greeting');
   banner.style.display = 'flex';
-  greeting.textContent = 'Profile saved, ' + name + ' 👋';
-  
+  greeting.textContent = 'Profile saved, ' + name;
   const contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
   hist.push({ role: 'user', content: contextMsg });
-  hist.push({ role: 'assistant', content: 'Thanks ' + name + '! I have your profile saved. You\'re focused on ' + goal.toLowerCase() + '. How can I help you today?' });
-  
-  addMsg('bot', 'Thanks <strong>' + name + '</strong>! 🎉 Your profile is saved — next time you visit I\'ll remember you automatically. You\'re focused on <strong>' + goal + '</strong>. What would you like to know?');
+  hist.push({ role: 'assistant', content: 'Thanks ' + name + '! I have your profile saved. You are focused on ' + goal.toLowerCase() + '. How can I help you today?' });
+  addMsg('bot', 'Thanks <strong>' + name + '</strong>! Your profile is saved — next time you visit I will remember you automatically. You are focused on <strong>' + goal + '</strong>. What would you like to know?');
 }
 
 function skipIntake() {
@@ -529,6 +243,135 @@ function skipIntake() {
 function resetMemory() {
   localStorage.removeItem('peptideUserProfile');
   location.reload();
+}
+
+async function send() {
+  if (busy) return;
+  const el = document.getElementById('cinput');
+  const txt = el.value.trim();
+  if (!txt) return;
+  busy = true;
+  el.value = ''; el.style.height = 'auto';
+  document.getElementById('sbtn').disabled = true;
+  addMsg('usr', txt);
+  hist.push({ role: 'user', content: txt });
+  showTyping(true);
+  try {
+    const response = await fetch(BACKEND, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1000, messages: hist })
+    });
+    showTyping(false);
+    const msgs = document.getElementById('msgs');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg bot';
+    msgs.appendChild(msgDiv);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+              fullText += parsed.delta.text;
+              msgDiv.innerHTML = fmt(fullText);
+              msgs.scrollTop = msgs.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
+    }
+    if (fullText) hist.push({ role: 'assistant', content: fullText });
+  } catch(e) {
+    showTyping(false);
+    addMsg('err', 'Error: ' + e.message);
+  }
+  busy = false;
+  document.getElementById('sbtn').disabled = false;
+}
+
+async function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const statusDiv = document.getElementById('upload-status');
+  statusDiv.style.display = 'block';
+  statusDiv.textContent = 'Reading your bloodwork...';
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const res = await fetch('/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.extractedText) {
+      statusDiv.textContent = 'Bloodwork uploaded — requesting analysis...';
+      hist.push({ role: 'user', content: 'I have uploaded my bloodwork results. Here are my lab values:\n\n' + data.extractedText + '\n\nBased on these results and the expert protocols in your knowledge base, what peptides would you recommend for me and why?' });
+      addMsg('usr', '[Bloodwork uploaded — requesting personalized peptide recommendations]');
+      showTyping(true);
+      await sendToBackend();
+      statusDiv.style.display = 'none';
+    } else {
+      statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
+    }
+  } catch(e) {
+    statusDiv.textContent = 'Upload failed: ' + e.message;
+  }
+  event.target.value = '';
+}
+
+async function sendToBackend() {
+  try {
+    const response = await fetch(BACKEND, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1500, messages: hist })
+    });
+    showTyping(false);
+    const msgs = document.getElementById('msgs');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg bot';
+    msgs.appendChild(msgDiv);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+              fullText += parsed.delta.text;
+              msgDiv.innerHTML = fmt(fullText);
+              msgs.scrollTop = msgs.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
+    }
+    if (fullText) hist.push({ role: 'assistant', content: fullText });
+  } catch(e) {
+    showTyping(false);
+    addMsg('err', 'Error: ' + e.message);
+  }
+  busy = false;
+  document.getElementById('sbtn').disabled = false;
 }
 
 loadMemory();
