@@ -311,13 +311,65 @@ function handleFileUpload(event) {
   }).then(function(data) {
     if (data.extractedText) {
       localStorage.setItem('peptideBloodwork', data.extractedText);
-      statusDiv.textContent = 'Bloodwork uploaded and saved to your profile!';
-      hist.push({ role: 'user', content: 'I have uploaded my bloodwork results. Here are my lab values:\n\n' + data.extractedText + '\n\nBased on these results and the expert protocols in your knowledge base, what peptides would you recommend for me and why?' });
-      addMsg('usr', '[Bloodwork uploaded and saved - requesting personalized recommendations]');
+      statusDiv.textContent = 'Bloodwork saved! Analyzing...';
+      addMsg('usr', '[Bloodwork uploaded and saved]');
+      var bloodworkPrompt = 'I have uploaded my bloodwork results. Here are my lab values:\n\n' + data.extractedText + '\n\nBased on these results and the expert protocols in your knowledge base, what peptides would you recommend for me and why?';
+      hist.push({ role: 'user', content: bloodworkPrompt });
+      busy = true;
+      document.getElementById('sbtn').disabled = true;
       showTyping(true);
-      busy = false;
-      sendMsg('Please analyze my uploaded bloodwork and provide personalized peptide recommendations based on my lab values and health profile.');
-      setTimeout(function() { statusDiv.style.display = 'none'; }, 3000);
+      fetch(BACKEND, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 3000, messages: hist })
+      }).then(function(response) {
+        showTyping(false);
+        var msgs = document.getElementById('msgs');
+        var msgDiv = document.createElement('div');
+        msgDiv.className = 'msg bot';
+        msgs.appendChild(msgDiv);
+        var reader = response.body.getReader();
+        var decoder = new TextDecoder();
+        var fullText = '';
+        var buffer = '';
+        function read() {
+          reader.read().then(function(result) {
+            if (result.done) {
+              if (fullText) hist.push({ role: 'assistant', content: fullText });
+              busy = false;
+              document.getElementById('sbtn').disabled = false;
+              statusDiv.style.display = 'none';
+              return;
+            }
+            buffer += decoder.decode(result.value, { stream: true });
+            var lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (var i = 0; i < lines.length; i++) {
+              var line = lines[i];
+              if (line.indexOf('data: ') === 0) {
+                var d = line.slice(6).trim();
+                if (d === '[DONE]') continue;
+                try {
+                  var parsed = JSON.parse(d);
+                  if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+                    fullText += parsed.delta.text;
+                    msgDiv.innerHTML = fmt(fullText);
+                    msgs.scrollTop = msgs.scrollHeight;
+                  }
+                } catch(e) {}
+              }
+            }
+            read();
+          });
+        }
+        read();
+      }).catch(function(e) {
+        showTyping(false);
+        addMsg('err', 'Error analyzing bloodwork: ' + e.message);
+        busy = false;
+        document.getElementById('sbtn').disabled = false;
+        statusDiv.style.display = 'none';
+      });
     } else {
       statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
     }
