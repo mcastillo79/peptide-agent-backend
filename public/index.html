@@ -116,8 +116,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <option value="Experienced peptide user">Experienced — currently using peptides</option>
       </select>
     </div>
-    <button id="intake-submit" onclick="saveIntake()">Start My Personalized Session →</button>
-    <span id="intake-skip" onclick="skipIntake()">Skip for now</span>
+    <button id="intake-submit">Start My Personalized Session →</button>
+   <span id="intake-skip">Skip for now</span>
   </div>
 </div>
 
@@ -373,6 +373,8 @@ async function sendToBackend() {
   document.getElementById('sbtn').disabled = false;
 }
 
+document.getElementById('intake-submit').addEventListener('click', saveIntake);
+document.getElementById('intake-skip').addEventListener('click', skipIntake);
 loadMemory();
 </script>
 </body>
