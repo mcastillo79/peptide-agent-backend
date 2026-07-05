@@ -315,7 +315,8 @@ function handleFileUpload(event) {
       hist.push({ role: 'user', content: 'I have uploaded my bloodwork results. Here are my lab values:\n\n' + data.extractedText + '\n\nBased on these results and the expert protocols in your knowledge base, what peptides would you recommend for me and why?' });
       addMsg('usr', '[Bloodwork uploaded and saved - requesting personalized recommendations]');
       showTyping(true);
-      sendMsg('');
+      busy = false;
+      sendMsg('Please analyze my uploaded bloodwork and provide personalized peptide recommendations based on my lab values and health profile.');
       setTimeout(function() { statusDiv.style.display = 'none'; }, 3000);
     } else {
       statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
