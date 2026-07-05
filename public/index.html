@@ -207,11 +207,18 @@ function loadMemory() {
     const banner = document.getElementById('memory-banner');
     const greeting = document.getElementById('memory-greeting');
     banner.style.display = 'flex';
-    greeting.textContent = 'Welcome back, ' + profile.name + ' Your profile is loaded.';
-    const contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '. Please keep this context in mind throughout our conversation and personalize your guidance accordingly.';
+    greeting.textContent = 'Welcome back, ' + profile.name + ' — your profile is loaded.';
+    const bloodwork = localStorage.getItem('peptideBloodwork') || '';
+    let contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
+    if (bloodwork) {
+      contextMsg += ' My previously uploaded bloodwork results: ' + bloodwork;
+    }
+    contextMsg += ' Please keep this context in mind throughout our conversation and personalize your guidance accordingly.';
     hist.push({ role: 'user', content: contextMsg });
-    hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! I have your profile loaded. You are focused on ' + profile.goal.toLowerCase() + ' and have ' + profile.experience.toLowerCase() + '. How can I help you today?' });
-    addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! I remember you — focused on <strong>' + profile.goal + '</strong>. How can I help you today?');
+    const bloodworkNote = bloodwork ? ' I also have your previously uploaded bloodwork on file.' : '';
+    hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! I have your profile loaded. You are focused on ' + profile.goal.toLowerCase() + '.' + bloodworkNote + ' How can I help you today?' });
+    const bloodworkBadge = bloodwork ? ' 🩸 <em style="font-size:12px;color:#64748b;">Bloodwork on file</em>' : '';
+    addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! I remember you — focused on <strong>' + profile.goal + '</strong>.' + bloodworkBadge + ' How can I help you today?');
   } else {
     document.getElementById('intake-overlay').style.display = 'flex';
   }
@@ -242,6 +249,7 @@ function skipIntake() {
 
 function resetMemory() {
   localStorage.removeItem('peptideUserProfile');
+  localStorage.removeItem('peptideBloodwork');
   location.reload();
 }
 
@@ -303,19 +311,11 @@ async function send() {
 
 async function handleFileUpload(event) {
   const file = event.target.files[0];
-  if (!file) return;
-  const statusDiv = document.getElementById('upload-status');
-  statusDiv.style.display = 'block';
-  statusDiv.textContent = 'Reading your bloodwork...';
-  const formData = new FormData();
-  formData.append('file', file);
-  try {
-    const res = await fetch('/upload', { method: 'POST', body: formData });
-    const data = await res.json();
-    if (data.extractedText) {
-      statusDiv.textContent = 'Bloodwork uploaded — requesting analysis...';
+  if (data.extractedText) {
+      localStorage.setItem('peptideBloodwork', data.extractedText);
+      statusDiv.textContent = 'Bloodwork uploaded and saved — requesting analysis...';
       hist.push({ role: 'user', content: 'I have uploaded my bloodwork results. Here are my lab values:\n\n' + data.extractedText + '\n\nBased on these results and the expert protocols in your knowledge base, what peptides would you recommend for me and why?' });
-      addMsg('usr', '[Bloodwork uploaded — requesting personalized peptide recommendations]');
+      addMsg('usr', '[Bloodwork uploaded and saved to your profile — requesting personalized peptide recommendations]');
       showTyping(true);
       await sendToBackend();
       statusDiv.style.display = 'none';
