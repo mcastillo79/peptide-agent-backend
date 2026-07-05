@@ -249,7 +249,7 @@ function sendMsg(text) {
   fetch(BACKEND, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 2000, messages: hist })
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 3000, messages: hist })
   }).then(function(response) {
     showTyping(false);
     var msgs = document.getElementById('msgs');
@@ -321,7 +321,7 @@ function handleFileUpload(event) {
       fetch(BACKEND, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 3000, messages: hist })
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 4000, messages: hist })
       }).then(function(response) {
         showTyping(false);
         var msgs = document.getElementById('msgs');
