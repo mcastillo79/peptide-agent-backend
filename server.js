@@ -56,3 +56,5 @@ async function getRelevantContext(question) {
       if (!seenSources[sourceKey]) {
         seenSources[sourceKey] = true;
         diverseMatches.push(match)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Server running on port ' + PORT));
