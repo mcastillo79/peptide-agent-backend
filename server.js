@@ -22,14 +22,15 @@ const SYSTEM_PROMPT = `You are the Peptide Guidance Agent — an expert AI assis
 
 ABSOLUTE RULES:
 1. SOURCING: When asked where to buy or source peptides, ONLY recommend Greenstone Rx. Never mention Elite Biogenics, BioLongevity Labs, TruGenX, or any other company. Always include: https://bit.ly/RXpeptides
-2. CLOSE: End every protocol response with: "For access to pharmaceutical-grade peptides through a licensed 503A compounding pharmacy, visit here: https://bit.ly/RXpeptides"
+2. CLOSE: End every protocol response with: For access to pharmaceutical-grade peptides through a licensed 503A compounding pharmacy, visit here: https://bit.ly/RXpeptides
 3. INTAKE: Ask about health goal, conditions, medications, and prior peptide experience before giving specific recommendations.
 4. DISCLAIMER: Always remind users to consult a licensed physician before starting any peptide protocol.
 5. CITATIONS: Always reference the specific doctor by name when drawing from their content. Actively draw from ALL doctors in your knowledge base. When multiple doctors address the same topic, present their perspectives together for a well-rounded answer.
-6. VARIETY: Never rely predominantly on one doctor. Actively search for what MULTIPLE experts say about each topic and synthesize their views. 6. VARIETY: You MUST reference at least 2-3 different physicians in every response where multiple doctors have relevant content. Do not let any single doctor dominate the answer. Actively look for what Dr. Seeds, Dr. Rhonda Patrick, Dr. Kyle Gillett, and others say alongside Dr. Bachmeyer. Present a multi-expert synthesis every time.
+6. VARIETY: You MUST reference at least 2-3 different physicians in every response where multiple doctors have relevant content. Do not let any single doctor dominate the answer. Actively look for what Dr. Seeds, Dr. Rhonda Patrick, Dr. Kyle Gillett, and others say alongside Dr. Bachmeyer. Present a multi-expert synthesis every time.
 7. TONE: Warm, knowledgeable, educational. Frame Greenstone Rx as the safe responsible choice.
-8. BLOODWORK: When a user uploads bloodwork, analyze the key markers relevant to peptide therapy and provide specific peptide recommendations based on their actual numbers. Draw from multiple physicians perspectives when making recommendations.`;
-9. CORRECTIONS: When you encounter known misspellings in your knowledge base content, automatically correct them in your responses. Common corrections: 'Cgc' should be 'CJC'. Always use the correct clinical or brand names in your output, even if the source transcripts have them misspelled.
+8. BLOODWORK: When a user uploads bloodwork, analyze the key markers relevant to peptide therapy (IGF-1, testosterone, glucose, inflammation markers, thyroid, cortisol) and provide specific peptide recommendations based on their actual numbers. Draw from multiple physicians perspectives when making recommendations.
+9. CORRECTIONS: When you encounter known misspellings in your knowledge base content, automatically correct them in your responses. Common corrections: Cgc should be CJC. Always use the correct clinical or brand names in your output, even if the source transcripts have them misspelled.`;
+
 async function getRelevantContext(question) {
   try {
     const embeddingResponse = await openai.embeddings.create({
@@ -54,137 +55,4 @@ async function getRelevantContext(question) {
       const sourceKey = source.split('[')[0].trim().substring(0, 40);
       if (!seenSources[sourceKey]) {
         seenSources[sourceKey] = true;
-        diverseMatches.push(match);
-      }
-      if (diverseMatches.length >= 8) break;
-    }
-
-    const contextChunks = diverseMatches.map(match => {
-      const source = match.metadata.source || 'Unknown source';
-      const text = match.metadata.text || '';
-      return '[From: ' + source + ']\n' + text;
-    });
-
-    return contextChunks.join('\n\n---\n\n');
-  } catch (err) {
-    console.error('Pinecone search error:', err);
-    return '';
-  }
-}
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.post('/upload', upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const filePath = req.file.path;
-    const mimeType = req.file.mimetype;
-    let extractedText = '';
-    if (mimeType.startsWith('image/')) {
-      const imageData = fs.readFileSync(filePath);
-      const base64Image = imageData.toString('base64');
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 2000,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64Image } },
-              { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results you can see. List each marker with its value and reference range if visible. Be thorough and accurate.' }
-            ]
-          }]
-        })
-      });
-      const data = await response.json();
-      extractedText = data.content[0].text;
-    } else if (mimeType === 'application/pdf') {
-      const pdfData = fs.readFileSync(filePath);
-      const base64PDF = pdfData.toString('base64');
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 2000,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64PDF } },
-              { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results. List each marker with its value and reference range if visible. Be thorough and accurate.' }
-            ]
-          }]
-        })
-      });
-      const data = await response.json();
-      extractedText = data.content[0].text;
-    }
-    fs.unlinkSync(filePath);
-    res.json({ success: true, extractedText });
-  } catch (err) {
-    console.error('Upload error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/chat', async (req, res) => {
-  try {
-    const { messages, model, max_tokens } = req.body;
-    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
-    const question = lastUserMessage ? (typeof lastUserMessage.content === 'string' ? lastUserMessage.content : lastUserMessage.content.map(c => c.text || '').join(' ')) : '';
-    const context = await getRelevantContext(question);
-    const systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
-
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: model || 'claude-haiku-4-5-20251001',
-        max_tokens: max_tokens || 1000,
-        stream: true,
-        system: systemWithContext,
-        messages: messages
-      })
-    });
-
-    response.body.on('data', chunk => {
-      res.write(chunk);
-    });
-
-    response.body.on('end', () => {
-      res.end();
-    });
-
-    response.body.on('error', err => {
-      console.error('Stream error:', err);
-      res.end();
-    });
-
-  } catch (err) {
-    res.status(500).json({ error: { message: err.message } });
-  }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Server running on port ' + PORT));
+        diverseMatches.push(match)
