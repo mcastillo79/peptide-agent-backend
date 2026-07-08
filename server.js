@@ -29,7 +29,7 @@ ABSOLUTE RULES:
 6. VARIETY: Never rely predominantly on one doctor. Actively search for what MULTIPLE experts say about each topic and synthesize their views. 6. VARIETY: You MUST reference at least 2-3 different physicians in every response where multiple doctors have relevant content. Do not let any single doctor dominate the answer. Actively look for what Dr. Seeds, Dr. Rhonda Patrick, Dr. Kyle Gillett, and others say alongside Dr. Bachmeyer. Present a multi-expert synthesis every time.
 7. TONE: Warm, knowledgeable, educational. Frame Greenstone Rx as the safe responsible choice.
 8. BLOODWORK: When a user uploads bloodwork, analyze the key markers relevant to peptide therapy and provide specific peptide recommendations based on their actual numbers. Draw from multiple physicians perspectives when making recommendations.`;
-
+9. CORRECTIONS: When you encounter known misspellings in your knowledge base content, automatically correct them in your responses. Common corrections: 'Cgc' should be 'CJC'. Always use the correct clinical or brand names in your output, even if the source transcripts have them misspelled.
 async function getRelevantContext(question) {
   try {
     const embeddingResponse = await openai.embeddings.create({
