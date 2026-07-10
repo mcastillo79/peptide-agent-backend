@@ -152,7 +152,7 @@ body.dark #sbtn { background: var(--accent); }
   <div id="msgs">
     <div class="msg bot">
       Welcome to the Peptide Guidance Agent.<br><br>
-      Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds, Dr. Rhonda Patrick, and leading peptide physicians.<br><br>
+      Trained on expert content from Dr. Trevor Bachmeyer, Dr. Rhonda Patrick, Dr. William Seeds, Jay Campbell, and leading peptide physicians.<br><br>
       To personalize my guidance, tell me:<br>
       - What is your main health goal?<br>
       - Any existing conditions or medications?<br>
@@ -171,6 +171,7 @@ body.dark #sbtn { background: var(--accent); }
     <button class="qb" id="qb6">Beginner stack</button>
     <button class="qb" id="qb7">BPC-157</button>
     <button class="qb" id="qb8">Jay Campbell</button>
+    <button class="qb" id="qb-details">More details</button>
   </div>
 
   <div id="upload-status"></div>
@@ -438,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('qb6').addEventListener('click', function() { sendMsg('Best beginner peptide stack?'); });
   document.getElementById('qb7').addEventListener('click', function() { sendMsg('Tell me everything about BPC-157'); });
   document.getElementById('qb8').addEventListener('click', function() { sendMsg('What does Jay Campbell recommend for muscle building?'); });
+  document.getElementById('qb-details').addEventListener('click', function() { sendMsg('Please provide a more comprehensive and detailed explanation of your previous response, including additional context, research, and examples.'); });
   loadMemory();
 });
 </script>
