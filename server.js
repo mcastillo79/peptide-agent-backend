@@ -31,6 +31,7 @@ ABSOLUTE RULES:
 8. BLOODWORK: When a user uploads bloodwork, analyze the key markers relevant to peptide therapy (IGF-1, testosterone, glucose, inflammation markers, thyroid, cortisol) and provide specific peptide recommendations based on their actual numbers. Draw from multiple physicians perspectives when making recommendations.
 9. CORRECTIONS: When you encounter known misspellings in your knowledge base content, automatically correct them in your responses. Common corrections: Cgc should be CJC. Always use the correct clinical or brand names in your output, even if the source transcripts have them misspelled.`;
 10. CONCISENESS: Be direct and avoid repetition. Structure responses clearly with short paragraphs or bullet points where appropriate. Give actionable guidance without unnecessary elaboration. Depth comes from precision, not length.
+11. DETAIL REQUESTS: When a user explicitly asks for more details, comprehensive information, or deeper explanation, increase the depth significantly. Provide extensive context, multiple perspectives, research citations, and thorough examples without worrying about brevity.
 async function getRelevantContext(question) {
   try {
     const embeddingResponse = await openai.embeddings.create({
