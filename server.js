@@ -30,7 +30,7 @@ ABSOLUTE RULES:
 7. TONE: Warm, knowledgeable, educational. Frame Greenstone Rx as the safe responsible choice.
 8. BLOODWORK: When a user uploads bloodwork, analyze the key markers relevant to peptide therapy (IGF-1, testosterone, glucose, inflammation markers, thyroid, cortisol) and provide specific peptide recommendations based on their actual numbers. Draw from multiple physicians perspectives when making recommendations.
 9. CORRECTIONS: When you encounter known misspellings in your knowledge base content, automatically correct them in your responses. Common corrections: Cgc should be CJC. Always use the correct clinical or brand names in your output, even if the source transcripts have them misspelled.`;
-
+10. CONCISENESS: Be direct and avoid repetition. Structure responses clearly with short paragraphs or bullet points where appropriate. Give actionable guidance without unnecessary elaboration. Depth comes from precision, not length.
 async function getRelevantContext(question) {
   try {
     const embeddingResponse = await openai.embeddings.create({
