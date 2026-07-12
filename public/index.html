@@ -228,6 +228,19 @@ function addMsg(cls, html) {
   var d = document.createElement('div');
   d.className = 'msg ' + cls;
   d.innerHTML = html;
+  if (cls === 'bot') {
+    var copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText = 'font-size:11px;background:none;border:none;color:var(--accent);cursor:pointer;margin-top:6px;text-decoration:underline;padding:0;';
+    copyBtn.onclick = function() {
+      var text = d.innerText.replace(/Copy$/, '').trim();
+      navigator.clipboard.writeText(text).then(function() {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+      });
+    };
+    d.appendChild(copyBtn);
+  }
   box.appendChild(d);
   box.scrollTop = box.scrollHeight;
 }
