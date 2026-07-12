@@ -325,6 +325,17 @@ function streamResponse(response, maxHandler) {
     reader.read().then(function(result) {
       if (result.done) {
         if (fullText) hist.push({ role: 'assistant', content: fullText });
+        var copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy';
+        copyBtn.style.cssText = 'font-size:11px;background:none;border:none;color:var(--accent);cursor:pointer;margin-top:6px;text-decoration:underline;padding:0;';
+        copyBtn.onclick = function() {
+          var text = msgDiv.innerText.replace(/Copy$/, '').trim();
+          navigator.clipboard.writeText(text).then(function() {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+          });
+        };
+        msgDiv.appendChild(copyBtn);
         busy = false;
         document.getElementById('sbtn').disabled = false;
         if (maxHandler) maxHandler();
