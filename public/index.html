@@ -67,6 +67,8 @@ body.dark #intake-submit { background: var(--accent); }
 body.dark .usr { background: #1f6feb; }
 .err { align-self: flex-start; background: #fff5f5; border: 1px solid #fed7d7; color: #c53030; border-radius: 4px 16px 16px 16px; font-size: 13px; }
 .msg a { color: var(--accent); text-decoration: underline; }
+.msg-copy { display: block; font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 6px; background: none; border: none; padding: 0; font-family: inherit; }
+.msg-copy:hover { opacity: 0.8; }
 #typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
 #typer span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-soft); animation: bb 1s infinite; display: inline-block; }
 #typer span:nth-child(2) { animation-delay: 0.2s; }
@@ -140,7 +142,7 @@ body.dark #sbtn { background: var(--accent); }
       <div id="ttl">Peptide Guidance Agent</div>
       <div id="sub">Expert protocols from Dr. Bachmeyer, Jay Campbell, Dr. Seeds and leading physicians</div>
     </div>
-    <button id="theme-toggle" title="Toggle dark mode">🌙</button>
+    <button id="theme-toggle" title="Toggle dark mode">moon</button>
     <div id="dot"></div>
   </div>
 
@@ -223,23 +225,28 @@ function ag(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
+function addCopyButton(msgDiv) {
+  var copyBtn = document.createElement('button');
+  copyBtn.className = 'msg-copy';
+  copyBtn.textContent = 'Copy';
+  copyBtn.onclick = function(e) {
+    e.preventDefault();
+    var text = msgDiv.innerText.replace(/Copy$/, '').trim();
+    navigator.clipboard.writeText(text).then(function() {
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+    });
+  };
+  msgDiv.appendChild(copyBtn);
+}
+
 function addMsg(cls, html) {
   var box = document.getElementById('msgs');
   var d = document.createElement('div');
   d.className = 'msg ' + cls;
   d.innerHTML = html;
   if (cls === 'bot') {
-    var copyBtn = document.createElement('button');
-    copyBtn.textContent = 'Copy';
-    copyBtn.style.cssText = 'font-size:11px;background:none;border:none;color:var(--accent);cursor:pointer;margin-top:6px;text-decoration:underline;padding:0;';
-    copyBtn.onclick = function() {
-      var text = d.innerText.replace(/Copy$/, '').trim();
-      navigator.clipboard.writeText(text).then(function() {
-        copyBtn.textContent = 'Copied!';
-        setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
-      });
-    };
-    d.appendChild(copyBtn);
+    addCopyButton(d);
   }
   box.appendChild(d);
   box.scrollTop = box.scrollHeight;
@@ -325,17 +332,7 @@ function streamResponse(response, maxHandler) {
     reader.read().then(function(result) {
       if (result.done) {
         if (fullText) hist.push({ role: 'assistant', content: fullText });
-        var copyBtn = document.createElement('button');
-        copyBtn.textContent = 'Copy';
-        copyBtn.style.cssText = 'font-size:11px;background:none;border:none;color:var(--accent);cursor:pointer;margin-top:6px;text-decoration:underline;padding:0;';
-        copyBtn.onclick = function() {
-          var text = msgDiv.innerText.replace(/Copy$/, '').trim();
-          navigator.clipboard.writeText(text).then(function() {
-            copyBtn.textContent = 'Copied!';
-            setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
-          });
-        };
-        msgDiv.appendChild(copyBtn);
+        addCopyButton(msgDiv);
         busy = false;
         document.getElementById('sbtn').disabled = false;
         if (maxHandler) maxHandler();
@@ -376,7 +373,7 @@ function sendMsg(text) {
   fetch(BACKEND, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 6000, messages: hist })
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 5000, messages: hist })
   }).then(function(response) {
     streamResponse(response, null);
   }).catch(function(e) {
