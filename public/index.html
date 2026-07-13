@@ -558,8 +558,12 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('intake-skip').addEventListener('click', skipIntake);
   document.getElementById('reset-memory').addEventListener('click', resetMemory);
 
-  document.getElementById('save-conv-submit').addEventListener('click', saveEmailAndConversation);
-  document.getElementById('save-conv-skip').addEventListener('click', hideSaveModal);
+document.getElementById('save-conv-submit').addEventListener('click', function() {
+  saveEmailAndConversation();
+});
+document.getElementById('save-conv-skip').addEventListener('click', function() {
+  hideSaveModal();
+});
 
   document.getElementById('sbtn').addEventListener('click', function() {
     var el = document.getElementById('cinput');
