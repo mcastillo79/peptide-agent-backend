@@ -355,6 +355,26 @@ function loadMemory() {
   if (!profileStr) {
     document.getElementById('intake-overlay').style.display = 'flex';
     return;
+  }var userEmail = localStorage.getItem('peptideUserEmail');
+  if (userEmail) {
+    var db = firebase.firestore();
+    db.collection('users').doc(userEmail).get().then(function(doc) {
+      if (doc.exists && doc.data().messages) {
+        hist = doc.data().messages;
+        document.getElementById('msgs').innerHTML = '';
+        addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>. How can I help you today?');
+        hist.slice(2).forEach(function(msg) {
+          if (msg.role === 'user') {
+            addMsg('usr', msg.content);
+          } else {
+            addMsg('bot', fmt(msg.content));
+          }
+        });
+        console.log('Loaded conversation history');
+      }
+    }).catch(function(e) {
+      console.log('No saved conversation found');
+    });
   }
 
   var profile = JSON.parse(profileStr);
