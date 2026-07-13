@@ -168,7 +168,7 @@ body.dark #sbtn { background: var(--accent); }
 <div id="ttl">Peptide Guidance Agent</div>
 <div id="sub">Expert protocols from Dr. Bachmeyer, Jay Campbell, Dr. Seeds and leading physicians</div>
 </div>
-<button id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">moon</button>
+<button id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
 <div id="dot"></div>
 </div>
 
@@ -235,10 +235,10 @@ var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3F
 function applyTheme(theme) {
   if (theme === 'dark') {
     document.body.classList.add('dark');
-    document.getElementById('theme-toggle').textContent = 'sun';
+    document.getElementById('theme-toggle').textContent = '☀️';
   } else {
     document.body.classList.remove('dark');
-    document.getElementById('theme-toggle').textContent = 'moon';
+    document.getElementById('theme-toggle').textContent = '🌙';
   }
 }
 
