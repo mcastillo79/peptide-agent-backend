@@ -72,7 +72,7 @@ body.dark #save-conv-submit { background: var(--accent); }
 #logo { width: 40px; height: 40px; border-radius: 50%; background: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
 #ttl { font-size: 15px; font-weight: 600; color: #fff; }
 #sub { font-size: 11px; color: #8ba4bf; margin-top: 2px; }
-#theme-toggle { background: none; border: none; cursor: pointer; font-size: 18px; margin-left: auto; padding: 4px; line-height: 1; color: #fff; }
+#theme-toggle { background: none; border: none; cursor: pointer; font-size: 20px; margin-left: auto; padding: 4px; line-height: 1; color: #fff; }
 #dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; margin-left: 10px; }
 #msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--chat-bg); }
 .msg { max-width: 88%; padding: 12px 16px; font-size: 14px; line-height: 1.7; }
@@ -377,26 +377,6 @@ function loadMemory() {
   hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
 
   addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
-
-  var userEmail = localStorage.getItem('peptideUserEmail');
-  if (userEmail) {
-    var db = firebase.firestore();
-    db.collection('users').doc(userEmail).get().then(function(doc) {
-      if (doc.exists && doc.data().messages) {
-        hist = doc.data().messages;
-        hist.slice(2).forEach(function(msg) {
-          if (msg.role === 'user') {
-            addMsg('usr', msg.content);
-          } else {
-            addMsg('bot', fmt(msg.content));
-          }
-        });
-        console.log('Loaded conversation history');
-      }
-    }).catch(function(e) {
-      console.log('No saved conversation found');
-    });
-  }
 }
 
 function saveConversationAuto() {
@@ -586,7 +566,7 @@ function handleFileUpload(event) {
   event.target.value = '';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function() {
   initTheme();
   document.getElementById('cinput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
