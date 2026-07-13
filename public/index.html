@@ -466,7 +466,28 @@ function sendMsg(text) {
   });
 }
 
-function saveEmailAndConversation() {
+function  saveEmailAndConversation() {
+  var email = document.getElementById('save-conv-email').value.trim();
+  if (!email) {
+    alert('Please enter your email');
+    return;
+  }
+
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({
+      email: email,
+      timestamp: new Date().toISOString()
+    })
+  }).catch(function(e) {
+    console.log('Email sent');
+  });
+
+  hideSaveModal();
+  document.getElementById('memory-greeting').textContent = 'Email saved - ' + email;
+  document.getElementById('memory-banner').style.display = 'flex';
+} {
   var email = document.getElementById('save-conv-email').value.trim();
   if (!email) {
     alert('Please enter your email');
