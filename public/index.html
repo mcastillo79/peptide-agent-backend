@@ -411,9 +411,7 @@ function streamResponse(response, maxHandler) {
         busy = false;
         document.getElementById('sbtn').disabled = false;
 
-        if (hist.length === 3) {
-          setTimeout(showSaveModal, 1500);
-        }
+       showSaveModal();
 
         if (maxHandler) maxHandler();
         return;
