@@ -10,32 +10,32 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --page-bg: #f0f4f8;
-  --card-bg: #ffffff;
-  --chat-bg: #f8fafc;
-  --header-bg: #0a2540;
-  --text-main: #1a202c;
-  --text-soft: #64748b;
-  --border-col: #e2e8f0;
-  --bot-bg: #ffffff;
-  --input-bg: #f8fafc;
-  --qb-bg: #f8fafc;
-  --qb-text: #64748b;
-  --accent: #1a6b3c;
+--page-bg: #f0f4f8;
+--card-bg: #ffffff;
+--chat-bg: #f8fafc;
+--header-bg: #0a2540;
+--text-main: #1a202c;
+--text-soft: #64748b;
+--border-col: #e2e8f0;
+--bot-bg: #ffffff;
+--input-bg: #f8fafc;
+--qb-bg: #f8fafc;
+--qb-text: #64748b;
+--accent: #1a6b3c;
 }
 body.dark {
-  --page-bg: #0d1117;
-  --card-bg: #161b22;
-  --chat-bg: #0d1117;
-  --header-bg: #010409;
-  --text-main: #e6edf3;
-  --text-soft: #8b949e;
-  --border-col: #30363d;
-  --bot-bg: #21262d;
-  --input-bg: #21262d;
-  --qb-bg: #21262d;
-  --qb-text: #8b949e;
-  --accent: #3fb950;
+--page-bg: #0d1117;
+--card-bg: #161b22;
+--chat-bg: #0d1117;
+--header-bg: #010409;
+--text-main: #e6edf3;
+--text-soft: #8b949e;
+--border-col: #30363d;
+--bot-bg: #21262d;
+--input-bg: #21262d;
+--qb-bg: #21262d;
+--qb-text: #8b949e;
+--accent: #3fb950;
 }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--page-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; transition: background 0.3s; }
 #intake-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
@@ -50,9 +50,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 #intake-submit { width: 100%; padding: 12px; background: var(--header-bg); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 6px; }
 body.dark #intake-submit { background: var(--accent); }
 #intake-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
+
+#save-conv-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; flex-align: center; justify-content: center; z-index: 999; padding: 20px; align-items: center; }
+#save-conv-box { background: var(--card-bg); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+#save-conv-box h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+#save-conv-box p { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; line-height: 1.5; }
+#save-conv-email { width: 100%; padding: 10px 12px; border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg); color: var(--text-main); margin-bottom: 12px; outline: none; }
+#save-conv-email:focus { border-color: var(--accent); }
+#save-conv-buttons { display: flex; gap: 8px; }
+#save-conv-submit { flex: 1; padding: 10px; background: var(--header-bg); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+body.dark #save-conv-submit { background: var(--accent); }
+#save-conv-skip { flex: 1; padding: 10px; background: var(--input-bg); color: var(--text-soft); border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; cursor: pointer; font-family: inherit; }
+#save-conv-skip:hover { background: var(--border-col); }
+
 #memory-banner { background: rgba(26,107,60,0.08); border-bottom: 1px solid var(--border-col); padding: 8px 16px; font-size: 13px; color: var(--accent); display: none; align-items: center; justify-content: space-between; flex-shrink: 0; }
 #memory-banner span { font-weight: 500; }
 #reset-memory { font-size: 11px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
+
 #wrap { display: flex; flex-direction: column; height: 700px; width: 100%; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: var(--card-bg); transition: background 0.3s; }
 #hdr { padding: 16px 20px; background: var(--header-bg); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 #logo { width: 40px; height: 40px; border-radius: 50%; background: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
@@ -92,105 +106,146 @@ body.dark #sbtn { background: var(--accent); }
 <body>
 
 <div id="intake-overlay">
-  <div id="intake-box">
-    <h2>Welcome to the Peptide Guidance Agent</h2>
-    <p>Tell us a little about yourself so we can personalize your guidance. This is saved locally on your device.</p>
-    <div class="intake-field">
-      <label>Your First Name</label>
-      <input type="text" id="intake-name" placeholder="e.g. Michael">
-    </div>
-    <div class="intake-field">
-      <label>Age and Biological Sex</label>
-      <input type="text" id="intake-age" placeholder="e.g. 45, Male">
-    </div>
-    <div class="intake-field">
-      <label>Main Health Goal</label>
-      <select id="intake-goal">
-        <option value="">Select your primary goal...</option>
-        <option value="Fat loss and metabolic health">Fat loss and metabolic health</option>
-        <option value="Muscle building and recovery">Muscle building and recovery</option>
-        <option value="Longevity and anti-aging">Longevity and anti-aging</option>
-        <option value="Injury healing and tissue repair">Injury healing and tissue repair</option>
-        <option value="Cognitive function and brain health">Cognitive function and brain health</option>
-        <option value="Hormone optimization">Hormone optimization</option>
-        <option value="Gut health and inflammation">Gut health and inflammation</option>
-        <option value="Sleep and recovery">Sleep and recovery</option>
-        <option value="General wellness and optimization">General wellness and optimization</option>
-      </select>
-    </div>
-    <div class="intake-field">
-      <label>Any existing conditions or medications? (optional)</label>
-      <textarea id="intake-conditions" placeholder="e.g. Type 2 diabetes, on metformin. Or leave blank if none."></textarea>
-    </div>
-    <div class="intake-field">
-      <label>Prior peptide experience?</label>
-      <select id="intake-experience">
-        <option value="No prior peptide experience">No - completely new to peptides</option>
-        <option value="Some peptide experience">Some experience - tried a few</option>
-        <option value="Experienced peptide user">Experienced - currently using peptides</option>
-      </select>
-    </div>
-    <button id="intake-submit">Start My Personalized Session</button>
-    <div id="intake-skip">Skip for now</div>
-  </div>
+<div id="intake-box">
+<h2>Welcome to the Peptide Guidance Agent</h2>
+<p>Tell us a little about yourself so we can personalize your guidance. This is saved locally on your device.</p>
+<div class="intake-field">
+<label>Your First Name</label>
+<input type="text" id="intake-name" placeholder="e.g. Michael">
+</div>
+<div class="intake-field">
+<label>Age and Biological Sex</label>
+<input type="text" id="intake-age" placeholder="e.g. 45, Male">
+</div>
+<div class="intake-field">
+<label>Main Health Goal</label>
+<select id="intake-goal">
+<option value="">Select your primary goal...</option>
+<option value="Fat loss and metabolic health">Fat loss and metabolic health</option>
+<option value="Muscle building and recovery">Muscle building and recovery</option>
+<option value="Longevity and anti-aging">Longevity and anti-aging</option>
+<option value="Injury healing and tissue repair">Injury healing and tissue repair</option>
+<option value="Cognitive function and brain health">Cognitive function and brain health</option>
+<option value="Hormone optimization">Hormone optimization</option>
+<option value="Gut health and inflammation">Gut health and inflammation</option>
+<option value="Sleep and recovery">Sleep and recovery</option>
+<option value="General wellness and optimization">General wellness and optimization</option>
+</select>
+</div>
+<div class="intake-field">
+<label>Any existing conditions or medications? (optional)</label>
+<textarea id="intake-conditions" placeholder="e.g. Type 2 diabetes, on metformin. Or leave blank if none."></textarea>
+</div>
+<div class="intake-field">
+<label>Prior peptide experience?</label>
+<select id="intake-experience">
+<option value="No prior peptide experience">No - completely new to peptides</option>
+<option value="Some peptide experience">Some experience - tried a few</option>
+<option value="Experienced peptide user">Experienced - currently using peptides</option>
+</select>
+</div>
+<button id="intake-submit">Start My Personalized Session</button>
+<div id="intake-skip">Skip for now</div>
+</div>
+</div>
+
+<div id="save-conv-overlay">
+<div id="save-conv-box">
+<h3>Save conversation?</h3>
+<p>Create a free account to save your conversation and unlock personalized guidance from our expert protocols.</p>
+<input type="email" id="save-conv-email" placeholder="your@email.com" autocomplete="email">
+<div id="save-conv-buttons">
+<button id="save-conv-submit">Save My Email</button>
+<button id="save-conv-skip">Keep Browsing</button>
+</div>
+</div>
 </div>
 
 <div id="wrap">
-  <div id="hdr">
-    <div id="logo">GRx</div>
-    <div>
-      <div id="ttl">Peptide Guidance Agent</div>
-      <div id="sub">Expert protocols from Dr. Bachmeyer, Jay Campbell, Dr. Seeds and leading physicians</div>
-    </div>
-    <button id="theme-toggle" title="Toggle dark mode">moon</button>
-    <div id="dot"></div>
-  </div>
-
-  <div id="memory-banner">
-    <span id="memory-greeting"></span>
-    <span id="reset-memory">Reset profile</span>
-  </div>
-
-  <div id="msgs">
-    <div class="msg bot">
-      Welcome to the Peptide Guidance Agent.<br><br>
-      Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds, Dr. Rhonda Patrick, and leading peptide physicians.<br><br>
-      To personalize my guidance, tell me:<br>
-      - What is your main health goal?<br>
-      - Any existing conditions or medications?<br>
-      - Have you used peptides before?
-    </div>
-  </div>
-
-  <div id="typer"><span></span><span></span><span></span></div>
-
-  <div id="qps">
-    <button class="qb" id="qb-concise">Concise version</button>
-    <button class="qb" id="qb1">Fat loss</button>
-    <button class="qb" id="qb2">Wolverine Stack</button>
-    <button class="qb" id="qb3">Longevity</button>
-    <button class="qb" id="qb4">Where to source</button>
-    <button class="qb" id="qb5">Bloodwork</button>
-    <button class="qb" id="qb6">Beginner stack</button>
-    <button class="qb" id="qb7">BPC-157</button>
-    <button class="qb" id="qb8">Jay Campbell</button>
-  </div>
-
-  <div id="upload-status"></div>
-
-  <div id="inp-area">
-    <label for="file-upload" id="upload-btn">📎</label>
-    <input type="file" id="file-upload" accept=".pdf,image/*" style="display:none">
-    <textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1"></textarea>
-    <button id="sbtn">↑</button>
-  </div>
-  <div id="ftr">Educational only - Always consult a physician - Licensed 503A Compounding Pharmacy</div>
+<div id="hdr">
+<div id="logo">GRx</div>
+<div>
+<div id="ttl">Peptide Guidance Agent</div>
+<div id="sub">Expert protocols from Dr. Bachmeyer, Jay Campbell, Dr. Seeds and leading physicians</div>
+</div>
+<button id="theme-toggle" title="Toggle dark mode">moon</button>
+<div id="dot"></div>
 </div>
 
+<div id="memory-banner">
+<span id="memory-greeting"></span>
+<span id="reset-memory">Reset profile</span>
+</div>
+
+<div id="msgs">
+<div class="msg bot">
+Welcome to the Peptide Guidance Agent.<br><br>
+Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds, Dr. Rhonda Patrick, and leading peptide physicians.<br><br>
+To personalize my guidance, tell me:<br>
+- What is your main health goal?<br>
+- Any existing conditions or medications?<br>
+- Have you used peptides before?
+</div>
+</div>
+
+<div id="typer"><span></span><span></span><span></span></div>
+<div id="qps">
+<button class="qb" id="qb-concise">Concise version</button>
+<button class="qb" id="qb1">Fat loss</button>
+<button class="qb" id="qb2">Wolverine Stack</button>
+<button class="qb" id="qb3">Longevity</button>
+<button class="qb" id="qb4">Where to source</button>
+<button class="qb" id="qb5">Bloodwork</button>
+<button class="qb" id="qb6">Beginner stack</button>
+<button class="qb" id="qb7">BPC-157</button>
+<button class="qb" id="qb8">Jay Campbell</button>
+</div>
+
+<div id="upload-status"></div>
+
+<div id="inp-area">
+<label for="file-upload" id="upload-btn">📎</label>
+<input type="file" id="file-upload" accept=".pdf,image/*" style="display:none">
+<textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1"></textarea>
+<button id="sbtn">↑</button>
+</div>
+
+<div id="ftr">Educational only - Always consult a physician - Licensed 503A Compounding Pharmacy</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
+  authDomain: "peptide-agent-49020.firebaseapp.com",
+  projectId: "peptide-agent-49020",
+  storageBucket: "peptide-agent-49020.firebasestorage.app",
+  messagingSenderId: "51195071651O",
+  appId: "1:51195071651O:web:ed6f4d1608ed2ff3267ecf"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 var BACKEND = '/chat';
 var hist = [];
 var busy = false;
+var showedSaveModal = false;
+var currentUser = null;
+var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec';
+
+auth.onAuthStateChanged(function(user) {
+  currentUser = user;
+  if (user) {
+    console.log('Logged in as:', user.email);
+    document.getElementById('memory-banner').style.display = 'flex';
+    document.getElementById('memory-greeting').textContent = 'Welcome back, ' + user.email;
+  }
+});
 
 function applyTheme(theme) {
   if (theme === 'dark') {
@@ -266,18 +321,32 @@ function showTyping(v) {
   if (v) document.getElementById('msgs').scrollTop = 99999;
 }
 
+function showSaveModal() {
+  if (!showedSaveModal && !currentUser) {
+    showedSaveModal = true;
+    document.getElementById('save-conv-overlay').style.display = 'flex';
+  }
+}
+
+function hideSaveModal() {
+  document.getElementById('save-conv-overlay').style.display = 'none';
+}
+
 function saveIntake() {
   var name = document.getElementById('intake-name').value.trim() || 'Friend';
   var age = document.getElementById('intake-age').value.trim() || 'Not specified';
   var goal = document.getElementById('intake-goal').value || 'General wellness and optimization';
   var conditions = document.getElementById('intake-conditions').value.trim() || 'None noted';
   var experience = document.getElementById('intake-experience').value;
+
   var profile = { name: name, age: age, goal: goal, conditions: conditions, experience: experience };
   localStorage.setItem('peptideUserProfile', JSON.stringify(profile));
   document.getElementById('intake-overlay').style.display = 'none';
+
   var banner = document.getElementById('memory-banner');
   document.getElementById('memory-greeting').textContent = 'Profile saved - ' + name;
   banner.style.display = 'flex';
+
   var contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
   hist.push({ role: 'user', content: contextMsg });
   hist.push({ role: 'assistant', content: 'Thanks ' + name + '! Your profile is saved. You are focused on ' + goal + '. How can I help you today?' });
@@ -291,6 +360,7 @@ function skipIntake() {
 function resetMemory() {
   localStorage.removeItem('peptideUserProfile');
   localStorage.removeItem('peptideBloodwork');
+  auth.signOut();
   location.reload();
 }
 
@@ -300,22 +370,27 @@ function loadMemory() {
     document.getElementById('intake-overlay').style.display = 'flex';
     return;
   }
+
   var profile = JSON.parse(profileStr);
   document.getElementById('intake-overlay').style.display = 'none';
+
   var banner = document.getElementById('memory-banner');
   banner.style.display = 'flex';
+
   var bloodwork = localStorage.getItem('peptideBloodwork') || '';
   document.getElementById('memory-greeting').textContent = 'Welcome back, ' + profile.name + ' - your profile is loaded.';
+
   var contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
   if (bloodwork) {
     contextMsg += ' My previously uploaded bloodwork results: ' + bloodwork;
   }
   contextMsg += ' Please keep this context in mind and personalize your guidance accordingly.';
+
   hist.push({ role: 'user', content: contextMsg });
-  var bloodworkNote = bloodwork ? ' I also have your previously uploaded bloodwork on file.' : '';
+  var bloodworkNote = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
   hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
-  var bloodworkBadge = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
-  addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkBadge + ' How can I help you today?');
+
+  addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
 }
 
 function streamResponse(response, maxHandler) {
@@ -324,10 +399,12 @@ function streamResponse(response, maxHandler) {
   var msgDiv = document.createElement('div');
   msgDiv.className = 'msg bot';
   msgs.appendChild(msgDiv);
+
   var reader = response.body.getReader();
   var decoder = new TextDecoder();
   var fullText = '';
   var buffer = '';
+
   function read() {
     reader.read().then(function(result) {
       if (result.done) {
@@ -335,12 +412,19 @@ function streamResponse(response, maxHandler) {
         addCopyButton(msgDiv);
         busy = false;
         document.getElementById('sbtn').disabled = false;
+
+        if (hist.length === 3) {
+          setTimeout(showSaveModal, 1500);
+        }
+
         if (maxHandler) maxHandler();
         return;
       }
+
       buffer += decoder.decode(result.value, { stream: true });
       var lines = buffer.split('\n');
       buffer = lines.pop();
+
       for (var i = 0; i < lines.length; i++) {
         var line = lines[i];
         if (line.indexOf('data: ') === 0) {
@@ -367,9 +451,12 @@ function sendMsg(text) {
   if (!text) return;
   busy = true;
   document.getElementById('sbtn').disabled = true;
+
   addMsg('usr', text);
   hist.push({ role: 'user', content: text });
+
   showTyping(true);
+
   fetch(BACKEND, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -384,14 +471,53 @@ function sendMsg(text) {
   });
 }
 
+function saveEmailAndConversation() {
+  var email = document.getElementById('save-conv-email').value.trim();
+  if (!email) {
+    alert('Please enter your email');
+    return;
+  }
+
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      email: email,
+      timestamp: new Date().toISOString()
+    })
+  }).catch(function(e) {
+    console.log('Webhook sent');
+  });
+
+  auth.signInAnonymously().then(function(result) {
+    var convRef = db.collection('conversations').doc(result.user.uid);
+    convRef.set({
+      email: email,
+      messages: hist,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function() {
+      console.log('Conversation saved');
+      currentUser = result.user;
+      hideSaveModal();
+      document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
+      document.getElementById('memory-banner').style.display = 'flex';
+    }).catch(function(e) {
+      console.error('Error saving conversation:', e);
+    });
+  });
+}
+
 function handleFileUpload(event) {
   var file = event.target.files[0];
   if (!file) return;
+
   var statusDiv = document.getElementById('upload-status');
   statusDiv.style.display = 'block';
   statusDiv.textContent = 'Reading your file...';
+
   var formData = new FormData();
   formData.append('file', file);
+
   fetch('/upload', { method: 'POST', body: formData }).then(function(res) {
     return res.json();
   }).then(function(data) {
@@ -399,11 +525,14 @@ function handleFileUpload(event) {
       localStorage.setItem('peptideBloodwork', data.extractedText);
       statusDiv.textContent = 'File saved! Analyzing...';
       addMsg('usr', '[File uploaded and saved]');
+
       var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
       hist.push({ role: 'user', content: uploadPrompt });
+
       busy = true;
       document.getElementById('sbtn').disabled = true;
       showTyping(true);
+
       fetch(BACKEND, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -423,6 +552,7 @@ function handleFileUpload(event) {
   }).catch(function(e) {
     statusDiv.textContent = 'Upload failed: ' + e.message;
   });
+
   event.target.value = '';
 }
 
@@ -432,6 +562,10 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('intake-submit').addEventListener('click', saveIntake);
   document.getElementById('intake-skip').addEventListener('click', skipIntake);
   document.getElementById('reset-memory').addEventListener('click', resetMemory);
+
+  document.getElementById('save-conv-submit').addEventListener('click', saveEmailAndConversation);
+  document.getElementById('save-conv-skip').addEventListener('click', hideSaveModal);
+
   document.getElementById('sbtn').addEventListener('click', function() {
     var el = document.getElementById('cinput');
     var txt = el.value.trim();
@@ -440,6 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
     el.style.height = 'auto';
     sendMsg(txt);
   });
+
   document.getElementById('cinput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -450,8 +585,10 @@ document.addEventListener('DOMContentLoaded', function() {
       sendMsg(txt);
     }
   });
+
   document.getElementById('cinput').addEventListener('input', function() { ag(this); });
   document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+
   document.getElementById('qb-concise').addEventListener('click', function() { sendMsg('Please provide a concise, brief version of your previous response in a few sentences, keeping only the most important points.'); });
   document.getElementById('qb1').addEventListener('click', function() { sendMsg('What peptides are best for fat loss?'); });
   document.getElementById('qb2').addEventListener('click', function() { sendMsg('Tell me about the Wolverine Stack'); });
@@ -461,8 +598,10 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('qb6').addEventListener('click', function() { sendMsg('Best beginner peptide stack?'); });
   document.getElementById('qb7').addEventListener('click', function() { sendMsg('Tell me everything about BPC-157'); });
   document.getElementById('qb8').addEventListener('click', function() { sendMsg('What does Jay Campbell recommend for muscle building?'); });
+
   loadMemory();
 });
 </script>
+
 </body>
 </html>
