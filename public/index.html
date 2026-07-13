@@ -307,7 +307,10 @@ function showTyping(v) {
 }
 
 function showSaveModal() {
-  document.getElementById('save-conv-overlay').style.display = 'flex';
+  if (!localStorage.getItem('peptideModalShown')) {
+    localStorage.setItem('peptideModalShown', 'true');
+    document.getElementById('save-conv-overlay').style.display = 'flex';
+  }
 }
 
 function hideSaveModal() {
@@ -342,6 +345,8 @@ function skipIntake() {
 function resetMemory() {
   localStorage.removeItem('peptideUserProfile');
   localStorage.removeItem('peptideBloodwork');
+  localStorage.removeItem('peptideModalShown');
+  localStorage.removeItem('peptideUserEmail');
   location.reload();
 }
 
@@ -372,6 +377,40 @@ function loadMemory() {
   hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
 
   addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+
+  var userEmail = localStorage.getItem('peptideUserEmail');
+  if (userEmail) {
+    var db = firebase.firestore();
+    db.collection('users').doc(userEmail).get().then(function(doc) {
+      if (doc.exists && doc.data().messages) {
+        hist = doc.data().messages;
+        hist.slice(2).forEach(function(msg) {
+          if (msg.role === 'user') {
+            addMsg('usr', msg.content);
+          } else {
+            addMsg('bot', fmt(msg.content));
+          }
+        });
+        console.log('Loaded conversation history');
+      }
+    }).catch(function(e) {
+      console.log('No saved conversation found');
+    });
+  }
+}
+
+function saveConversationAuto() {
+  var userEmail = localStorage.getItem('peptideUserEmail');
+  if (userEmail) {
+    var db = firebase.firestore();
+    db.collection('users').doc(userEmail).set({
+      email: userEmail,
+      messages: hist,
+      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(function(e) {
+      console.log('Auto-save skipped');
+    });
+  }
 }
 
 function streamResponse(response) {
@@ -389,14 +428,14 @@ function streamResponse(response) {
   function read() {
     reader.read().then(function(result) {
       if (result.done) {
-        if (fullText) hist.push({ role: 'assistant', content: fullText });
+        if (fullText) {
+          hist.push({ role: 'assistant', content: fullText });
+          saveConversationAuto();
+        }
         addCopyButton(msgDiv);
         busy = false;
         document.getElementById('sbtn').disabled = false;
-        if (!localStorage.getItem('peptideModalShown')) {
-  localStorage.setItem('peptideModalShown', 'true');
-  setTimeout(showSaveModal, 800);
-}
+        setTimeout(showSaveModal, 800);
         return;
       }
 
@@ -433,6 +472,7 @@ function sendMsg(text) {
 
   addMsg('usr', text);
   hist.push({ role: 'user', content: text });
+  saveConversationAuto();
 
   showTyping(true);
 
@@ -477,8 +517,21 @@ function saveEmailAndConversation() {
     console.log('Email sent');
   });
 
+  localStorage.setItem('peptideUserEmail', email);
+  
+  var db = firebase.firestore();
+  db.collection('users').doc(email).set({
+    email: email,
+    messages: hist,
+    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function() {
+    console.log('Conversation saved');
+  }).catch(function(e) {
+    console.error('Firebase error:', e);
+  });
+
   hideSaveModal();
-  document.getElementById('memory-greeting').textContent = 'Email saved - ' + email;
+  document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
   document.getElementById('memory-banner').style.display = 'flex';
 }
 
@@ -503,6 +556,7 @@ function handleFileUpload(event) {
 
       var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
       hist.push({ role: 'user', content: uploadPrompt });
+      saveConversationAuto();
 
       busy = true;
       document.getElementById('sbtn').disabled = true;
