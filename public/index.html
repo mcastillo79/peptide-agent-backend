@@ -393,7 +393,10 @@ function streamResponse(response) {
         addCopyButton(msgDiv);
         busy = false;
         document.getElementById('sbtn').disabled = false;
-        setTimeout(showSaveModal, 800);
+        if (!localStorage.getItem('peptideModalShown')) {
+  localStorage.setItem('peptideModalShown', 'true');
+  setTimeout(showSaveModal, 800);
+}
         return;
       }
 
