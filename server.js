@@ -190,3 +190,47 @@ app.post('/chat', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
+const stripe = require('stripe')('sk_test_51ItW0FfDCCS2QI1I6Y0ITiRARhfd5ye0bgZTBmzJmk3xah6g0FDIPkNhPF4IQjMNy0eLj0Stwzpw JG7kbWjGbh13R008QZz2BFB');
+
+app.post('/create-checkout-session', async (req, res) => {
+  try {
+    const { amount, type } = req.body;
+    
+    if (type === 'subscription') {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'subscription',
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: { name: 'Peptide Guidance Agent Monthly Support' },
+            recurring: { interval: 'month' },
+            unit_amount: 499
+          },
+          quantity: 1
+        }],
+        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
+        cancel_url: 'https://peptide-agent-backend.onrender.com/'
+      });
+      res.json({ sessionId: session.id });
+    } else {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'payment',
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: { name: 'Support Peptide Guidance Agent' },
+            unit_amount: amount
+          },
+          quantity: 1
+        }],
+        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
+        cancel_url: 'https://peptide-agent-backend.onrender.com/'
+      });
+      res.json({ sessionId: session.id });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
