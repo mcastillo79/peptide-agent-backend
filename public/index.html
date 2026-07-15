@@ -7,6 +7,7 @@
 <meta property="og:title" content="Free Peptide Guidance - Get Personalized Protocol Advice">
 <meta property="og:description" content="Ask our AI peptide agent anything - protocols, dosing, stacking, and bloodwork analysis. Backed by leading physicians. Free to use, no login required.">
 <meta property="og:url" content="https://peptide-agent-backend.onrender.com">
+<script src="https://js.stripe.com/v3/"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -50,7 +51,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; bac
 #intake-submit { width: 100%; padding: 12px; background: var(--header-bg); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 6px; }
 body.dark #intake-submit { background: var(--accent); }
 #intake-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
-
 #save-conv-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
 #save-conv-box { background: var(--card-bg); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
 #save-conv-box h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
@@ -62,12 +62,17 @@ body.dark #intake-submit { background: var(--accent); }
 body.dark #save-conv-submit { background: var(--accent); }
 #save-conv-skip { flex: 1; padding: 10px; background: var(--input-bg); color: var(--text-soft); border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; cursor: pointer; font-family: inherit; }
 #save-conv-skip:hover { background: var(--border-col); }
-
+#donation-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 998; padding: 20px; }
+#donation-box { background: var(--card-bg); border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+#donation-box h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+#donation-box p { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; }
+#custom-amount { width: 100%; padding: 10px 12px; border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg); color: var(--text-main); margin-bottom: 12px; outline: none; }
+#donate-confirm { width: 100%; padding: 10px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+#donate-cancel { width: 100%; padding: 10px; background: var(--input-bg); color: var(--text-soft); border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; cursor: pointer; font-family: inherit; margin-top: 8px; }
 #memory-banner { background: rgba(26,107,60,0.08); border-bottom: 1px solid var(--border-col); padding: 8px 16px; font-size: 13px; color: var(--accent); display: none; align-items: center; justify-content: space-between; flex-shrink: 0; }
 #memory-banner span { font-weight: 500; }
 #reset-memory { font-size: 11px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
-
-#wrap { display: flex; flex-direction: column; height: 700px; width: 100%; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: var(--card-bg); transition: background 0.3s; }
+#wrap { display: flex; flex-direction: column; height: 100vh; width: 100%; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: var(--card-bg); transition: background 0.3s; }
 #hdr { padding: 16px 20px; background: var(--header-bg); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 #logo { width: 40px; height: 40px; border-radius: 50%; background: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
 #ttl { font-size: 15px; font-weight: 600; color: #fff; }
@@ -100,6 +105,15 @@ body.dark .usr { background: #1f6feb; }
 #sbtn { width: 44px; height: 44px; border-radius: 50%; background: var(--header-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; color: #fff; }
 body.dark #sbtn { background: var(--accent); }
 #sbtn:disabled { opacity: 0.4; cursor: not-allowed; }
+#donation-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px 16px; border-top: 2px solid #667eea; flex-shrink: 0; }
+#donation-section h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; text-align: center; }
+#donation-section p { font-size: 12px; color: rgba(255,255,255,0.9); margin-bottom: 14px; text-align: center; }
+#donation-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.donation-btn { flex: 1; min-width: 120px; padding: 12px 16px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.donation-btn:hover { transform: scale(1.05); }
+#coffee-btn { background: #fff; color: #667eea; }
+#custom-btn { background: #f59e0b; color: #fff; }
+#monthly-btn { background: #10b981; color: #fff; }
 #ftr { text-align: center; font-size: 11px; color: var(--text-soft); padding: 8px 16px 10px; background: var(--card-bg); flex-shrink: 0; }
 </style>
 </head>
@@ -161,6 +175,17 @@ body.dark #sbtn { background: var(--accent); }
 </div>
 </div>
 
+<div id="donation-modal">
+<div id="donation-box">
+<h3>💰 Support This Project</h3>
+<p>Help keep the Peptide Guidance Agent running and improve it for everyone.</p>
+<label style="font-size: 12px; color: var(--text-soft); display: block; margin-bottom: 6px;">Donation Amount (USD)</label>
+<input type="number" id="custom-amount" placeholder="e.g. 10" min="1" step="0.01">
+<button id="donate-confirm" onclick="processCustomDonation()">Donate Now</button>
+<button id="donate-cancel" onclick="closeDonationModal()">Cancel</button>
+</div>
+</div>
+
 <div id="wrap">
 <div id="hdr">
 <div id="logo">GRx</div>
@@ -210,12 +235,24 @@ To personalize my guidance, tell me:<br>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
 </div>
 
+<div id="donation-section">
+<h3>💜 Support This Project</h3>
+<p>Help us keep the Peptide Guidance Agent running and improve it for everyone</p>
+<div id="donation-buttons">
+<button class="donation-btn" id="coffee-btn" onclick="stripeDonate(5)">☕ Buy me a coffee</button>
+<button class="donation-btn" id="custom-btn" onclick="openCustomDonation()">💰 Custom amount</button>
+<button class="donation-btn" id="monthly-btn" onclick="stripeMonthly()">💚 Support monthly</button>
+</div>
+</div>
+
 <div id="ftr">Educational only - Always consult a physician - Licensed 503A Compounding Pharmacy</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-compat.js"></script>
 
 <script>
+const stripe = Stripe('pk_test_51ItW0FfDCCS2QI1MKgXW1cdTSdees05wDduc727zIGRqeGu9Kq6sdxFXdyoKyL9H0NGfip8mnqPqm0Gj4afJn3o00pA2Nt9z1');
+
 const firebaseConfig = {
   apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
   authDomain: "peptide-agent-49020.firebaseapp.com",
@@ -317,6 +354,53 @@ function hideSaveModal() {
   document.getElementById('save-conv-overlay').style.display = 'none';
 }
 
+function openCustomDonation() {
+  document.getElementById('donation-modal').style.display = 'flex';
+}
+
+function closeDonationModal() {
+  document.getElementById('donation-modal').style.display = 'none';
+  document.getElementById('custom-amount').value = '';
+}
+
+function processCustomDonation() {
+  var amount = parseFloat(document.getElementById('custom-amount').value);
+  if (!amount || amount <= 0) {
+    alert('Please enter a valid amount');
+    return;
+  }
+  stripeDonate(amount);
+}
+
+function stripeDonate(amount) {
+  fetch('/create-checkout-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: Math.round(amount * 100), type: 'one-time' })
+  }).then(function(res) { return res.json(); }).then(function(data) {
+    if (data.sessionId) {
+      stripe.redirectToCheckout({ sessionId: data.sessionId });
+    }
+  }).catch(function(e) {
+    alert('Error: ' + e.message);
+  });
+  closeDonationModal();
+}
+
+function stripeMonthly() {
+  fetch('/create-checkout-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'subscription' })
+  }).then(function(res) { return res.json(); }).then(function(data) {
+    if (data.sessionId) {
+      stripe.redirectToCheckout({ sessionId: data.sessionId });
+    }
+  }).catch(function(e) {
+    alert('Error: ' + e.message);
+  });
+}
+
 function saveIntake() {
   var name = document.getElementById('intake-name').value.trim() || 'Friend';
   var age = document.getElementById('intake-age').value.trim() || 'Not specified';
@@ -355,26 +439,6 @@ function loadMemory() {
   if (!profileStr) {
     document.getElementById('intake-overlay').style.display = 'flex';
     return;
-  }var userEmail = localStorage.getItem('peptideUserEmail');
-  if (userEmail) {
-    var db = firebase.firestore();
-    db.collection('users').doc(userEmail).get().then(function(doc) {
-      if (doc.exists && doc.data().messages) {
-        hist = doc.data().messages;
-        document.getElementById('msgs').innerHTML = '';
-        addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>. How can I help you today?');
-        hist.slice(2).forEach(function(msg) {
-          if (msg.role === 'user') {
-            addMsg('usr', msg.content);
-          } else {
-            addMsg('bot', fmt(msg.content));
-          }
-        });
-        console.log('Loaded conversation history');
-      }
-    }).catch(function(e) {
-      console.log('No saved conversation found');
-    });
   }
 
   var profile = JSON.parse(profileStr);
@@ -397,6 +461,28 @@ function loadMemory() {
   hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
 
   addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+
+  var userEmail = localStorage.getItem('peptideUserEmail');
+  if (userEmail) {
+    var db = firebase.firestore();
+    db.collection('users').doc(userEmail).get().then(function(doc) {
+      if (doc.exists && doc.data().messages) {
+        hist = doc.data().messages;
+        document.getElementById('msgs').innerHTML = '';
+        addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+        hist.slice(2).forEach(function(msg) {
+          if (msg.role === 'user') {
+            addMsg('usr', msg.content);
+          } else {
+            addMsg('bot', fmt(msg.content));
+          }
+        });
+        console.log('Loaded conversation history');
+      }
+    }).catch(function(e) {
+      console.log('No saved conversation found');
+    });
+  }
 }
 
 function saveConversationAuto() {
