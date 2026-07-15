@@ -238,10 +238,11 @@ To personalize my guidance, tell me:<br>
 <div id="donation-section">
 <h3>💜 Support This Project</h3>
 <p>Help us keep the Peptide Guidance Agent running and improve it for everyone</p>
-<div id="donation-buttons">
-<button class="donation-btn" id="coffee-btn" onclick="stripeDonate(5)">☕ Buy me a coffee</button>
-<button class="donation-btn" id="custom-btn" onclick="openCustomDonation()">💰 Custom amount</button>
-<button class="donation-btn" id="monthly-btn" onclick="stripeMonthly()">💚 Support monthly</button>
+<div id="donation-buttons" style="position: relative;">
+<button class="donation-btn" id="coffee-btn" disabled style="opacity: 0.6; cursor: not-allowed;">☕ Buy me a coffee</button>
+<button class="donation-btn" id="custom-btn" disabled style="opacity: 0.6; cursor: not-allowed;">💰 Custom amount</button>
+<button class="donation-btn" id="monthly-btn" disabled style="opacity: 0.6; cursor: not-allowed;">💚 Support monthly</button>
+<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap;">Coming Soon</div>
 </div>
 </div>
 
