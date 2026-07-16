@@ -190,8 +190,7 @@ app.post('/chat', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
-sk_test_51ItW0FfDCCS2QI1I6Y0ITiRARhfd5ye0bgZTBmzJmk3xah6g0FDIPkNhPF4IQjMNy0eLj0StwzpwJG7kbWjGbh13R008QZz2BFBapp.post('/create-checkout-session', async (req, res) => {
-  try {
+const stripe = require('stripe')('sk_test_51ItW0FfDCCS2QI1I6Y0ITiRARhfd5ye0bgZTBmzJmk3xah6g0FDIPkNhPF4IQjMNy0eLj0StwzpwJG7kbWjGbh13R008QZz2BFB');  try {
     const { amount, type } = req.body;
     let session;
     if (type === 'subscription') {
