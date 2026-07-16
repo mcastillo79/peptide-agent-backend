@@ -190,8 +190,8 @@ app.post('/chat', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
-const stripe = require('stripe')('sk_test_51ItW0FfDCCS2QI1I6Y0ITiRARhfd5ye0bgZTBmzJmk3xah6g0FDIPkNhPF4IQjMNy0eLj0StwzpwJG7kbWjGbh13R008QZz2BFB');  try {
-    const { amount, type } = req.body;
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { amount, type } = req.body;
     let session;
     if (type === 'subscription') {
       session = await stripe.checkout.sessions.create({
