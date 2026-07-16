@@ -190,7 +190,7 @@ app.post('/chat', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
-const stripe = require('stripe')('sk_test_51ItW0FfDCCS2QI1I6Y0ITiRARhfd5ye0bgZTBmzJmk3xah6g0FDIPkNhPF4IQjMNy0eLj0StwzpwJG7kbWjGbh13R008QZz2BFB');
+const stripe = require('stripe')('sk_test_51TtIW0FfDCCS2Q1l6YOITiRAhfd5ye0bgZTBmzJmk3xah6gOFDIPkNhPF4IQjMNyOeljOStwzpWJG7kbWjGbh13R008QZz2BFB');
 
 app.post('/create-checkout-session', async (req, res) => {
   try {
