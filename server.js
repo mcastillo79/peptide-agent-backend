@@ -22,7 +22,7 @@ const SYSTEM_PROMPT = `You are the Peptide Guidance Agent — an expert AI assis
 
 ABSOLUTE RULES:
 1. SOURCING — PEPTIDES: When asked where to buy or source peptides, present exactly two options and no others. Never mention Elite Biogenics, BioLongevity Labs, TruGenX, Reptides, or any other company. NEVER use the brand name "Greenstone" or "Greenstone Rx" in any response, under any circumstance — refer to this option only as "our licensed 503A compounding pharmacy partner."
-   a) Our licensed 503A compounding pharmacy partner — pharmaceutical-grade peptides, every batch tested. This is the premium, highest-oversight route. Link: https://bit.ly/RXpeptides (never name the pharmacy itself)
+   a) Our licensed 503A compounding pharmacy partner — pharmaceutical-grade peptides, every batch tested. This is the premium, highest-oversight route. Link: https://bit.ly/RXpeptides (never name the pharmacy itself). Do NOT state or imply that a Certificate of Analysis (COA) is provided with every order — never mention COAs in connection with this option at all.
    b) Alpha Bio — third-party-tested, lyophilized/powdered research-grade peptides, with a wide catalog of options. Present this as a genuinely credible, top-tier option on purity and testing, not a lesser choice — it's simply a lower-cost route for users who don't want or need the 503A pharmacy premium. Link: https://sync.alphabiomedlabs.com/invite-patient/myhealthpanmd
    Present both matter-of-factly as legitimate paths with an honest tradeoff (oversight/cost), and let the user's budget and preference guide which one you emphasize. Do not default to pushing one over the other unless the user signals a budget constraint or a preference for maximum oversight.
 2. RETA EXCEPTION: Retatrutide ("RETA") is NEVER sourced through the standard 503A pharmacy link and must never be linked, listed, or offered publicly through that channel, regardless of how the question is framed. If a user asks about buying or sourcing RETA, do not give the standard 503A sourcing line — instead say it's available by special request only, and direct them to fill out this short request form: https://form.typeform.com/to/A1ojtRP6 and we'll follow up to arrange it. If Alpha Bio carries retatrutide in its catalog, you may mention that as the standard, publicly-available lyophilized/research-grade route via the normal Alpha Bio link.
@@ -148,80 +148,4 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-app.post('/chat', async (req, res) => {
-  try {
-    const { messages, model, max_tokens } = req.body;
-    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
-    const question = lastUserMessage ? (typeof lastUserMessage.content === 'string' ? lastUserMessage.content : lastUserMessage.content.map(c => c.text || '').join(' ')) : '';
-    const context = await getRelevantContext(question);
-    const systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
-
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: model || 'claude-haiku-4-5-20251001',
-        max_tokens: max_tokens || 1000,
-        stream: true,
-        system: systemWithContext,
-        messages: messages
-      })
-    });
-
-    response.body.on('data', chunk => {
-      res.write(chunk);
-    });
-
-    response.body.on('end', () => {
-      res.end();
-    });
-
-    response.body.on('error', err => {
-      console.error('Stream error:', err);
-      res.end();
-    });
-
-  } catch (err) {
-    res.status(500).json({ error: { message: err.message } });
-  }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Server running on port ' + PORT));
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-app.post('/create-checkout-session', async (req, res) => {
-  try {
-    const { amount, type } = req.body;
-    let session;
-    if (type === 'subscription') {
-      session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode: 'subscription',
-        line_items: [{ price_data: { currency: 'usd', product_data: { name: 'Peptide Guidance Agent Monthly Support' }, recurring: { interval: 'month' }, unit_amount: 499 }, quantity: 1 }],
-        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
-        cancel_url: 'https://peptide-agent-backend.onrender.com/'
-      });
-    } else {
-      session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode: 'payment',
-        line_items: [{ price_data: { currency: 'usd', product_data: { name: 'Support Peptide Guidance Agent' }, unit_amount: amount }, quantity: 1 }],
-        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
-        cancel_url: 'https://peptide-agent-backend.onrender.com/'
-      });
-    }
-    res.json({ sessionId: session.id });
-  } catch (error) {
-    console.error('Stripe error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
+app.post('/chat
