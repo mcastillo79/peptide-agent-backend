@@ -148,4 +148,80 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-app.post('/chat
+app.post('/chat', async (req, res) => {
+  try {
+    const { messages, model, max_tokens } = req.body;
+    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+    const question = lastUserMessage ? (typeof lastUserMessage.content === 'string' ? lastUserMessage.content : lastUserMessage.content.map(c => c.text || '').join(' ')) : '';
+    const context = await getRelevantContext(question);
+    const systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: model || 'claude-haiku-4-5-20251001',
+        max_tokens: max_tokens || 1000,
+        stream: true,
+        system: systemWithContext,
+        messages: messages
+      })
+    });
+
+    response.body.on('data', chunk => {
+      res.write(chunk);
+    });
+
+    response.body.on('end', () => {
+      res.end();
+    });
+
+    response.body.on('error', err => {
+      console.error('Stream error:', err);
+      res.end();
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: { message: err.message } });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Server running on port ' + PORT));
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+app.post('/create-checkout-session', async (req, res) => {
+  try {
+    const { amount, type } = req.body;
+    let session;
+    if (type === 'subscription') {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'subscription',
+        line_items: [{ price_data: { currency: 'usd', product_data: { name: 'Peptide Guidance Agent Monthly Support' }, recurring: { interval: 'month' }, unit_amount: 499 }, quantity: 1 }],
+        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
+        cancel_url: 'https://peptide-agent-backend.onrender.com/'
+      });
+    } else {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'payment',
+        line_items: [{ price_data: { currency: 'usd', product_data: { name: 'Support Peptide Guidance Agent' }, unit_amount: amount }, quantity: 1 }],
+        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
+        cancel_url: 'https://peptide-agent-backend.onrender.com/'
+      });
+    }
+    res.json({ sessionId: session.id });
+  } catch (error) {
+    console.error('Stripe error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
