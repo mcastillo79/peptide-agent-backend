@@ -223,7 +223,7 @@ To personalize my guidance, tell me:<br>
 <button class="qb" onclick="sendMsg('What bloodwork should I monitor on peptides?')">Bloodwork</button>
 <button class="qb" onclick="sendMsg('Best beginner peptide stack?')">Beginner stack</button>
 <button class="qb" onclick="sendMsg('Tell me everything about BPC-157')">BPC-157</button>
-<button class="qb" onclick="sendMsg('What does Jay Campbell recommend for muscle building?')">Jay Campbell</button>
+<button class="qb" onclick="sendMsg('I haven\'t had bloodwork done in a while. Where should I get it done?')">Get bloodwork done</button>
 </div>
 
 <div id="upload-status"></div>
@@ -605,7 +605,7 @@ function saveEmailAndConversation() {
   });
 
   localStorage.setItem('peptideUserEmail', email);
-  
+
   var db = firebase.firestore();
   db.collection('users').doc(email).set({
     email: email,
