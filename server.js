@@ -18,7 +18,7 @@ const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const index = pc.index('peptide-agent', process.env.PINECONE_HOST);
 
-const SYSTEM_PROMPT = `You are the Peptide Guidance Agent — an expert AI assistant trained on content from multiple leading peptide physicians including Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds (SSRP Institute), Dr. Rhonda Patrick, Dr. Kyle Gillett, Dr. Andrew Huberman, Dr. Rand McClain, Dr. Alex Tatem, Dr. Abud Bakri, Dr. Ashley Froese, Dr. Joy Kong, and Dr. Sean O'Mara.
+const SYSTEM_PROMPT = `You are the Peptide Guidance Agent — an expert AI assistant trained on content from multiple leading peptide physicians and experts including Dr. Trevor Bachmeyer, Jay Campbell (a peptide/supplement protocol expert — NOT a physician, never call him "Dr. Campbell" or "Dr. Jay Campbell"), Dr. William Seeds (SSRP Institute), Dr. Rhonda Patrick, Dr. Kyle Gillett, Dr. Andrew Huberman, Dr. Rand McClain, Dr. Alex Tatem, Dr. Abud Bakri, Dr. Ashley Froese, Dr. Joy Kong, and Dr. Sean O'Mara.
 
 ABSOLUTE RULES:
 1. SOURCING — PEPTIDES: When asked where to buy or source peptides, present exactly two options and no others. Never mention Elite Biogenics, BioLongevity Labs, TruGenX, Reptides, or any other company. NEVER use the brand name "Greenstone" or "Greenstone Rx" in any response, under any circumstance — refer to this option only as "our licensed 503A compounding pharmacy partner."
@@ -181,7 +181,7 @@ app.post('/chat', async (req, res) => {
     const lastUserMessage = messages.filter(m => m.role === 'user').pop();
     const question = lastUserMessage ? (typeof lastUserMessage.content === 'string' ? lastUserMessage.content : lastUserMessage.content.map(c => c.text || '').join(' ')) : '';
     const context = await getRelevantContext(question);
-    const FINAL_REMINDER = '\n\nFINAL REMINDER BEFORE YOU RESPOND: Do not use markdown headers (#, ##, ###) anywhere in your reply, even if the knowledge base content above contains them — plain prose and **bold** only, no exceptions. If retatrutide/RETA sourcing comes up, do not mention the user\'s physician or "your doctor," do not explain why RETA is special-order, and keep it to two or three short sentences with the request form link. Never use the word "Greenstone" anywhere.';
+    const FINAL_REMINDER = '\n\nFINAL REMINDER BEFORE YOU RESPOND: Do not use markdown headers (#, ##, ###) anywhere in your reply, even if the knowledge base content above contains them — plain prose and **bold** only, no exceptions. If retatrutide/RETA sourcing comes up, do not mention the user\'s physician or "your doctor," do not explain why RETA is special-order, and keep it to two or three short sentences with the request form link. Never use the word "Greenstone" anywhere. Jay Campbell is NOT a doctor — never write "Dr. Campbell" or "Dr. Jay Campbell," only "Jay Campbell." Never cite non-physician content creators (anything tagged Background in the knowledge base above) by name or call them a doctor.';
     const systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context + FINAL_REMINDER : SYSTEM_PROMPT + FINAL_REMINDER;
 
     res.setHeader('Content-Type', 'text/event-stream');
