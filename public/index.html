@@ -1,3 +1,5 @@
+
+Index · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,7 +128,7 @@ body.dark #sbtn { background: var(--accent); }
 </style>
 </head>
 <body>
-
+ 
 <div id="intake-overlay">
 <div id="intake-box">
 <h2>Welcome to the Peptide Guidance Agent</h2>
@@ -170,7 +172,7 @@ body.dark #sbtn { background: var(--accent); }
 <div id="intake-skip" onclick="skipIntake()" style="cursor: pointer;">Skip for now</div>
 </div>
 </div>
-
+ 
 <div id="save-conv-overlay">
 <div id="save-conv-box">
 <h3>Save conversation?</h3>
@@ -182,7 +184,7 @@ body.dark #sbtn { background: var(--accent); }
 </div>
 </div>
 </div>
-
+ 
 <div id="donation-modal">
 <div id="donation-box">
 <h3>💰 Support This Project</h3>
@@ -193,7 +195,7 @@ body.dark #sbtn { background: var(--accent); }
 <button id="donate-cancel" onclick="closeDonationModal()">Cancel</button>
 </div>
 </div>
-
+ 
 <div id="wrap">
 <div id="hdr">
 <div id="logo">GRx</div>
@@ -204,12 +206,12 @@ body.dark #sbtn { background: var(--accent); }
 <button id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
 <div id="dot"></div>
 </div>
-
+ 
 <div id="memory-banner">
 <span id="memory-greeting"></span>
 <span id="reset-memory" onclick="resetMemory()" style="cursor: pointer;">Reset profile</span>
 </div>
-
+ 
 <div id="msgs">
 <div class="msg bot">
 Welcome to the Peptide Guidance Agent.<br><br>
@@ -220,7 +222,7 @@ To personalize my guidance, tell me:<br>
 - Have you used peptides before?
 </div>
 </div>
-
+ 
 <div id="typer"><span></span><span></span><span></span></div>
 <div id="qps">
 <button class="qb" onclick="sendMsg('Please provide a concise, brief version of your previous response in a few sentences, keeping only the most important points.')">Concise version</button>
@@ -233,16 +235,16 @@ To personalize my guidance, tell me:<br>
 <button class="qb" onclick="sendMsg('Best beginner peptide stack?')">Beginner stack</button>
 <button class="qb" onclick="sendMsg('Tell me everything about BPC-157')">BPC-157</button>
 </div>
-
+ 
 <div id="upload-status"></div>
-
+ 
 <div id="inp-area">
 <label for="file-upload" id="upload-btn">📎</label>
 <input type="file" id="file-upload" accept=".pdf,image/*" style="display:none">
 <textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1"></textarea>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
 </div>
-
+ 
 <div id="donation-section">
 <h3>💜 Support This Project</h3>
 <p>Help us keep the Peptide Guidance Agent running and improve it for everyone</p>
@@ -253,15 +255,15 @@ To personalize my guidance, tell me:<br>
 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap;">Coming Soon</div>
 </div>
 </div>
-
+ 
 <div id="ftr">Educational only - Always consult a physician - Licensed 503A Compounding Pharmacy</div>
 </div>
-
+ 
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-compat.js"></script>
-
+ 
 <script>
-const stripe = Stripe('pk_test_51ItW0FfDCCS2QI1MKgXW1cdTSdees05wDduc727zIGRqeGu9Kq6sdxFXdyoKyL9H0NGfip8mnqPqm0Gj4afJn3o00pA2Nt9z1');
-
+const stripe = Stripe('pk_test_51TtIVqFvV3t1R8TgzxczU4UKEXkGiyCb1feqRxGKq51gyaNhwZ0OOYZjCjQsUvyAAa96DZAP6vvIJNcmxwAcRylt00IrIIOyLz');
+ 
 const firebaseConfig = {
   apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
   authDomain: "peptide-agent-49020.firebaseapp.com",
@@ -270,14 +272,14 @@ const firebaseConfig = {
   messagingSenderId: "51195071651O",
   appId: "1:51195071651O:web:ed6f4d1608ed2ff3267ecf"
 };
-
+ 
 firebase.initializeApp(firebaseConfig);
-
+ 
 var BACKEND = '/chat';
 var hist = [];
 var busy = false;
 var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec';
-
+ 
 function applyTheme(theme) {
   if (theme === 'dark') {
     document.body.classList.add('dark');
@@ -287,7 +289,7 @@ function applyTheme(theme) {
     document.getElementById('theme-toggle').textContent = '🌙';
   }
 }
-
+ 
 function initTheme() {
   var saved = localStorage.getItem('peptideTheme');
   if (saved) {
@@ -298,19 +300,19 @@ function initTheme() {
     applyTheme('light');
   }
 }
-
+ 
 function toggleTheme() {
   var isDark = document.body.classList.contains('dark');
   var newTheme = isDark ? 'light' : 'dark';
   applyTheme(newTheme);
   localStorage.setItem('peptideTheme', newTheme);
 }
-
+ 
 function ag(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
-
+ 
 function addCopyButton(msgDiv) {
   var copyBtn = document.createElement('button');
   copyBtn.className = 'msg-copy';
@@ -325,7 +327,7 @@ function addCopyButton(msgDiv) {
   };
   msgDiv.appendChild(copyBtn);
 }
-
+ 
 function addMsg(cls, html) {
   var box = document.getElementById('msgs');
   var d = document.createElement('div');
@@ -337,7 +339,7 @@ function addMsg(cls, html) {
   box.appendChild(d);
   box.scrollTop = box.scrollHeight;
 }
-
+ 
 function fmt(t) {
   t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
@@ -346,32 +348,32 @@ function fmt(t) {
   t = t.replace(/\n/g, '<br>');
   return t;
 }
-
+ 
 function showTyping(v) {
   document.getElementById('typer').style.display = v ? 'flex' : 'none';
   if (v) document.getElementById('msgs').scrollTop = 99999;
 }
-
+ 
 function showSaveModal() {
   if (!localStorage.getItem('peptideModalShown')) {
     localStorage.setItem('peptideModalShown', 'true');
     document.getElementById('save-conv-overlay').style.display = 'flex';
   }
 }
-
+ 
 function hideSaveModal() {
   document.getElementById('save-conv-overlay').style.display = 'none';
 }
-
+ 
 function openCustomDonation() {
   document.getElementById('donation-modal').style.display = 'flex';
 }
-
+ 
 function closeDonationModal() {
   document.getElementById('donation-modal').style.display = 'none';
   document.getElementById('custom-amount').value = '';
 }
-
+ 
 function processCustomDonation() {
   var amount = parseFloat(document.getElementById('custom-amount').value);
   if (!amount || amount <= 0) {
@@ -380,7 +382,7 @@ function processCustomDonation() {
   }
   stripeDonate(amount);
 }
-
+ 
 function stripeDonate(amount) {
   fetch('/create-checkout-session', {
     method: 'POST',
@@ -395,7 +397,7 @@ function stripeDonate(amount) {
   });
   closeDonationModal();
 }
-
+ 
 function stripeMonthly() {
   fetch('/create-checkout-session', {
     method: 'POST',
@@ -409,32 +411,32 @@ function stripeMonthly() {
     alert('Error: ' + e.message);
   });
 }
-
+ 
 function saveIntake() {
   var name = document.getElementById('intake-name').value.trim() || 'Friend';
   var age = document.getElementById('intake-age').value.trim() || 'Not specified';
   var goal = document.getElementById('intake-goal').value || 'General wellness and optimization';
   var conditions = document.getElementById('intake-conditions').value.trim() || 'None noted';
   var experience = document.getElementById('intake-experience').value;
-
+ 
   var profile = { name: name, age: age, goal: goal, conditions: conditions, experience: experience };
   localStorage.setItem('peptideUserProfile', JSON.stringify(profile));
   document.getElementById('intake-overlay').style.display = 'none';
-
+ 
   var banner = document.getElementById('memory-banner');
   document.getElementById('memory-greeting').textContent = 'Profile saved - ' + name;
   banner.style.display = 'flex';
-
+ 
   var contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
   hist.push({ role: 'user', content: contextMsg });
   hist.push({ role: 'assistant', content: 'Thanks ' + name + '! Your profile is saved. You are focused on ' + goal + '. How can I help you today?' });
   addMsg('bot', 'Thanks <strong>' + name + '</strong>! Your profile is saved. Next time you visit I will remember you. You are focused on <strong>' + goal + '</strong>. What would you like to know?');
 }
-
+ 
 function skipIntake() {
   document.getElementById('intake-overlay').style.display = 'none';
 }
-
+ 
 function resetMemory() {
   localStorage.removeItem('peptideUserProfile');
   localStorage.removeItem('peptideBloodwork');
@@ -442,35 +444,35 @@ function resetMemory() {
   localStorage.removeItem('peptideUserEmail');
   location.reload();
 }
-
+ 
 function loadMemory() {
   var profileStr = localStorage.getItem('peptideUserProfile');
   if (!profileStr) {
     document.getElementById('intake-overlay').style.display = 'flex';
     return;
   }
-
+ 
   var profile = JSON.parse(profileStr);
   document.getElementById('intake-overlay').style.display = 'none';
-
+ 
   var banner = document.getElementById('memory-banner');
   banner.style.display = 'flex';
-
+ 
   var bloodwork = localStorage.getItem('peptideBloodwork') || '';
   document.getElementById('memory-greeting').textContent = 'Welcome back, ' + profile.name + ' - your profile is loaded.';
-
+ 
   var contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
   if (bloodwork) {
     contextMsg += ' My previously uploaded bloodwork results: ' + bloodwork;
   }
   contextMsg += ' Please keep this context in mind and personalize your guidance accordingly.';
-
+ 
   hist.push({ role: 'user', content: contextMsg });
   var bloodworkNote = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
   hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
-
+ 
   addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
-
+ 
   var userEmail = localStorage.getItem('peptideUserEmail');
   if (userEmail) {
     var db = firebase.firestore();
@@ -493,7 +495,7 @@ function loadMemory() {
     });
   }
 }
-
+ 
 function saveConversationAuto() {
   var userEmail = localStorage.getItem('peptideUserEmail');
   if (userEmail) {
@@ -507,19 +509,19 @@ function saveConversationAuto() {
     });
   }
 }
-
+ 
 function streamResponse(response) {
   showTyping(false);
   var msgs = document.getElementById('msgs');
   var msgDiv = document.createElement('div');
   msgDiv.className = 'msg bot';
   msgs.appendChild(msgDiv);
-
+ 
   var reader = response.body.getReader();
   var decoder = new TextDecoder();
   var fullText = '';
   var buffer = '';
-
+ 
   function read() {
     reader.read().then(function(result) {
       if (result.done) {
@@ -533,11 +535,11 @@ function streamResponse(response) {
         setTimeout(showSaveModal, 800);
         return;
       }
-
+ 
       buffer += decoder.decode(result.value, { stream: true });
       var lines = buffer.split('\n');
       buffer = lines.pop();
-
+ 
       for (var i = 0; i < lines.length; i++) {
         var line = lines[i];
         if (line.indexOf('data: ') === 0) {
@@ -558,19 +560,19 @@ function streamResponse(response) {
   }
   read();
 }
-
+ 
 function sendMsg(text) {
   if (busy) return;
   if (!text) return;
   busy = true;
   document.getElementById('sbtn').disabled = true;
-
+ 
   addMsg('usr', text);
   hist.push({ role: 'user', content: text });
   saveConversationAuto();
-
+ 
   showTyping(true);
-
+ 
   fetch(BACKEND, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -584,7 +586,7 @@ function sendMsg(text) {
     document.getElementById('sbtn').disabled = false;
   });
 }
-
+ 
 function sendMsgFromInput() {
   var el = document.getElementById('cinput');
   var txt = el.value.trim();
@@ -593,14 +595,14 @@ function sendMsgFromInput() {
   el.style.height = 'auto';
   sendMsg(txt);
 }
-
+ 
 function saveEmailAndConversation() {
   var email = document.getElementById('save-conv-email').value.trim();
   if (!email) {
     alert('Please enter your email');
     return;
   }
-
+ 
   fetch(WEBHOOK_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -611,9 +613,9 @@ function saveEmailAndConversation() {
   }).catch(function(e) {
     console.log('Email sent');
   });
-
+ 
   localStorage.setItem('peptideUserEmail', email);
-
+ 
   var db = firebase.firestore();
   db.collection('users').doc(email).set({
     email: email,
@@ -624,23 +626,23 @@ function saveEmailAndConversation() {
   }).catch(function(e) {
     console.error('Firebase error:', e);
   });
-
+ 
   hideSaveModal();
   document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
   document.getElementById('memory-banner').style.display = 'flex';
 }
-
+ 
 function handleFileUpload(event) {
   var file = event.target.files[0];
   if (!file) return;
-
+ 
   var statusDiv = document.getElementById('upload-status');
   statusDiv.style.display = 'block';
   statusDiv.textContent = 'Reading your file...';
-
+ 
   var formData = new FormData();
   formData.append('file', file);
-
+ 
   fetch('/upload', { method: 'POST', body: formData }).then(function(res) {
     return res.json();
   }).then(function(data) {
@@ -648,15 +650,15 @@ function handleFileUpload(event) {
       localStorage.setItem('peptideBloodwork', data.extractedText);
       statusDiv.textContent = 'File saved! Analyzing...';
       addMsg('usr', '[File uploaded and saved]');
-
+ 
       var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
       hist.push({ role: 'user', content: uploadPrompt });
       saveConversationAuto();
-
+ 
       busy = true;
       document.getElementById('sbtn').disabled = true;
       showTyping(true);
-
+ 
       fetch(BACKEND, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -677,10 +679,10 @@ function handleFileUpload(event) {
   }).catch(function(e) {
     statusDiv.textContent = 'Upload failed: ' + e.message;
   });
-
+ 
   event.target.value = '';
 }
-
+ 
 window.addEventListener('DOMContentLoaded', function() {
   initTheme();
   document.getElementById('cinput').addEventListener('keydown', function(e) {
@@ -694,6 +696,10 @@ window.addEventListener('DOMContentLoaded', function() {
   loadMemory();
 });
 </script>
-
+ 
 </body>
 </html>
+ 
+
+
+
