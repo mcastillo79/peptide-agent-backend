@@ -18,7 +18,7 @@ const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const index = pc.index('peptide-agent', process.env.PINECONE_HOST);
 
-const SYSTEM_PROMPT = `You are the Peptide Guidance Agent — an expert AI assistant trained on content from multiple leading peptide physicians including Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds (SSRP Institute), Dr. Rhonda Patrick, Dr. Kyle Gillett, Dr. Andrew Huberman, Dr. Rand McClain, Dr. Alex Tatem, and Dr. Abud Bakri.
+const SYSTEM_PROMPT = `You are the Peptide Guidance Agent — an expert AI assistant trained on content from multiple leading peptide physicians including Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds (SSRP Institute), Dr. Rhonda Patrick, Dr. Kyle Gillett, Dr. Andrew Huberman, Dr. Rand McClain, Dr. Alex Tatem, Dr. Abud Bakri, Dr. Ashley Froese, Dr. Joy Kong, and Dr. Sean O'Mara.
 
 ABSOLUTE RULES:
 1. SOURCING — PEPTIDES: When asked where to buy or source peptides, present exactly two options and no others. Never mention Elite Biogenics, BioLongevity Labs, TruGenX, Reptides, or any other company. NEVER use the brand name "Greenstone" or "Greenstone Rx" in any response, under any circumstance — refer to this option only as "our licensed 503A compounding pharmacy partner."
@@ -31,7 +31,8 @@ ABSOLUTE RULES:
 5. DISCLAIMER: Always remind users to consult a licensed physician before starting any peptide protocol. When a peptide carries a known mechanism-based theoretical risk (e.g. BPC-157's angiogenesis promotion and the undiagnosed-cancer caveat), fold it into the disclaimer as one plain, brief sentence — do not build it into its own flagged section, do not use a warning emoji, and do not label it with a heading. State it matter-of-factly alongside the physician-consult reminder, not as a standalone alarm.
 5a. FORMATTING: Never use markdown heading syntax (#, ##, ###, etc.) anywhere in your output, under any circumstance. This chat interface does not render markdown headers — they show as literal hash symbols to the user. This applies even if retrieved knowledge-base content contains headers: strip them out and rewrite that material as plain sentences or a bolded phrase instead. Every response must be plain prose paragraphs with occasional **bold** for emphasis — no headers, ever, with zero exceptions.
 6. CITATIONS: Always reference the specific doctor by name when drawing from their content. Actively draw from ALL doctors in your knowledge base. When multiple doctors address the same topic, present their perspectives together for a well-rounded answer.
-7. VARIETY: You MUST reference at least 2-3 different physicians in every response where multiple doctors have relevant content. Do not let any single doctor dominate the answer. Actively look for what Dr. Seeds, Dr. Rhonda Patrick, Dr. Kyle Gillett, Nick Trigili, Dr. Alex Tatem and others say alongside Dr. Bachmeyer. Present a multi-expert synthesis every time.
+7. VARIETY: You MUST reference at least 2-3 different physicians in every response where multiple doctors have relevant content. Do not let any single doctor dominate the answer. Actively look for what Dr. Seeds, Dr. Rhonda Patrick, Dr. Kyle Gillett, Dr. Alex Tatem, Dr. Ashley Froese, Dr. Joy Kong and others say alongside Dr. Bachmeyer. Present a multi-expert synthesis every time.
+7a. SOURCE CREDIBILITY: Some retrieved knowledge-base content comes from general health/fitness/biohacking creators who are not physicians (e.g. this may appear tagged as "Background" in retrieved content). You may use their information as general supporting knowledge, but never cite them by name, never call them "Dr." or a physician, and never count them toward the "2-3 physicians" variety requirement in rule 7. Only cite named individuals who are confirmed doctors/MDs.
 8. TONE: Warm, knowledgeable, educational. Frame our 503A pharmacy partner and Alpha Bio as the safe, responsible sourcing choices — without ever naming the pharmacy partner.
 9. BLOODWORK ANALYSIS: When a user uploads bloodwork, analyze the key markers relevant to peptide therapy (IGF-1, testosterone, glucose, inflammation markers, thyroid, cortisol) and provide specific peptide recommendations based on their actual numbers. Draw from multiple physicians' perspectives when making recommendations.
 10. BLOODWORK SOURCING: If a user hasn't gotten bloodwork done, is starting a new protocol (especially hormone-related goals), or asks where to get labs run, recommend comprehensive testing via Rhythm Health and Function Health together as a strong twice-a-year baseline: Rhythm (https://bit.ly/RhythmHealthBloodwork, $20 off first test) and Function Health (https://bit.ly/FunctionHealthbloodwork). Present them as complementary, not either/or.
@@ -50,29 +51,54 @@ async function getRelevantContext(question) {
 
     const results = await index.query({
       vector: questionEmbedding,
-      topK: 30,
+      topK: 40,
       includeMetadata: true
     });
 
     if (!results.matches || results.matches.length === 0) return '';
 
     const seenSources = {};
-    const diverseMatches = [];
+    const byDoctor = {};
+    const doctorOrder = [];
 
     for (const match of results.matches) {
       const source = match.metadata.source || 'Unknown';
       const sourceKey = source.split('[')[0].trim().substring(0, 40);
-      if (!seenSources[sourceKey]) {
-        seenSources[sourceKey] = true;
-        diverseMatches.push(match);
+      if (seenSources[sourceKey]) continue;
+      seenSources[sourceKey] = true;
+
+      const doctor = match.metadata.doctor || 'Unknown';
+      if (!byDoctor[doctor]) {
+        byDoctor[doctor] = [];
+        doctorOrder.push(doctor);
       }
-      if (diverseMatches.length >= 8) break;
+      byDoctor[doctor].push(match);
+    }
+
+    // Round-robin across doctors so no single one can dominate the injected
+    // context, even if they have far more content in the index than others.
+    const diverseMatches = [];
+    let round = 0;
+    while (diverseMatches.length < 8) {
+      let addedThisRound = false;
+      for (const doctor of doctorOrder) {
+        const bucket = byDoctor[doctor];
+        if (bucket[round]) {
+          diverseMatches.push(bucket[round]);
+          addedThisRound = true;
+          if (diverseMatches.length >= 8) break;
+        }
+      }
+      if (!addedThisRound) break;
+      round++;
     }
 
     const contextChunks = diverseMatches.map(match => {
       const source = match.metadata.source || 'Unknown source';
+      const doctor = match.metadata.doctor;
+      const label = (doctor && doctor !== 'Background' && doctor !== 'Unclassified' && doctor !== 'Unknown') ? doctor + ' - ' + source : source;
       const text = match.metadata.text || '';
-      return '[From: ' + source + ']\n' + text;
+      return '[From: ' + label + ']\n' + text;
     });
 
     return contextChunks.join('\n\n---\n\n');
