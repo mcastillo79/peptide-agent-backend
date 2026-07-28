@@ -174,6 +174,7 @@ body.dark #sbtn { background: var(--accent); }
 </div>
 <button id="intake-submit" onclick="saveIntake()">Start My Personalized Session</button>
 <div id="intake-skip" onclick="skipIntake()" style="cursor: pointer;">Skip for now</div>
+<div id="intake-restore" onclick="restoreAccount()" style="cursor: pointer; text-align: center; margin-top: 12px; font-size: 13px; color: var(--accent); text-decoration: underline;">Already have an account? Restore by email</div>
 </div>
 </div>
 
@@ -359,13 +360,19 @@ function showTyping(v) {
 }
 
 function showSaveModal() {
-  if (!localStorage.getItem('peptideModalShown')) {
-    localStorage.setItem('peptideModalShown', 'true');
-    document.getElementById('save-conv-overlay').style.display = 'flex';
-  }
+  // Don't nag someone who's already saved their email.
+  if (localStorage.getItem('peptideUserEmail')) return;
+  // If they've dismissed it before, wait a day before asking again instead
+  // of never asking again (the old behavior permanently blocked this after
+  // one dismissal, which is how people lost their history for good).
+  var dismissedAt = localStorage.getItem('peptideModalDismissedAt');
+  var oneDayMs = 24 * 60 * 60 * 1000;
+  if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < oneDayMs) return;
+  document.getElementById('save-conv-overlay').style.display = 'flex';
 }
 
 function hideSaveModal() {
+  localStorage.setItem('peptideModalDismissedAt', String(Date.now()));
   document.getElementById('save-conv-overlay').style.display = 'none';
 }
 
@@ -449,11 +456,11 @@ function resetMemory() {
   location.reload();
 }
 
-function loadMemory() {
+function renderMemoryUI(userEmail) {
   var profileStr = localStorage.getItem('peptideUserProfile');
   if (!profileStr) {
     document.getElementById('intake-overlay').style.display = 'flex';
-    return;
+    return null;
   }
 
   var profile = JSON.parse(profileStr);
@@ -463,7 +470,7 @@ function loadMemory() {
   banner.style.display = 'flex';
 
   var bloodwork = localStorage.getItem('peptideBloodwork') || '';
-  document.getElementById('memory-greeting').textContent = 'Welcome back, ' + profile.name + ' - your profile is loaded.';
+  document.getElementById('memory-greeting').textContent = userEmail ? 'Conversation saved - ' + userEmail : 'Welcome back, ' + profile.name + ' - your profile is loaded.';
 
   var contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
   if (bloodwork) {
@@ -476,42 +483,88 @@ function loadMemory() {
   hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
 
   addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+  return { profile: profile, bloodworkNote: bloodworkNote };
+}
 
+function loadMemory() {
   var userEmail = localStorage.getItem('peptideUserEmail');
-  if (userEmail) {
-    var db = firebase.firestore();
-    db.collection('users').doc(userEmail).get().then(function(doc) {
-      if (doc.exists && doc.data().messages) {
-        hist = doc.data().messages;
-        document.getElementById('msgs').innerHTML = '';
-        addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
-        hist.slice(2).forEach(function(msg) {
-          if (msg.role === 'user') {
-            addMsg('usr', msg.content);
-          } else {
-            addMsg('bot', fmt(msg.content));
-          }
-        });
-        console.log('Loaded conversation history');
-      }
-    }).catch(function(e) {
-      console.log('No saved conversation found');
-    });
+
+  if (!userEmail) {
+    renderMemoryUI(null);
+    return;
   }
+
+  // Firestore is the source of truth once we know the user's email - it may
+  // have profile/bloodwork/messages even if this browser's local storage
+  // got cleared (a known iOS Safari behavior), so pull it down first.
+  var db = firebase.firestore();
+  db.collection('users').doc(userEmail).get().then(function(doc) {
+    if (doc.exists) {
+      var data = doc.data();
+      if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+      if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+    }
+
+    var rendered = renderMemoryUI(userEmail);
+    if (!rendered) return;
+
+    if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
+      hist = doc.data().messages;
+      document.getElementById('msgs').innerHTML = '';
+      addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
+      hist.slice(2).forEach(function(msg) {
+        if (msg.role === 'user') {
+          addMsg('usr', msg.content);
+        } else {
+          addMsg('bot', fmt(msg.content));
+        }
+      });
+      console.log('Loaded conversation history');
+    }
+  }).catch(function(e) {
+    console.log('Could not reach saved conversation, using local data only');
+    renderMemoryUI(userEmail);
+  });
 }
 
 function saveConversationAuto() {
   var userEmail = localStorage.getItem('peptideUserEmail');
   if (userEmail) {
     var db = firebase.firestore();
+    var profileStr = localStorage.getItem('peptideUserProfile');
+    var bloodwork = localStorage.getItem('peptideBloodwork') || '';
     db.collection('users').doc(userEmail).set({
       email: userEmail,
       messages: hist,
+      profile: profileStr ? JSON.parse(profileStr) : null,
+      bloodwork: bloodwork,
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true }).catch(function(e) {
       console.log('Auto-save skipped');
     });
   }
+}
+
+function restoreAccount() {
+  var email = prompt('Enter the email you used to save your conversation:');
+  if (!email) return;
+  email = email.trim();
+  if (!email) return;
+
+  var db = firebase.firestore();
+  db.collection('users').doc(email).get().then(function(doc) {
+    if (doc.exists) {
+      localStorage.setItem('peptideUserEmail', email);
+      var data = doc.data();
+      if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+      if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+      location.reload();
+    } else {
+      alert('No saved account found for that email. Double check you typed it exactly as before.');
+    }
+  }).catch(function(e) {
+    alert('Something went wrong trying to restore your account. Please try again in a moment.');
+  });
 }
 
 function streamResponse(response) {
@@ -621,11 +674,15 @@ function saveEmailAndConversation() {
   localStorage.setItem('peptideUserEmail', email);
 
   var db = firebase.firestore();
+  var profileStr = localStorage.getItem('peptideUserProfile');
+  var bloodwork = localStorage.getItem('peptideBloodwork') || '';
   db.collection('users').doc(email).set({
     email: email,
     messages: hist,
+    profile: profileStr ? JSON.parse(profileStr) : null,
+    bloodwork: bloodwork,
     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(function() {
+  }, { merge: true }).then(function() {
     console.log('Conversation saved');
   }).catch(function(e) {
     console.error('Firebase error:', e);
