@@ -122,12 +122,12 @@ body.dark #sbtn { background: var(--accent); }
 #monthly-btn { background: #10b981; color: #fff; }
 #ftr { text-align: center; font-size: 11px; color: var(--text-soft); padding: 8px 16px 10px; background: var(--card-bg); flex-shrink: 0; }
 @media (max-width: 480px) {
-  #donation-section { padding: 8px 12px; }
-  #donation-section h3 { font-size: 12px; margin-bottom: 6px; }
-  #donation-section p { display: none; }
-  #donation-buttons { gap: 5px; flex-wrap: nowrap; }
-  .donation-btn { min-width: 0; padding: 7px 4px; font-size: 10px; white-space: nowrap; }
-  #donation-buttons > div { font-size: 9px !important; padding: 4px 6px !important; }
+#donation-section { padding: 8px 12px; }
+#donation-section h3 { font-size: 12px; margin-bottom: 6px; }
+#donation-section p { display: none; }
+#donation-buttons { gap: 5px; flex-wrap: nowrap; }
+.donation-btn { min-width: 0; padding: 7px 4px; font-size: 10px; white-space: nowrap; }
+#donation-buttons > div { font-size: 9px !important; padding: 4px 6px !important; }
 }
 </style>
 </head>
@@ -270,12 +270,12 @@ To personalize my guidance, tell me:<br>
 const stripe = Stripe('pk_test_51TtIVqFvV3t1R8TgzxczU4UKEXkGiyCb1feqRxGKq51gyaNhwZ0OOYZjCjQsUvyAAa96DZAP6vvIJNcmxwAcRylt00IrIIOyLz');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
-  authDomain: "peptide-agent-49020.firebaseapp.com",
-  projectId: "peptide-agent-49020",
-  storageBucket: "peptide-agent-49020.firebasestorage.app",
-  messagingSenderId: "51195071651O",
-  appId: "1:51195071651O:web:ed6f4d1608ed2ff3267ecf"
+apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
+authDomain: "peptide-agent-49020.firebaseapp.com",
+projectId: "peptide-agent-49020",
+storageBucket: "peptide-agent-49020.firebasestorage.app",
+messagingSenderId: "51195071651O",
+appId: "1:51195071651O:web:ed6f4d1608ed2ff3267ecf"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -286,475 +286,486 @@ var busy = false;
 var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec';
 
 function applyTheme(theme) {
-  if (theme === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('theme-toggle').textContent = '☀️';
-  } else {
-    document.body.classList.remove('dark');
-    document.getElementById('theme-toggle').textContent = '🌙';
-  }
+if (theme === 'dark') {
+document.body.classList.add('dark');
+document.getElementById('theme-toggle').textContent = '☀️';
+} else {
+document.body.classList.remove('dark');
+document.getElementById('theme-toggle').textContent = '🌙';
+}
 }
 
 function initTheme() {
-  var saved = localStorage.getItem('peptideTheme');
-  if (saved) {
-    applyTheme(saved);
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    applyTheme('dark');
-  } else {
-    applyTheme('light');
-  }
+var saved = localStorage.getItem('peptideTheme');
+if (saved) {
+applyTheme(saved);
+} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+applyTheme('dark');
+} else {
+applyTheme('light');
+}
 }
 
 function toggleTheme() {
-  var isDark = document.body.classList.contains('dark');
-  var newTheme = isDark ? 'light' : 'dark';
-  applyTheme(newTheme);
-  localStorage.setItem('peptideTheme', newTheme);
+var isDark = document.body.classList.contains('dark');
+var newTheme = isDark ? 'light' : 'dark';
+applyTheme(newTheme);
+localStorage.setItem('peptideTheme', newTheme);
 }
 
 function ag(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+el.style.height = 'auto';
+el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 function addCopyButton(msgDiv) {
-  var copyBtn = document.createElement('button');
-  copyBtn.className = 'msg-copy';
-  copyBtn.textContent = 'Copy';
-  copyBtn.onclick = function(e) {
-    e.preventDefault();
-    var text = msgDiv.innerText.replace(/Copy$/, '').trim();
-    navigator.clipboard.writeText(text).then(function() {
-      copyBtn.textContent = 'Copied!';
-      setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
-    });
-  };
-  msgDiv.appendChild(copyBtn);
+var copyBtn = document.createElement('button');
+copyBtn.className = 'msg-copy';
+copyBtn.textContent = 'Copy';
+copyBtn.onclick = function(e) {
+e.preventDefault();
+var text = msgDiv.innerText.replace(/Copy$/, '').trim();
+navigator.clipboard.writeText(text).then(function() {
+copyBtn.textContent = 'Copied!';
+setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+});
+};
+msgDiv.appendChild(copyBtn);
 }
 
 function addMsg(cls, html) {
-  var box = document.getElementById('msgs');
-  var d = document.createElement('div');
-  d.className = 'msg ' + cls;
-  d.innerHTML = html;
-  if (cls === 'bot') {
-    addCopyButton(d);
-  }
-  box.appendChild(d);
-  box.scrollTop = box.scrollHeight;
+var box = document.getElementById('msgs');
+var d = document.createElement('div');
+d.className = 'msg ' + cls;
+d.innerHTML = html;
+if (cls === 'bot') {
+addCopyButton(d);
+}
+box.appendChild(d);
+box.scrollTop = box.scrollHeight;
 }
 
 function fmt(t) {
-  t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-  t = t.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>');
-  t = t.replace(/\n\n/g, '<br><br>');
-  t = t.replace(/\n/g, '<br>');
-  return t;
+t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+t = t.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>');
+t = t.replace(/\n\n/g, '<br><br>');
+t = t.replace(/\n/g, '<br>');
+return t;
 }
 
 function showTyping(v) {
-  document.getElementById('typer').style.display = v ? 'flex' : 'none';
-  if (v) document.getElementById('msgs').scrollTop = 99999;
+document.getElementById('typer').style.display = v ? 'flex' : 'none';
+if (v) document.getElementById('msgs').scrollTop = 99999;
 }
 
 function showSaveModal() {
-  // Don't nag someone who's already saved their email.
-  if (localStorage.getItem('peptideUserEmail')) return;
-  // If they've dismissed it before, wait a day before asking again instead
-  // of never asking again (the old behavior permanently blocked this after
-  // one dismissal, which is how people lost their history for good).
-  var dismissedAt = localStorage.getItem('peptideModalDismissedAt');
-  var oneDayMs = 24 * 60 * 60 * 1000;
-  if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < oneDayMs) return;
-  document.getElementById('save-conv-overlay').style.display = 'flex';
+// Don't nag someone who's already saved their email.
+if (localStorage.getItem('peptideUserEmail')) return;
+// If they've dismissed it before, wait a day before asking again instead
+// of never asking again (the old behavior permanently blocked this after
+// one dismissal, which is how people lost their history for good).
+var dismissedAt = localStorage.getItem('peptideModalDismissedAt');
+var oneDayMs = 24 * 60 * 60 * 1000;
+if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < oneDayMs) return;
+document.getElementById('save-conv-overlay').style.display = 'flex';
 }
 
 function hideSaveModal() {
-  localStorage.setItem('peptideModalDismissedAt', String(Date.now()));
-  document.getElementById('save-conv-overlay').style.display = 'none';
+localStorage.setItem('peptideModalDismissedAt', String(Date.now()));
+document.getElementById('save-conv-overlay').style.display = 'none';
 }
 
 function openCustomDonation() {
-  document.getElementById('donation-modal').style.display = 'flex';
+document.getElementById('donation-modal').style.display = 'flex';
 }
 
 function closeDonationModal() {
-  document.getElementById('donation-modal').style.display = 'none';
-  document.getElementById('custom-amount').value = '';
+document.getElementById('donation-modal').style.display = 'none';
+document.getElementById('custom-amount').value = '';
 }
 
 function processCustomDonation() {
-  var amount = parseFloat(document.getElementById('custom-amount').value);
-  if (!amount || amount <= 0) {
-    alert('Please enter a valid amount');
-    return;
-  }
-  stripeDonate(amount);
+var amount = parseFloat(document.getElementById('custom-amount').value);
+if (!amount || amount <= 0) {
+alert('Please enter a valid amount');
+return;
+}
+stripeDonate(amount);
 }
 
 function stripeDonate(amount) {
-  fetch('/create-checkout-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount: Math.round(amount * 100), type: 'one-time' })
-  }).then(function(res) { return res.json(); }).then(function(data) {
-    if (data.sessionId) {
-      stripe.redirectToCheckout({ sessionId: data.sessionId });
-    }
-  }).catch(function(e) {
-    alert('Error: ' + e.message);
-  });
-  closeDonationModal();
+fetch('/create-checkout-session', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ amount: Math.round(amount * 100), type: 'one-time' })
+}).then(function(res) { return res.json(); }).then(function(data) {
+if (data.sessionId) {
+stripe.redirectToCheckout({ sessionId: data.sessionId });
+}
+}).catch(function(e) {
+alert('Error: ' + e.message);
+});
+closeDonationModal();
 }
 
 function stripeMonthly() {
-  fetch('/create-checkout-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'subscription' })
-  }).then(function(res) { return res.json(); }).then(function(data) {
-    if (data.sessionId) {
-      stripe.redirectToCheckout({ sessionId: data.sessionId });
-    }
-  }).catch(function(e) {
-    alert('Error: ' + e.message);
-  });
+fetch('/create-checkout-session', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ type: 'subscription' })
+}).then(function(res) { return res.json(); }).then(function(data) {
+if (data.sessionId) {
+stripe.redirectToCheckout({ sessionId: data.sessionId });
+}
+}).catch(function(e) {
+alert('Error: ' + e.message);
+});
 }
 
 function saveIntake() {
-  var name = document.getElementById('intake-name').value.trim() || 'Friend';
-  var age = document.getElementById('intake-age').value.trim() || 'Not specified';
-  var goal = document.getElementById('intake-goal').value || 'General wellness and optimization';
-  var conditions = document.getElementById('intake-conditions').value.trim() || 'None noted';
-  var experience = document.getElementById('intake-experience').value;
+var name = document.getElementById('intake-name').value.trim() || 'Friend';
+var age = document.getElementById('intake-age').value.trim() || 'Not specified';
+var goal = document.getElementById('intake-goal').value || 'General wellness and optimization';
+var conditions = document.getElementById('intake-conditions').value.trim() || 'None noted';
+var experience = document.getElementById('intake-experience').value;
 
-  var profile = { name: name, age: age, goal: goal, conditions: conditions, experience: experience };
-  localStorage.setItem('peptideUserProfile', JSON.stringify(profile));
-  document.getElementById('intake-overlay').style.display = 'none';
+var profile = { name: name, age: age, goal: goal, conditions: conditions, experience: experience };
+localStorage.setItem('peptideUserProfile', JSON.stringify(profile));
+document.getElementById('intake-overlay').style.display = 'none';
 
-  var banner = document.getElementById('memory-banner');
-  document.getElementById('memory-greeting').textContent = 'Profile saved - ' + name;
-  banner.style.display = 'flex';
+var banner = document.getElementById('memory-banner');
+document.getElementById('memory-greeting').textContent = 'Profile saved - ' + name;
+banner.style.display = 'flex';
 
-  var contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
-  hist.push({ role: 'user', content: contextMsg });
-  hist.push({ role: 'assistant', content: 'Thanks ' + name + '! Your profile is saved. You are focused on ' + goal + '. How can I help you today?' });
-  addMsg('bot', 'Thanks <strong>' + name + '</strong>! Your profile is saved. Next time you visit I will remember you. You are focused on <strong>' + goal + '</strong>. What would you like to know?');
+var contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
+hist.push({ role: 'user', content: contextMsg });
+hist.push({ role: 'assistant', content: 'Thanks ' + name + '! Your profile is saved. You are focused on ' + goal + '. How can I help you today?' });
+addMsg('bot', 'Thanks <strong>' + name + '</strong>! Your profile is saved. Next time you visit I will remember you. You are focused on <strong>' + goal + '</strong>. What would you like to know?');
 }
 
 function skipIntake() {
-  document.getElementById('intake-overlay').style.display = 'none';
+document.getElementById('intake-overlay').style.display = 'none';
 }
 
 function resetMemory() {
-  localStorage.removeItem('peptideUserProfile');
-  localStorage.removeItem('peptideBloodwork');
-  localStorage.removeItem('peptideModalShown');
-  localStorage.removeItem('peptideUserEmail');
-  location.reload();
+localStorage.removeItem('peptideUserProfile');
+localStorage.removeItem('peptideBloodwork');
+localStorage.removeItem('peptideModalShown');
+localStorage.removeItem('peptideUserEmail');
+location.reload();
 }
 
 function renderMemoryUI(userEmail) {
-  var profileStr = localStorage.getItem('peptideUserProfile');
-  if (!profileStr) {
-    document.getElementById('intake-overlay').style.display = 'flex';
-    return null;
-  }
+var profileStr = localStorage.getItem('peptideUserProfile');
+if (!profileStr) {
+document.getElementById('intake-overlay').style.display = 'flex';
+return null;
+}
 
-  var profile = JSON.parse(profileStr);
-  document.getElementById('intake-overlay').style.display = 'none';
+var profile = JSON.parse(profileStr);
+document.getElementById('intake-overlay').style.display = 'none';
 
-  var banner = document.getElementById('memory-banner');
-  banner.style.display = 'flex';
+var banner = document.getElementById('memory-banner');
+banner.style.display = 'flex';
 
-  var bloodwork = localStorage.getItem('peptideBloodwork') || '';
-  document.getElementById('memory-greeting').textContent = userEmail ? 'Conversation saved - ' + userEmail : 'Welcome back, ' + profile.name + ' - your profile is loaded.';
+var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+document.getElementById('memory-greeting').textContent = userEmail ? 'Conversation saved - ' + userEmail : 'Welcome back, ' + profile.name + ' - your profile is loaded.';
 
-  var contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
-  if (bloodwork) {
-    contextMsg += ' My previously uploaded bloodwork results: ' + bloodwork;
-  }
-  contextMsg += ' Please keep this context in mind and personalize your guidance accordingly.';
+var contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
+if (bloodwork) {
+contextMsg += ' My previously uploaded bloodwork results: ' + bloodwork;
+}
+contextMsg += ' Please keep this context in mind and personalize your guidance accordingly.';
 
-  hist.push({ role: 'user', content: contextMsg });
-  var bloodworkNote = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
-  hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
+hist.push({ role: 'user', content: contextMsg });
+var bloodworkNote = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
+hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
 
-  addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
-  return { profile: profile, bloodworkNote: bloodworkNote };
+addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+return { profile: profile, bloodworkNote: bloodworkNote };
 }
 
 function loadMemory() {
-  var userEmail = localStorage.getItem('peptideUserEmail');
+var userEmail = localStorage.getItem('peptideUserEmail');
 
-  if (!userEmail) {
-    renderMemoryUI(null);
-    return;
-  }
+if (!userEmail) {
+renderMemoryUI(null);
+return;
+}
 
-  // Firestore is the source of truth once we know the user's email - it may
-  // have profile/bloodwork/messages even if this browser's local storage
-  // got cleared (a known iOS Safari behavior), so pull it down first.
-  var db = firebase.firestore();
-  db.collection('users').doc(userEmail).get().then(function(doc) {
-    if (doc.exists) {
-      var data = doc.data();
-      if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
-      if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
-    }
+// Firestore is the source of truth once we know the user's email - it may
+// have profile/bloodwork/messages even if this browser's local storage
+// got cleared (a known iOS Safari behavior), so pull it down first.
+var db = firebase.firestore();
+db.collection('users').doc(userEmail).get().then(function(doc) {
+if (doc.exists) {
+var data = doc.data();
+if (data.profile) {
+localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+} else if (!localStorage.getItem('peptideUserProfile')) {
+// This is a real, saved account (email + conversation on file) - it
+// just never had the intake form filled out (e.g. user hit "Skip
+// for now" originally). Don't trap them on the welcome screen every
+// time they restore - give them a minimal default profile instead.
+localStorage.setItem('peptideUserProfile', JSON.stringify({
+name: 'Friend', age: 'Not specified', goal: 'General wellness and optimization',
+conditions: 'None noted', experience: 'Not specified'
+}));
+}
+if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+}
 
-    var rendered = renderMemoryUI(userEmail);
-    if (!rendered) return;
+var rendered = renderMemoryUI(userEmail);
+if (!rendered) return;
 
-    if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
-      hist = doc.data().messages;
-      document.getElementById('msgs').innerHTML = '';
-      addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
-      hist.slice(2).forEach(function(msg) {
-        if (msg.role === 'user') {
-          addMsg('usr', msg.content);
-        } else {
-          addMsg('bot', fmt(msg.content));
-        }
-      });
-      console.log('Loaded conversation history');
-    }
-  }).catch(function(e) {
-    console.log('Could not reach saved conversation, using local data only');
-    renderMemoryUI(userEmail);
-  });
+if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
+hist = doc.data().messages;
+document.getElementById('msgs').innerHTML = '';
+addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
+hist.slice(2).forEach(function(msg) {
+if (msg.role === 'user') {
+addMsg('usr', msg.content);
+} else {
+addMsg('bot', fmt(msg.content));
+}
+});
+console.log('Loaded conversation history');
+}
+}).catch(function(e) {
+console.log('Could not reach saved conversation, using local data only');
+renderMemoryUI(userEmail);
+});
 }
 
 function saveConversationAuto() {
-  var userEmail = localStorage.getItem('peptideUserEmail');
-  if (userEmail) {
-    var db = firebase.firestore();
-    var profileStr = localStorage.getItem('peptideUserProfile');
-    var bloodwork = localStorage.getItem('peptideBloodwork') || '';
-    db.collection('users').doc(userEmail).set({
-      email: userEmail,
-      messages: hist,
-      profile: profileStr ? JSON.parse(profileStr) : null,
-      bloodwork: bloodwork,
-      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true }).catch(function(e) {
-      console.log('Auto-save skipped');
-    });
-  }
+var userEmail = localStorage.getItem('peptideUserEmail');
+if (userEmail) {
+var db = firebase.firestore();
+var profileStr = localStorage.getItem('peptideUserProfile');
+var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+db.collection('users').doc(userEmail).set({
+email: userEmail,
+messages: hist,
+profile: profileStr ? JSON.parse(profileStr) : null,
+bloodwork: bloodwork,
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).catch(function(e) {
+console.log('Auto-save skipped');
+});
+}
 }
 
 function restoreAccount() {
-  var email = prompt('Enter the email you used to save your conversation:');
-  if (!email) return;
-  email = email.trim();
-  if (!email) return;
+var email = prompt('Enter the email you used to save your conversation:');
+if (!email) return;
+email = email.trim();
+if (!email) return;
 
-  var db = firebase.firestore();
-  db.collection('users').doc(email).get().then(function(doc) {
-    if (doc.exists) {
-      localStorage.setItem('peptideUserEmail', email);
-      var data = doc.data();
-      if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
-      if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
-      location.reload();
-    } else {
-      alert('No saved account found for that email. Double check you typed it exactly as before.');
-    }
-  }).catch(function(e) {
-    alert('Something went wrong trying to restore your account. Please try again in a moment.');
-  });
+var db = firebase.firestore();
+db.collection('users').doc(email).get().then(function(doc) {
+if (doc.exists) {
+localStorage.setItem('peptideUserEmail', email);
+var data = doc.data();
+if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+location.reload();
+} else {
+alert('No saved account found for that email. Double check you typed it exactly as before.');
+}
+}).catch(function(e) {
+alert('Something went wrong trying to restore your account. Please try again in a moment.');
+});
 }
 
 function streamResponse(response) {
-  showTyping(false);
-  var msgs = document.getElementById('msgs');
-  var msgDiv = document.createElement('div');
-  msgDiv.className = 'msg bot';
-  msgs.appendChild(msgDiv);
+showTyping(false);
+var msgs = document.getElementById('msgs');
+var msgDiv = document.createElement('div');
+msgDiv.className = 'msg bot';
+msgs.appendChild(msgDiv);
 
-  var reader = response.body.getReader();
-  var decoder = new TextDecoder();
-  var fullText = '';
-  var buffer = '';
+var reader = response.body.getReader();
+var decoder = new TextDecoder();
+var fullText = '';
+var buffer = '';
 
-  function read() {
-    reader.read().then(function(result) {
-      if (result.done) {
-        if (fullText) {
-          hist.push({ role: 'assistant', content: fullText });
-          saveConversationAuto();
-        }
-        addCopyButton(msgDiv);
-        busy = false;
-        document.getElementById('sbtn').disabled = false;
-        setTimeout(showSaveModal, 800);
-        return;
-      }
+function read() {
+reader.read().then(function(result) {
+if (result.done) {
+if (fullText) {
+hist.push({ role: 'assistant', content: fullText });
+saveConversationAuto();
+}
+addCopyButton(msgDiv);
+busy = false;
+document.getElementById('sbtn').disabled = false;
+setTimeout(showSaveModal, 800);
+return;
+}
 
-      buffer += decoder.decode(result.value, { stream: true });
-      var lines = buffer.split('\n');
-      buffer = lines.pop();
+buffer += decoder.decode(result.value, { stream: true });
+var lines = buffer.split('\n');
+buffer = lines.pop();
 
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i];
-        if (line.indexOf('data: ') === 0) {
-          var d = line.slice(6).trim();
-          if (d === '[DONE]') continue;
-          try {
-            var parsed = JSON.parse(d);
-            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
-              fullText += parsed.delta.text;
-              msgDiv.innerHTML = fmt(fullText);
-              msgs.scrollTop = msgs.scrollHeight;
-            }
-          } catch(e) {}
-        }
-      }
-      read();
-    });
-  }
-  read();
+for (var i = 0; i < lines.length; i++) {
+var line = lines[i];
+if (line.indexOf('data: ') === 0) {
+var d = line.slice(6).trim();
+if (d === '[DONE]') continue;
+try {
+var parsed = JSON.parse(d);
+if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+fullText += parsed.delta.text;
+msgDiv.innerHTML = fmt(fullText);
+msgs.scrollTop = msgs.scrollHeight;
+}
+} catch(e) {}
+}
+}
+read();
+});
+}
+read();
 }
 
 function sendMsg(text) {
-  if (busy) return;
-  if (!text) return;
-  busy = true;
-  document.getElementById('sbtn').disabled = true;
+if (busy) return;
+if (!text) return;
+busy = true;
+document.getElementById('sbtn').disabled = true;
 
-  addMsg('usr', text);
-  hist.push({ role: 'user', content: text });
-  saveConversationAuto();
+addMsg('usr', text);
+hist.push({ role: 'user', content: text });
+saveConversationAuto();
 
-  showTyping(true);
+showTyping(true);
 
-  fetch(BACKEND, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 5000, messages: hist })
-  }).then(function(response) {
-    streamResponse(response);
-  }).catch(function(e) {
-    showTyping(false);
-    addMsg('err', 'Error: ' + e.message);
-    busy = false;
-    document.getElementById('sbtn').disabled = false;
-  });
+fetch(BACKEND, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 5000, messages: hist })
+}).then(function(response) {
+streamResponse(response);
+}).catch(function(e) {
+showTyping(false);
+addMsg('err', 'Error: ' + e.message);
+busy = false;
+document.getElementById('sbtn').disabled = false;
+});
 }
 
 function sendMsgFromInput() {
-  var el = document.getElementById('cinput');
-  var txt = el.value.trim();
-  if (!txt) return;
-  el.value = '';
-  el.style.height = 'auto';
-  sendMsg(txt);
+var el = document.getElementById('cinput');
+var txt = el.value.trim();
+if (!txt) return;
+el.value = '';
+el.style.height = 'auto';
+sendMsg(txt);
 }
 
 function saveEmailAndConversation() {
-  var email = document.getElementById('save-conv-email').value.trim();
-  if (!email) {
-    alert('Please enter your email');
-    return;
-  }
+var email = document.getElementById('save-conv-email').value.trim();
+if (!email) {
+alert('Please enter your email');
+return;
+}
 
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: JSON.stringify({
-      email: email,
-      timestamp: new Date().toISOString()
-    })
-  }).catch(function(e) {
-    console.log('Email sent');
-  });
+fetch(WEBHOOK_URL, {
+method: 'POST',
+mode: 'no-cors',
+body: JSON.stringify({
+email: email,
+timestamp: new Date().toISOString()
+})
+}).catch(function(e) {
+console.log('Email sent');
+});
 
-  localStorage.setItem('peptideUserEmail', email);
+localStorage.setItem('peptideUserEmail', email);
 
-  var db = firebase.firestore();
-  var profileStr = localStorage.getItem('peptideUserProfile');
-  var bloodwork = localStorage.getItem('peptideBloodwork') || '';
-  db.collection('users').doc(email).set({
-    email: email,
-    messages: hist,
-    profile: profileStr ? JSON.parse(profileStr) : null,
-    bloodwork: bloodwork,
-    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true }).then(function() {
-    console.log('Conversation saved');
-  }).catch(function(e) {
-    console.error('Firebase error:', e);
-  });
+var db = firebase.firestore();
+var profileStr = localStorage.getItem('peptideUserProfile');
+var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+db.collection('users').doc(email).set({
+email: email,
+messages: hist,
+profile: profileStr ? JSON.parse(profileStr) : null,
+bloodwork: bloodwork,
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).then(function() {
+console.log('Conversation saved');
+}).catch(function(e) {
+console.error('Firebase error:', e);
+});
 
-  hideSaveModal();
-  document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
-  document.getElementById('memory-banner').style.display = 'flex';
+hideSaveModal();
+document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
+document.getElementById('memory-banner').style.display = 'flex';
 }
 
 function handleFileUpload(event) {
-  var file = event.target.files[0];
-  if (!file) return;
+var file = event.target.files[0];
+if (!file) return;
 
-  var statusDiv = document.getElementById('upload-status');
-  statusDiv.style.display = 'block';
-  statusDiv.textContent = 'Reading your file...';
+var statusDiv = document.getElementById('upload-status');
+statusDiv.style.display = 'block';
+statusDiv.textContent = 'Reading your file...';
 
-  var formData = new FormData();
-  formData.append('file', file);
+var formData = new FormData();
+formData.append('file', file);
 
-  fetch('/upload', { method: 'POST', body: formData }).then(function(res) {
-    return res.json();
-  }).then(function(data) {
-    if (data.extractedText) {
-      localStorage.setItem('peptideBloodwork', data.extractedText);
-      statusDiv.textContent = 'File saved! Analyzing...';
-      addMsg('usr', '[File uploaded and saved]');
+fetch('/upload', { method: 'POST', body: formData }).then(function(res) {
+return res.json();
+}).then(function(data) {
+if (data.extractedText) {
+localStorage.setItem('peptideBloodwork', data.extractedText);
+statusDiv.textContent = 'File saved! Analyzing...';
+addMsg('usr', '[File uploaded and saved]');
 
-      var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
-      hist.push({ role: 'user', content: uploadPrompt });
-      saveConversationAuto();
+var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
+hist.push({ role: 'user', content: uploadPrompt });
+saveConversationAuto();
 
-      busy = true;
-      document.getElementById('sbtn').disabled = true;
-      showTyping(true);
+busy = true;
+document.getElementById('sbtn').disabled = true;
+showTyping(true);
 
-      fetch(BACKEND, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8000, messages: hist })
-      }).then(function(response) {
-        streamResponse(response);
-        statusDiv.style.display = 'none';
-      }).catch(function(e) {
-        showTyping(false);
-        addMsg('err', 'Error analyzing file: ' + e.message);
-        busy = false;
-        document.getElementById('sbtn').disabled = false;
-        statusDiv.style.display = 'none';
-      });
-    } else {
-      statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
-    }
-  }).catch(function(e) {
-    statusDiv.textContent = 'Upload failed: ' + e.message;
-  });
+fetch(BACKEND, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8000, messages: hist })
+}).then(function(response) {
+streamResponse(response);
+statusDiv.style.display = 'none';
+}).catch(function(e) {
+showTyping(false);
+addMsg('err', 'Error analyzing file: ' + e.message);
+busy = false;
+document.getElementById('sbtn').disabled = false;
+statusDiv.style.display = 'none';
+});
+} else {
+statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
+}
+}).catch(function(e) {
+statusDiv.textContent = 'Upload failed: ' + e.message;
+});
 
-  event.target.value = '';
+event.target.value = '';
 }
 
 window.addEventListener('DOMContentLoaded', function() {
-  initTheme();
-  document.getElementById('cinput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMsgFromInput();
-    }
-  });
-  document.getElementById('cinput').addEventListener('input', function() { ag(this); });
-  document.getElementById('file-upload').addEventListener('change', handleFileUpload);
-  loadMemory();
+initTheme();
+document.getElementById('cinput').addEventListener('keydown', function(e) {
+if (e.key === 'Enter' && !e.shiftKey) {
+e.preventDefault();
+sendMsgFromInput();
+}
+});
+document.getElementById('cinput').addEventListener('input', function() { ag(this); });
+document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+loadMemory();
 });
 </script>
 
