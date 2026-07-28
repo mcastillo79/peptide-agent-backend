@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peptide Guidance Agent | Dr. Bachmeyer, Jay Campbell and More</title>
+<meta property="og:title" content="Free Peptide Guidance - Get Personalized Protocol Advice">
+<meta property="og:description" content="Ask our AI peptide agent anything - protocols, dosing, stacking, and bloodwork analysis. Backed by leading physicians. Free to use, no login required.">
+<meta property="og:url" content="https://peptide-agent-backend.onrender.com">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEVElEQVR4nO3dTW7bMBCG4VGQnX3HAm1+CjTHyaJNm1vqAF0YCALYn2OJHA45fB9418JkyNeUgwj2cvj2y4BL7qIngH4RByTigEQckIgDEnFAIg5IxAHp3pboKaBXnByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQuBMMEicHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJO4Eg8TJAYk4IBEHJOKARByQiAPSffQEbrW+v6p/Ov54aTmTGw034XPL4XvXXwB4ZYnP9bDow034in7j2LTKn0Wt+HAT/lKPcexe5c9arvhwE75Rd29Iqyx0xedpNlCzCd+urzjqLlCD5R5uwpt0FIfH0rgu93AT3qqXOPwWxemZh5vwDl3E4b0c1Z9/uAnvEx9Hm4WoOMpwE94tPg50684WC3y0fH2s768TTrjkwckBKTKO9V/ry2rhiMNNuBAnByTigBQWR9SBuXvc4SZcjpMD0jB3glUU+y5vIJwckIgDEnFAIg5IxAFpxt9Wjg97buWd8HecsJNj3w4FjjvchMtxWYFEHJAi42h/YBaOONyEC032mWDD/bChEw6+rBwf270yqow13IRL8J4DUnwcbV4fFUcZbsK7xcdh/gtR/fmHm/A+XcRhnsvh9MzDTXiHXuIwn0VxXejhJrxVR3FY7aVpsNDDTXiTvuKw/haomQ5/8OXw0N3HPp2sf2t8lpLzig8xyd36jeOkfPVdl75wet1mcdL7/Rwfy3dlG275Px4uDrdpwp3r/eTY6vqGjTtWiO7ekI4ifRmWL46L29P4cpNGtjjamOHYsJRxcHjUkjAOpVYfkxwbFv6ZYE6P45PYquJnvlzG00v4j+zxSHtyXOxjfePiskHaODxcbEueUuPLHAeHR6HMcdQ127Fh/f9tpdDx6eV8U9e318+beuUsyb33X1oOj6n+tnLO7zqSPp38l5X0W+gnfxzm08cMzU0RR3UzlGHEsc8kvw9PEYfHXs7QR/44/HYxfR/J4/Dev9x9ZI6jzc4l7iNzHCiUNo6WL+ish0faOFAu551g7V/K61vwNzl6PDg5IBEHpIRxrH+CvowtaFw/CeNALcQBiTggEQck4oBEHJCIAxJxQEoYx/E56MvYgsb1kzAO1EIckHLG0f6Ez3dNsaxxoIq0cbR8Kac8Nmy6b4d0knQN054cZnb82eTL2JqMEiJzHOa/c4nLsPRxmOf+5S7DZojDfHYxfRk2SRxWey9nKMPmicPq7egkZZjZcnhO/oFx59bfO28TnyeLkxnjONmUyGxZnMwbx4crlczZxAfigDTRG1JsRRyQiAMScUAiDkjEAYk4IHEnGCRODkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjcCQaJkwMScUAiDkjEAYk4IBEHJOKARByQ/gOXdhw1O0rikwAAAABJRU5ErkJggg==">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEVElEQVR4nO3dTW7bMBCG4VGQnX3HAm1+CjTHyaJNm1vqAF0YCALYn2OJHA45fB9418JkyNeUgwj2cvj2y4BL7qIngH4RByTigEQckIgDEnFAIg5IxAHp3pboKaBXnByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQuBMMEicHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJO4Eg8TJAYk4IBEHJOKARByQiAPSffQEbrW+v6p/Ov54aTmTGw034XPL4XvXXwB4ZYnP9bDow034in7j2LTKn0Wt+HAT/lKPcexe5c9arvhwE75Rd29Iqyx0xedpNlCzCd+urzjqLlCD5R5uwpt0FIfH0rgu93AT3qqXOPwWxemZh5vwDl3E4b0c1Z9/uAnvEx9Hm4WoOMpwE94tPg50684WC3y0fH2s768TTrjkwckBKTKO9V/ry2rhiMNNuBAnByTigBQWR9SBuXvc4SZcjpMD0jB3glUU+y5vIJwckIgDEnFAIg5IxAFpxt9Wjg97buWd8HecsJNj3w4FjjvchMtxWYFEHJAi42h/YBaOONyEC032mWDD/bChEw6+rBwf270yqow13IRL8J4DUnwcbV4fFUcZbsK7xcdh/gtR/fmHm/A+XcRhnsvh9MzDTXiHXuIwn0VxXejhJrxVR3FY7aVpsNDDTXiTvuKw/haomQ5/8OXw0N3HPp2sf2t8lpLzig8xyd36jeOkfPVdl75wet1mcdL7/Rwfy3dlG275Px4uDrdpwp3r/eTY6vqGjTtWiO7ekI4ifRmWL46L29P4cpNGtjjamOHYsJRxcHjUkjAOpVYfkxwbFv6ZYE6P45PYquJnvlzG00v4j+zxSHtyXOxjfePiskHaODxcbEueUuPLHAeHR6HMcdQ127Fh/f9tpdDx6eV8U9e318+beuUsyb33X1oOj6n+tnLO7zqSPp38l5X0W+gnfxzm08cMzU0RR3UzlGHEsc8kvw9PEYfHXs7QR/44/HYxfR/J4/Dev9x9ZI6jzc4l7iNzHCiUNo6WL+ish0faOFAu551g7V/K61vwNzl6PDg5IBEHpIRxrH+CvowtaFw/CeNALcQBiTggEQck4oBEHJCIAxJxQEoYx/E56MvYgsb1kzAO1EIckHLG0f6Ez3dNsaxxoIq0cbR8Kac8Nmy6b4d0knQN054cZnb82eTL2JqMEiJzHOa/c4nLsPRxmOf+5S7DZojDfHYxfRk2SRxWey9nKMPmicPq7egkZZjZcnhO/oFx59bfO28TnyeLkxnjONmUyGxZnMwbx4crlczZxAfigDTRG1JsRRyQiAMScUAiDkjEAYk4IHEnGCRODkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjcCQaJkwMScUAiDkjEAYk4IBEHJOKARByQ/gOXdhw1O0rikwAAAABJRU5ErkJggg==">
+<meta name="apple-mobile-web-app-title" content="Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+--page-bg: #f0f4f8;
+--card-bg: #ffffff;
+--chat-bg: #f8fafc;
+--header-bg: #0a2540;
+--text-main: #1a202c;
+--text-soft: #64748b;
+--border-col: #e2e8f0;
+--bot-bg: #ffffff;
+--input-bg: #f8fafc;
+--qb-bg: #f8fafc;
+--qb-text: #64748b;
+--accent: #1a6b3c;
+}
+body.dark {
+--page-bg: #0d1117;
+--card-bg: #161b22;
+--chat-bg: #0d1117;
+--header-bg: #010409;
+--text-main: #e6edf3;
+--text-soft: #8b949e;
+--border-col: #30363d;
+--bot-bg: #21262d;
+--input-bg: #21262d;
+--qb-bg: #21262d;
+--qb-text: #8b949e;
+--accent: #3fb950;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; background: var(--page-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; transition: background 0.3s; }
+#intake-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+#intake-box { background: var(--card-bg); border-radius: 16px; padding: 28px 24px; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+#intake-box h2 { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+#intake-box p { font-size: 13px; color: var(--text-soft); margin-bottom: 20px; line-height: 1.5; }
+.intake-field { margin-bottom: 14px; }
+.intake-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-soft); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.intake-field input, .intake-field select, .intake-field textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg); color: var(--text-main); outline: none; }
+.intake-field input:focus, .intake-field select:focus, .intake-field textarea:focus { border-color: var(--accent); }
+.intake-field textarea { resize: none; height: 70px; }
+#intake-submit { width: 100%; padding: 12px; background: var(--header-bg); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 6px; }
+body.dark #intake-submit { background: var(--accent); }
+#intake-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
+#save-conv-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+#save-conv-box { background: var(--card-bg); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+#save-conv-box h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+#save-conv-box p { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; line-height: 1.5; }
+#save-conv-email { width: 100%; padding: 10px 12px; border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg); color: var(--text-main); margin-bottom: 12px; outline: none; }
+#save-conv-email:focus { border-color: var(--accent); }
+#save-conv-buttons { display: flex; gap: 8px; }
+#save-conv-submit { flex: 1; padding: 10px; background: var(--header-bg); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+body.dark #save-conv-submit { background: var(--accent); }
+#save-conv-skip { flex: 1; padding: 10px; background: var(--input-bg); color: var(--text-soft); border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; cursor: pointer; font-family: inherit; }
+#save-conv-skip:hover { background: var(--border-col); }
+#donation-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 998; padding: 20px; }
+#donation-box { background: var(--card-bg); border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+#donation-box h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+#donation-box p { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; }
+#custom-amount { width: 100%; padding: 10px 12px; border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg); color: var(--text-main); margin-bottom: 12px; outline: none; }
+#donate-confirm { width: 100%; padding: 10px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+#donate-cancel { width: 100%; padding: 10px; background: var(--input-bg); color: var(--text-soft); border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; cursor: pointer; font-family: inherit; margin-top: 8px; }
+#memory-banner { background: rgba(26,107,60,0.08); border-bottom: 1px solid var(--border-col); padding: 8px 16px; font-size: 13px; color: var(--accent); display: none; align-items: center; justify-content: space-between; flex-shrink: 0; }
+#memory-banner span { font-weight: 500; }
+#reset-memory { font-size: 11px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
+#wrap { display: flex; flex-direction: column; height: 100vh; width: 100%; min-width: 0; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: var(--card-bg); transition: background 0.3s; }
+#hdr { padding: 16px 20px; background: var(--header-bg); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+#logo { width: 40px; height: 40px; border-radius: 50%; background: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
+#ttl { font-size: 15px; font-weight: 600; color: #fff; }
+#sub { font-size: 11px; color: #8ba4bf; margin-top: 2px; }
+#theme-toggle { background: none; border: none; cursor: pointer; font-size: 20px; margin-left: auto; padding: 4px; line-height: 1; color: #fff; }
+#dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; margin-left: 10px; }
+#msgs { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--chat-bg); min-width: 0; }
+.msg { max-width: 88%; min-width: 0; padding: 12px 16px; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+.bot { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 4px 16px 16px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.usr { align-self: flex-end; background: var(--header-bg); color: #fff; border-radius: 16px 4px 16px 16px; }
+body.dark .usr { background: #1f6feb; }
+.err { align-self: flex-start; background: #fff5f5; border: 1px solid #fed7d7; color: #c53030; border-radius: 4px 16px 16px 16px; font-size: 13px; }
+.msg a { color: var(--accent); text-decoration: underline; overflow-wrap: anywhere; }
+.msg-copy { display: block; font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 6px; background: none; border: none; padding: 0; font-family: inherit; }
+.msg-copy:hover { opacity: 0.8; }
+#typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
+#typer span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-soft); animation: bb 1s infinite; display: inline-block; }
+#typer span:nth-child(2) { animation-delay: 0.2s; }
+#typer span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bb { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+#qps { display: flex; gap: 6px; padding: 10px 16px; overflow-x: auto; background: var(--card-bg); border-top: 1px solid var(--border-col); flex-shrink: 0; scrollbar-width: none; }
+#qps::-webkit-scrollbar { display: none; }
+.qb { flex-shrink: 0; padding: 6px 12px; border: 1px solid var(--border-col); border-radius: 20px; font-size: 12px; color: var(--qb-text); background: var(--qb-bg); cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s; }
+.qb:hover { background: var(--header-bg); color: #fff; border-color: var(--header-bg); }
+#inp-area { display: flex; gap: 8px; padding: 14px 16px; background: var(--card-bg); border-top: 1px solid var(--border-col); align-items: flex-end; flex-shrink: 0; }
+#upload-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border-col); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+#upload-status { padding: 6px 16px; font-size: 12px; color: var(--accent); background: rgba(26,107,60,0.08); border-top: 1px solid var(--border-col); display: none; flex-shrink: 0; }
+#cinput { flex: 1; resize: none; font-size: 14px; padding: 10px 14px; border-radius: 24px; font-family: inherit; background: var(--input-bg); color: var(--text-main); min-height: 44px; max-height: 120px; line-height: 1.5; border: 1px solid var(--border-col); outline: none; }
+#cinput:focus { border-color: var(--accent); }
+#sbtn { width: 44px; height: 44px; border-radius: 50%; background: var(--header-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; color: #fff; }
+body.dark #sbtn { background: var(--accent); }
+#sbtn:disabled { opacity: 0.4; cursor: not-allowed; }
+#donation-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px 16px; border-top: 2px solid #667eea; flex-shrink: 0; }
+#donation-section h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; text-align: center; }
+#donation-section p { font-size: 12px; color: rgba(255,255,255,0.9); margin-bottom: 14px; text-align: center; }
+#donation-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.donation-btn { flex: 1; min-width: 120px; padding: 12px 16px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.donation-btn:hover { transform: scale(1.05); }
+#coffee-btn { background: #fff; color: #667eea; }
+#custom-btn { background: #f59e0b; color: #fff; }
+#monthly-btn { background: #10b981; color: #fff; }
+#ftr { text-align: center; font-size: 11px; color: var(--text-soft); padding: 8px 16px 10px; background: var(--card-bg); flex-shrink: 0; }
+@media (max-width: 480px) {
+  #donation-section { padding: 8px 12px; }
+  #donation-section h3 { font-size: 12px; margin-bottom: 6px; }
+  #donation-section p { display: none; }
+  #donation-buttons { gap: 5px; flex-wrap: nowrap; }
+  .donation-btn { min-width: 0; padding: 7px 4px; font-size: 10px; white-space: nowrap; }
+  #donation-buttons > div { font-size: 9px !important; padding: 4px 6px !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="intake-overlay">
+<div id="intake-box">
+<h2>Welcome to the Peptide Guidance Agent</h2>
+<p>Tell us a little about yourself so we can personalize your guidance. This is saved locally on your device.</p>
+<div class="intake-field">
+<label>Your First Name</label>
+<input type="text" id="intake-name" placeholder="e.g. Michael">
+</div>
+<div class="intake-field">
+<label>Age and Biological Sex</label>
+<input type="text" id="intake-age" placeholder="e.g. 45, Male">
+</div>
+<div class="intake-field">
+<label>Main Health Goal</label>
+<select id="intake-goal">
+<option value="">Select your primary goal...</option>
+<option value="Fat loss and metabolic health">Fat loss and metabolic health</option>
+<option value="Muscle building and recovery">Muscle building and recovery</option>
+<option value="Longevity and anti-aging">Longevity and anti-aging</option>
+<option value="Injury healing and tissue repair">Injury healing and tissue repair</option>
+<option value="Cognitive function and brain health">Cognitive function and brain health</option>
+<option value="Hormone optimization">Hormone optimization</option>
+<option value="Gut health and inflammation">Gut health and inflammation</option>
+<option value="Sleep and recovery">Sleep and recovery</option>
+<option value="General wellness and optimization">General wellness and optimization</option>
+</select>
+</div>
+<div class="intake-field">
+<label>Any existing conditions or medications? (optional)</label>
+<textarea id="intake-conditions" placeholder="e.g. Type 2 diabetes, on metformin. Or leave blank if none."></textarea>
+</div>
+<div class="intake-field">
+<label>Prior peptide experience?</label>
+<select id="intake-experience">
+<option value="No prior peptide experience">No - completely new to peptides</option>
+<option value="Some peptide experience">Some experience - tried a few</option>
+<option value="Experienced peptide user">Experienced - currently using peptides</option>
+</select>
+</div>
+<button id="intake-submit" onclick="saveIntake()">Start My Personalized Session</button>
+<div id="intake-skip" onclick="skipIntake()" style="cursor: pointer;">Skip for now</div>
+<div id="intake-restore" onclick="restoreAccount()" style="cursor: pointer; text-align: center; margin-top: 12px; font-size: 13px; color: var(--accent); text-decoration: underline;">Already have an account? Restore by email</div>
+</div>
+</div>
+
+<div id="save-conv-overlay">
+<div id="save-conv-box">
+<h3>Save conversation?</h3>
+<p>Create a free account to save your conversation and unlock personalized guidance from our expert protocols.</p>
+<input type="email" id="save-conv-email" placeholder="your@email.com" autocomplete="email">
+<div id="save-conv-buttons">
+<button id="save-conv-submit" onclick="saveEmailAndConversation()">Save My Email</button>
+<button id="save-conv-skip" onclick="hideSaveModal()">Keep Browsing</button>
+</div>
+</div>
+</div>
+
+<div id="donation-modal">
+<div id="donation-box">
+<h3>💰 Support This Project</h3>
+<p>Help keep the Peptide Guidance Agent running and improve it for everyone.</p>
+<label style="font-size: 12px; color: var(--text-soft); display: block; margin-bottom: 6px;">Donation Amount (USD)</label>
+<input type="number" id="custom-amount" placeholder="e.g. 10" min="1" step="0.01">
+<button id="donate-confirm" onclick="processCustomDonation()">Donate Now</button>
+<button id="donate-cancel" onclick="closeDonationModal()">Cancel</button>
+</div>
+</div>
+
+<div id="wrap">
+<div id="hdr">
+<div id="logo">GRx</div>
+<div>
+<div id="ttl">Peptide Guidance Agent</div>
+<div id="sub">Expert protocols from Dr. Bachmeyer, Jay Campbell, Dr. Seeds and leading physicians</div>
+</div>
+<button id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
+<div id="dot"></div>
+</div>
+
+<div id="memory-banner">
+<span id="memory-greeting"></span>
+<span id="reset-memory" onclick="resetMemory()" style="cursor: pointer;">Reset profile</span>
+</div>
+
+<div id="msgs">
+<div class="msg bot">
+Welcome to the Peptide Guidance Agent.<br><br>
+Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds, Dr. Rhonda Patrick, and leading peptide physicians.<br><br>
+To personalize my guidance, tell me:<br>
+- What is your main health goal?<br>
+- Any existing conditions or medications?<br>
+- Have you used peptides before?
+</div>
+</div>
+
+<div id="typer"><span></span><span></span><span></span></div>
+<div id="qps">
+<button class="qb" onclick="sendMsg('Please provide a concise, brief version of your previous response in a few sentences, keeping only the most important points.')">Concise version</button>
+<button class="qb" onclick="sendMsg('I haven\'t had bloodwork done in a while. Where should I get it done?')">Get bloodwork done</button>
+<button class="qb" onclick="sendMsg('What peptides are best for fat loss?')">Fat loss</button>
+<button class="qb" onclick="sendMsg('Tell me about the Wolverine Stack')">Wolverine Stack</button>
+<button class="qb" onclick="sendMsg('Best peptides for longevity and anti-aging?')">Longevity</button>
+<button class="qb" onclick="sendMsg('Where can I source peptides safely and legally?')">Where to source</button>
+<button class="qb" onclick="sendMsg('What bloodwork should I monitor on peptides?')">Bloodwork</button>
+<button class="qb" onclick="sendMsg('Best beginner peptide stack?')">Beginner stack</button>
+<button class="qb" onclick="sendMsg('Tell me everything about BPC-157')">BPC-157</button>
+</div>
+
+<div id="upload-status"></div>
+
+<div id="inp-area">
+<label for="file-upload" id="upload-btn">📎</label>
+<input type="file" id="file-upload" accept=".pdf,image/*" style="display:none">
+<textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1"></textarea>
+<button id="sbtn" onclick="sendMsgFromInput()">↑</button>
+</div>
+
+<div id="donation-section">
+<h3>💜 Support This Project</h3>
+<p>Help us keep the Peptide Guidance Agent running and improve it for everyone</p>
+<div id="donation-buttons" style="position: relative;">
+<button class="donation-btn" id="coffee-btn" onclick="stripeDonate(5)" disabled style="opacity:0.4; cursor:not-allowed; pointer-events:none;">☕ Buy me a coffee</button>
+<button class="donation-btn" id="custom-btn" onclick="openCustomDonation()" disabled style="opacity:0.4; cursor:not-allowed; pointer-events:none;">💰 Custom amount</button>
+<button class="donation-btn" id="monthly-btn" onclick="stripeMonthly()" disabled style="opacity:0.4; cursor:not-allowed; pointer-events:none;">💚 Support monthly</button>
+<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; pointer-events: none;">Coming Soon</div>
+</div>
+</div>
+
+<div id="ftr">Educational only - Always consult a physician - Licensed 503A Compounding Pharmacy</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-compat.js"></script>
+
+<script>
+const stripe = Stripe('pk_test_51TtIVqFvV3t1R8TgzxczU4UKEXkGiyCb1feqRxGKq51gyaNhwZ0OOYZjCjQsUvyAAa96DZAP6vvIJNcmxwAcRylt00IrIIOyLz');
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
+  authDomain: "peptide-agent-49020.firebaseapp.com",
+  projectId: "peptide-agent-49020",
+  storageBucket: "peptide-agent-49020.firebasestorage.app",
+  messagingSenderId: "51195071651O",
+  appId: "1:51195071651O:web:ed6f4d1608ed2ff3267ecf"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+var BACKEND = '/chat';
+var hist = [];
+var busy = false;
+var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec';
+
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('theme-toggle').textContent = '☀️';
+  } else {
+    document.body.classList.remove('dark');
+    document.getElementById('theme-toggle').textContent = '🌙';
+  }
+}
+
+function initTheme() {
+  var saved = localStorage.getItem('peptideTheme');
+  if (saved) {
+    applyTheme(saved);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    applyTheme('dark');
+  } else {
+    applyTheme('light');
+  }
+}
+
+function toggleTheme() {
+  var isDark = document.body.classList.contains('dark');
+  var newTheme = isDark ? 'light' : 'dark';
+  applyTheme(newTheme);
+  localStorage.setItem('peptideTheme', newTheme);
+}
+
+function ag(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function addCopyButton(msgDiv) {
+  var copyBtn = document.createElement('button');
+  copyBtn.className = 'msg-copy';
+  copyBtn.textContent = 'Copy';
+  copyBtn.onclick = function(e) {
+    e.preventDefault();
+    var text = msgDiv.innerText.replace(/Copy$/, '').trim();
+    navigator.clipboard.writeText(text).then(function() {
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+    });
+  };
+  msgDiv.appendChild(copyBtn);
+}
+
+function addMsg(cls, html) {
+  var box = document.getElementById('msgs');
+  var d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerHTML = html;
+  if (cls === 'bot') {
+    addCopyButton(d);
+  }
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+
+function fmt(t) {
+  t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  t = t.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>');
+  t = t.replace(/\n\n/g, '<br><br>');
+  t = t.replace(/\n/g, '<br>');
+  return t;
+}
+
+function showTyping(v) {
+  document.getElementById('typer').style.display = v ? 'flex' : 'none';
+  if (v) document.getElementById('msgs').scrollTop = 99999;
+}
+
+function showSaveModal() {
+  // Don't nag someone who's already saved their email.
+  if (localStorage.getItem('peptideUserEmail')) return;
+  // If they've dismissed it before, wait a day before asking again instead
+  // of never asking again (the old behavior permanently blocked this after
+  // one dismissal, which is how people lost their history for good).
+  var dismissedAt = localStorage.getItem('peptideModalDismissedAt');
+  var oneDayMs = 24 * 60 * 60 * 1000;
+  if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < oneDayMs) return;
+  document.getElementById('save-conv-overlay').style.display = 'flex';
+}
+
+function hideSaveModal() {
+  localStorage.setItem('peptideModalDismissedAt', String(Date.now()));
+  document.getElementById('save-conv-overlay').style.display = 'none';
+}
+
+function openCustomDonation() {
+  document.getElementById('donation-modal').style.display = 'flex';
+}
+
+function closeDonationModal() {
+  document.getElementById('donation-modal').style.display = 'none';
+  document.getElementById('custom-amount').value = '';
+}
+
+function processCustomDonation() {
+  var amount = parseFloat(document.getElementById('custom-amount').value);
+  if (!amount || amount <= 0) {
+    alert('Please enter a valid amount');
+    return;
+  }
+  stripeDonate(amount);
+}
+
+function stripeDonate(amount) {
+  fetch('/create-checkout-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: Math.round(amount * 100), type: 'one-time' })
+  }).then(function(res) { return res.json(); }).then(function(data) {
+    if (data.sessionId) {
+      stripe.redirectToCheckout({ sessionId: data.sessionId });
+    }
+  }).catch(function(e) {
+    alert('Error: ' + e.message);
+  });
+  closeDonationModal();
+}
+
+function stripeMonthly() {
+  fetch('/create-checkout-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'subscription' })
+  }).then(function(res) { return res.json(); }).then(function(data) {
+    if (data.sessionId) {
+      stripe.redirectToCheckout({ sessionId: data.sessionId });
+    }
+  }).catch(function(e) {
+    alert('Error: ' + e.message);
+  });
+}
+
+function saveIntake() {
+  var name = document.getElementById('intake-name').value.trim() || 'Friend';
+  var age = document.getElementById('intake-age').value.trim() || 'Not specified';
+  var goal = document.getElementById('intake-goal').value || 'General wellness and optimization';
+  var conditions = document.getElementById('intake-conditions').value.trim() || 'None noted';
+  var experience = document.getElementById('intake-experience').value;
+
+  var profile = { name: name, age: age, goal: goal, conditions: conditions, experience: experience };
+  localStorage.setItem('peptideUserProfile', JSON.stringify(profile));
+  document.getElementById('intake-overlay').style.display = 'none';
+
+  var banner = document.getElementById('memory-banner');
+  document.getElementById('memory-greeting').textContent = 'Profile saved - ' + name;
+  banner.style.display = 'flex';
+
+  var contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
+  hist.push({ role: 'user', content: contextMsg });
+  hist.push({ role: 'assistant', content: 'Thanks ' + name + '! Your profile is saved. You are focused on ' + goal + '. How can I help you today?' });
+  addMsg('bot', 'Thanks <strong>' + name + '</strong>! Your profile is saved. Next time you visit I will remember you. You are focused on <strong>' + goal + '</strong>. What would you like to know?');
+}
+
+function skipIntake() {
+  document.getElementById('intake-overlay').style.display = 'none';
+}
+
+function resetMemory() {
+  localStorage.removeItem('peptideUserProfile');
+  localStorage.removeItem('peptideBloodwork');
+  localStorage.removeItem('peptideModalShown');
+  localStorage.removeItem('peptideUserEmail');
+  location.reload();
+}
+
+function renderMemoryUI(userEmail) {
+  var profileStr = localStorage.getItem('peptideUserProfile');
+  if (!profileStr) {
+    document.getElementById('intake-overlay').style.display = 'flex';
+    return null;
+  }
+
+  var profile = JSON.parse(profileStr);
+  document.getElementById('intake-overlay').style.display = 'none';
+
+  var banner = document.getElementById('memory-banner');
+  banner.style.display = 'flex';
+
+  var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+  document.getElementById('memory-greeting').textContent = userEmail ? 'Conversation saved - ' + userEmail : 'Welcome back, ' + profile.name + ' - your profile is loaded.';
+
+  var contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
+  if (bloodwork) {
+    contextMsg += ' My previously uploaded bloodwork results: ' + bloodwork;
+  }
+  contextMsg += ' Please keep this context in mind and personalize your guidance accordingly.';
+
+  hist.push({ role: 'user', content: contextMsg });
+  var bloodworkNote = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
+  hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
+
+  addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+  return { profile: profile, bloodworkNote: bloodworkNote };
+}
+
+function loadMemory() {
+  var userEmail = localStorage.getItem('peptideUserEmail');
+
+  if (!userEmail) {
+    renderMemoryUI(null);
+    return;
+  }
+
+  // Firestore is the source of truth once we know the user's email - it may
+  // have profile/bloodwork/messages even if this browser's local storage
+  // got cleared (a known iOS Safari behavior), so pull it down first.
+  var db = firebase.firestore();
+  db.collection('users').doc(userEmail).get().then(function(doc) {
+    if (doc.exists) {
+      var data = doc.data();
+      if (data.profile) {
+        localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+      } else if (!localStorage.getItem('peptideUserProfile')) {
+        // This is a real, saved account (email + conversation on file) - it
+        // just never had the intake form filled out (e.g. user hit "Skip
+        // for now" originally). Don't trap them on the welcome screen every
+        // time they restore - give them a minimal default profile instead.
+        localStorage.setItem('peptideUserProfile', JSON.stringify({
+          name: 'Friend', age: 'Not specified', goal: 'General wellness and optimization',
+          conditions: 'None noted', experience: 'Not specified'
+        }));
+      }
+      if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+    }
+
+    var rendered = renderMemoryUI(userEmail);
+    if (!rendered) return;
+
+    if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
+      hist = doc.data().messages;
+      document.getElementById('msgs').innerHTML = '';
+      addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
+      hist.slice(2).forEach(function(msg) {
+        if (msg.role === 'user') {
+          addMsg('usr', msg.content);
+        } else {
+          addMsg('bot', fmt(msg.content));
+        }
+      });
+      console.log('Loaded conversation history');
+    }
+  }).catch(function(e) {
+    console.log('Could not reach saved conversation, using local data only');
+    renderMemoryUI(userEmail);
+  });
+}
+
+function saveConversationAuto() {
+  var userEmail = localStorage.getItem('peptideUserEmail');
+  if (userEmail) {
+    var db = firebase.firestore();
+    var profileStr = localStorage.getItem('peptideUserProfile');
+    var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+    db.collection('users').doc(userEmail).set({
+      email: userEmail,
+      messages: hist,
+      profile: profileStr ? JSON.parse(profileStr) : null,
+      bloodwork: bloodwork,
+      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(function(e) {
+      console.log('Auto-save skipped');
+    });
+  }
+}
+
+function restoreAccount() {
+  var email = prompt('Enter the email you used to save your conversation:');
+  if (!email) return;
+  email = email.trim();
+  if (!email) return;
+
+  var db = firebase.firestore();
+  db.collection('users').doc(email).get().then(function(doc) {
+    if (doc.exists) {
+      localStorage.setItem('peptideUserEmail', email);
+      var data = doc.data();
+      if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+      if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+      location.reload();
+    } else {
+      alert('No saved account found for that email. Double check you typed it exactly as before.');
+    }
+  }).catch(function(e) {
+    alert('Something went wrong trying to restore your account. Please try again in a moment.');
+  });
+}
+
+function streamResponse(response) {
+  showTyping(false);
+  var msgs = document.getElementById('msgs');
+  var msgDiv = document.createElement('div');
+  msgDiv.className = 'msg bot';
+  msgs.appendChild(msgDiv);
+
+  var reader = response.body.getReader();
+  var decoder = new TextDecoder();
+  var fullText = '';
+  var buffer = '';
+
+  function read() {
+    reader.read().then(function(result) {
+      if (result.done) {
+        if (fullText) {
+          hist.push({ role: 'assistant', content: fullText });
+          saveConversationAuto();
+        }
+        addCopyButton(msgDiv);
+        busy = false;
+        document.getElementById('sbtn').disabled = false;
+        setTimeout(showSaveModal, 800);
+        return;
+      }
+
+      buffer += decoder.decode(result.value, { stream: true });
+      var lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        if (line.indexOf('data: ') === 0) {
+          var d = line.slice(6).trim();
+          if (d === '[DONE]') continue;
+          try {
+            var parsed = JSON.parse(d);
+            if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+              fullText += parsed.delta.text;
+              msgDiv.innerHTML = fmt(fullText);
+              msgs.scrollTop = msgs.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
+      read();
+    });
+  }
+  read();
+}
+
+function sendMsg(text) {
+  if (busy) return;
+  if (!text) return;
+  busy = true;
+  document.getElementById('sbtn').disabled = true;
+
+  addMsg('usr', text);
+  hist.push({ role: 'user', content: text });
+  saveConversationAuto();
+
+  showTyping(true);
+
+  fetch(BACKEND, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 5000, messages: hist })
+  }).then(function(response) {
+    streamResponse(response);
+  }).catch(function(e) {
+    showTyping(false);
+    addMsg('err', 'Error: ' + e.message);
+    busy = false;
+    document.getElementById('sbtn').disabled = false;
+  });
+}
+
+function sendMsgFromInput() {
+  var el = document.getElementById('cinput');
+  var txt = el.value.trim();
+  if (!txt) return;
+  el.value = '';
+  el.style.height = 'auto';
+  sendMsg(txt);
+}
+
+function saveEmailAndConversation() {
+  var email = document.getElementById('save-conv-email').value.trim();
+  if (!email) {
+    alert('Please enter your email');
+    return;
+  }
+
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({
+      email: email,
+      timestamp: new Date().toISOString()
+    })
+  }).catch(function(e) {
+    console.log('Email sent');
+  });
+
+  localStorage.setItem('peptideUserEmail', email);
+
+  var db = firebase.firestore();
+  var profileStr = localStorage.getItem('peptideUserProfile');
+  var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+  db.collection('users').doc(email).set({
+    email: email,
+    messages: hist,
+    profile: profileStr ? JSON.parse(profileStr) : null,
+    bloodwork: bloodwork,
+    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).then(function() {
+    console.log('Conversation saved');
+  }).catch(function(e) {
+    console.error('Firebase error:', e);
+  });
+
+  hideSaveModal();
+  document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
+  document.getElementById('memory-banner').style.display = 'flex';
+}
+
+function handleFileUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+
+  var statusDiv = document.getElementById('upload-status');
+  statusDiv.style.display = 'block';
+  statusDiv.textContent = 'Reading your file...';
+
+  var formData = new FormData();
+  formData.append('file', file);
+
+  fetch('/upload', { method: 'POST', body: formData }).then(function(res) {
+    return res.json();
+  }).then(function(data) {
+    if (data.extractedText) {
+      localStorage.setItem('peptideBloodwork', data.extractedText);
+      statusDiv.textContent = 'File saved! Analyzing...';
+      addMsg('usr', '[File uploaded and saved]');
+
+      var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
+      hist.push({ role: 'user', content: uploadPrompt });
+      saveConversationAuto();
+
+      busy = true;
+      document.getElementById('sbtn').disabled = true;
+      showTyping(true);
+
+      fetch(BACKEND, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8000, messages: hist })
+      }).then(function(response) {
+        streamResponse(response);
+        statusDiv.style.display = 'none';
+      }).catch(function(e) {
+        showTyping(false);
+        addMsg('err', 'Error analyzing file: ' + e.message);
+        busy = false;
+        document.getElementById('sbtn').disabled = false;
+        statusDiv.style.display = 'none';
+      });
+    } else {
+      statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
+    }
+  }).catch(function(e) {
+    statusDiv.textContent = 'Upload failed: ' + e.message;
+  });
+
+  event.target.value = '';
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  initTheme();
+  document.getElementById('cinput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMsgFromInput();
+    }
+  });
+  document.getElementById('cinput').addEventListener('input', function() { ag(this); });
+  document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+  loadMemory();
+});
+</script>
+
+</body>
+</html>
