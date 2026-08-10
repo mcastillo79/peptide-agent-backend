@@ -94,6 +94,13 @@ body.dark .usr { background: #1f6feb; }
 .msg a { color: var(--accent); text-decoration: underline; overflow-wrap: anywhere; }
 .msg-copy { display: block; font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 6px; background: none; border: none; padding: 0; font-family: inherit; }
 .msg-copy:hover { opacity: 0.8; }
+.msg-actions { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.msg-actions .msg-copy { margin-top: 0; }
+.msg-fb { background: none; border: none; cursor: pointer; font-size: 13px; padding: 0; opacity: 0.5; transition: opacity 0.15s; line-height: 1; }
+.msg-fb:hover { opacity: 1; }
+.msg-fb:disabled { cursor: default; }
+.msg-fb.fb-selected { opacity: 1; }
+.msg-fb-note { font-size: 11px; color: var(--text-soft); }
 #typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
 #typer span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-soft); animation: bb 1s infinite; display: inline-block; }
 #typer span:nth-child(2) { animation-delay: 0.2s; }
@@ -318,19 +325,68 @@ el.style.height = 'auto';
 el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-function addCopyButton(msgDiv) {
+function addMsgActions(msgDiv) {
+// Capture the clean text now, before any action buttons are appended,
+// so Copy never picks up button labels appended after it.
+var cleanText = msgDiv.innerText.trim();
+
 var copyBtn = document.createElement('button');
 copyBtn.className = 'msg-copy';
 copyBtn.textContent = 'Copy';
 copyBtn.onclick = function(e) {
 e.preventDefault();
-var text = msgDiv.innerText.replace(/Copy$/, '').trim();
-navigator.clipboard.writeText(text).then(function() {
+navigator.clipboard.writeText(cleanText).then(function() {
 copyBtn.textContent = 'Copied!';
 setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
 });
 };
-msgDiv.appendChild(copyBtn);
+
+var upBtn = document.createElement('button');
+upBtn.className = 'msg-fb';
+upBtn.title = 'This was helpful';
+upBtn.textContent = 'ð';
+
+var downBtn = document.createElement('button');
+downBtn.className = 'msg-fb';
+downBtn.title = 'This was not helpful';
+downBtn.textContent = 'ð';
+
+var fbNote = document.createElement('span');
+fbNote.className = 'msg-fb-note';
+
+function sendFeedback(rating, btn) {
+upBtn.disabled = true;
+downBtn.disabled = true;
+btn.classList.add('fb-selected');
+fbNote.textContent = 'Thanks for the feedback';
+
+var question = '';
+for (var i = hist.length - 1; i >= 0; i--) {
+if (hist[i].role === 'user') { question = hist[i].content; break; }
+}
+
+var db = firebase.firestore();
+db.collection('feedback').add({
+question: typeof question === 'string' ? question : '',
+response: cleanText,
+rating: rating,
+email: localStorage.getItem('peptideUserEmail') || null,
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).catch(function(e) {
+console.log('Feedback log skipped');
+});
+}
+
+upBtn.onclick = function(e) { e.preventDefault(); sendFeedback('up', upBtn); };
+downBtn.onclick = function(e) { e.preventDefault(); sendFeedback('down', downBtn); };
+
+var actions = document.createElement('div');
+actions.className = 'msg-actions';
+actions.appendChild(copyBtn);
+actions.appendChild(upBtn);
+actions.appendChild(downBtn);
+actions.appendChild(fbNote);
+msgDiv.appendChild(actions);
 }
 
 function addMsg(cls, html) {
@@ -339,7 +395,7 @@ var d = document.createElement('div');
 d.className = 'msg ' + cls;
 d.innerHTML = html;
 if (cls === 'bot') {
-addCopyButton(d);
+addMsgActions(d);
 }
 box.appendChild(d);
 box.scrollTop = box.scrollHeight;
@@ -597,7 +653,7 @@ if (fullText) {
 hist.push({ role: 'assistant', content: fullText });
 saveConversationAuto();
 }
-addCopyButton(msgDiv);
+addMsgActions(msgDiv);
 busy = false;
 document.getElementById('sbtn').disabled = false;
 setTimeout(showSaveModal, 800);
