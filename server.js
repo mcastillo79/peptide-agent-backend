@@ -224,6 +224,144 @@ app.post('/chat', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+// ---- Admin feedback dashboard ----------------------------------------
+// Feedback is write-only from the browser: Firestore rules deny client
+// reads so one user's questions can never be read by another. This route
+// reads it server-side with a service account instead, gated by ADMIN_KEY.
+// Credentials are read lazily and everything is wrapped in try/catch, so a
+// missing or bad credential can only ever break this one page, never chat.
+function fbEsc(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('"').join('&quot;');
+}
+function fbB64Url(buf) {
+  return Buffer.from(buf).toString('base64').split('=').join('').split('+').join('-').split('/').join('_');
+}
+function fbVal(v) {
+  if (!v) return '';
+  if (v.stringValue !== undefined) return v.stringValue;
+  if (v.integerValue !== undefined) return v.integerValue;
+  if (v.timestampValue !== undefined) return v.timestampValue;
+  return '';
+}
+async function fbAccessToken(sa) {
+  const nodeCrypto = require('crypto');
+  const now = Math.floor(Date.now() / 1000);
+  const header = fbB64Url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const claim = fbB64Url(JSON.stringify({
+    iss: sa.client_email,
+    scope: 'https://www.googleapis.com/auth/datastore',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now
+  }));
+  const signer = nodeCrypto.createSign('RSA-SHA256');
+  signer.update(header + '.' + claim);
+  const sig = fbB64Url(signer.sign(sa.private_key));
+  const assertion = header + '.' + claim + '.' + sig;
+  const tokRes = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=' + encodeURIComponent('urn:ietf:params:oauth:grant-type:jwt-bearer') + '&assertion=' + assertion
+  });
+  const tok = await tokRes.json();
+  if (!tok.access_token) throw new Error('Auth failed: ' + (tok.error_description || tok.error || 'no token'));
+  return tok.access_token;
+}
+
+app.get('/admin/feedback', async (req, res) => {
+  try {
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey) return res.status(503).send('Not configured: set ADMIN_KEY in Render, then reload.');
+    if (req.query.key !== adminKey) return res.status(401).send('Unauthorized');
+    const rawSa = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!rawSa) return res.status(503).send('Not configured: set FIREBASE_SERVICE_ACCOUNT in Render, then reload.');
+    const sa = JSON.parse(rawSa);
+    const token = await fbAccessToken(sa);
+
+    let docs = [];
+    let pageToken = '';
+    for (let i = 0; i < 25; i++) {
+      const url = 'https://firestore.googleapis.com/v1/projects/' + sa.project_id +
+        '/databases/(default)/documents/feedback?pageSize=300' +
+        (pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : '');
+      const fr = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
+      const fj = await fr.json();
+      if (fj.error) throw new Error(fj.error.message);
+      docs = docs.concat(fj.documents || []);
+      if (!fj.nextPageToken) break;
+      pageToken = fj.nextPageToken;
+    }
+
+    const rows = docs.map(function(d) {
+      const f = d.fields || {};
+      return {
+        rating: fbVal(f.rating),
+        question: fbVal(f.question),
+        response: fbVal(f.response),
+        createdAt: fbVal(f.createdAt)
+      };
+    }).sort(function(a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
+
+    const ups = rows.filter(function(r2) { return r2.rating === 'up'; });
+    const downs = rows.filter(function(r2) { return r2.rating === 'down'; });
+    const total = ups.length + downs.length;
+    const pct = total ? Math.round((ups.length / total) * 100) : 0;
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const recent = rows.filter(function(r2) { return new Date(r2.createdAt).getTime() >= cutoff; });
+    const recentUp = recent.filter(function(r2) { return r2.rating === 'up'; }).length;
+    const recentDown = recent.filter(function(r2) { return r2.rating === 'down'; }).length;
+
+    function card(label, value, sub) {
+      return '<div class="card"><div class="lbl">' + fbEsc(label) + '</div><div class="val">' +
+        fbEsc(value) + '</div><div class="sub">' + fbEsc(sub) + '</div></div>';
+    }
+    function table(list, title, emptyMsg) {
+      if (!list.length) return '<h2>' + fbEsc(title) + '</h2><p class="empty">' + fbEsc(emptyMsg) + '</p>';
+      let h = '<h2>' + fbEsc(title) + ' (' + list.length + ')</h2><table><tr><th>When</th><th>Question</th><th>Answer</th></tr>';
+      list.forEach(function(r2) {
+        const when = r2.createdAt ? new Date(r2.createdAt).toLocaleString() : '';
+        h += '<tr><td class="when">' + fbEsc(when) + '</td><td>' + fbEsc(r2.question) +
+          '</td><td class="ans">' + fbEsc(String(r2.response).slice(0, 600)) + '</td></tr>';
+      });
+      return h + '</table>';
+    }
+
+    const html = '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<title>Scout feedback</title><style>' +
+      'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#f0f4f8;color:#1a202c;margin:0;padding:24px;}' +
+      'h1{font-size:20px;margin:0 0 4px;} .meta{color:#64748b;font-size:13px;margin-bottom:20px;}' +
+      '.cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px;}' +
+      '.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 18px;min-width:150px;}' +
+      '.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;}' +
+      '.val{font-size:26px;font-weight:700;margin:4px 0;} .sub{font-size:12px;color:#64748b;}' +
+      'h2{font-size:15px;margin:26px 0 10px;}' +
+      'table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;}' +
+      'th{background:#f8fafc;text-align:left;font-size:11px;text-transform:uppercase;color:#64748b;padding:9px 12px;}' +
+      'td{padding:10px 12px;border-top:1px solid #e2e8f0;font-size:13px;vertical-align:top;}' +
+      '.when{white-space:nowrap;color:#64748b;font-size:12px;} .ans{color:#475569;}' +
+      '.empty{color:#64748b;font-size:13px;}' +
+      '</style></head><body>' +
+      '<h1>Scout feedback</h1><div class="meta">' + total + ' ratings total. Generated ' +
+      fbEsc(new Date().toLocaleString()) + '.</div>' +
+      '<div class="cards">' +
+      card('Helpful', String(ups.length), 'thumbs up') +
+      card('Not helpful', String(downs.length), 'thumbs down') +
+      card('Satisfaction', total ? pct + '%' : 'n/a', 'rated helpful') +
+      card('Last 7 days', recentUp + ' up / ' + recentDown + ' down', String(recent.length) + ' ratings') +
+      '</div>' +
+      table(downs, 'Rated not helpful - worth reviewing', 'No negative feedback yet.') +
+      table(ups.slice(0, 25), 'Rated helpful (most recent 25)', 'No positive feedback yet.') +
+      '</body></html>';
+
+    res.set('Cache-Control', 'no-store');
+    res.send(html);
+  } catch (e) {
+    res.status(500).send('Dashboard error: ' + fbEsc(e.message));
+  }
+});
+
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 app.post('/create-checkout-session', async (req, res) => {
