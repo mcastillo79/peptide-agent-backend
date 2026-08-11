@@ -290,7 +290,7 @@ firebase.initializeApp(firebaseConfig);
 var BACKEND = '/chat';
 var hist = [];
 var busy = false;
-var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec'; var historyReady = false; var historyReadyPromise = null; var knownCloudMsgCount = 0; function withHistoryReady(fn) { if (historyReady) { fn(); return; } if (historyReadyPromise) { historyReadyPromise.then(fn); return; } fn(); }
+var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec'; var historyReady = false; var historyReadyPromise = null; var knownCloudMsgCount = 0; function withHistoryReady(fn) { if (historyReady) { fn(); return; } if (historyReadyPromise) { historyReadyPromise.then(fn); return; } fn(); } /* Snapshot backups: saveConversationAuto() replaces the whole messages array on every write, so one bad write can destroy a conversation permanently. Snapshots are append-only immutable copies in a subcollection (rules allow create, not update or delete), so a recoverable copy survives even if the main doc is clobbered. The one written right after load captures known-good state from before this session can touch anything. */ var SNAPSHOT_INTERVAL_MS = 6 * 60 * 60 * 1000; function writeSnapshot(userEmail, reason) { if (!userEmail) return; if (!hist || hist.length < 3) return; var db = firebase.firestore(); db.collection('users').doc(userEmail).collection('snapshots').add({ email: userEmail, messages: hist, messageCount: hist.length, reason: reason, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(function() { localStorage.setItem('peptideLastSnapshotAt', String(Date.now())); }).catch(function(e) { console.log('Snapshot skipped'); }); } function maybeWriteSnapshot(userEmail, reason) { var last = parseInt(localStorage.getItem('peptideLastSnapshotAt') || '0', 10); if (last && (Date.now() - last) < SNAPSHOT_INTERVAL_MS) return; writeSnapshot(userEmail, reason); }
 
 function applyTheme(theme) {
 if (theme === 'dark') {
@@ -576,7 +576,7 @@ var rendered = renderMemoryUI(userEmail);
 if (!rendered) return;
 
 if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
-hist = doc.data().messages; knownCloudMsgCount = hist.length;
+hist = doc.data().messages; knownCloudMsgCount = hist.length; maybeWriteSnapshot(userEmail, 'load');
 document.getElementById('msgs').innerHTML = '';
 addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
 hist.slice(2).forEach(function(msg) {
@@ -605,7 +605,7 @@ messages: hist,
 profile: profileStr ? JSON.parse(profileStr) : null,
 bloodwork: bloodwork,
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true }).then(function() { knownCloudMsgCount = hist.length; }).catch(function(e) {
+}, { merge: true }).then(function() { knownCloudMsgCount = hist.length; maybeWriteSnapshot(userEmail, 'autosave'); }).catch(function(e) {
 console.log('Auto-save skipped');
 });
 }
