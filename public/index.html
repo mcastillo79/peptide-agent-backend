@@ -290,7 +290,7 @@ firebase.initializeApp(firebaseConfig);
 var BACKEND = '/chat';
 var hist = [];
 var busy = false;
-var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec';
+var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyC22snfF-ZZdDLnfcr3Fvr_aKBCDDaChPfe_sgG81gVKtmjrYSlzwtKA-RkGCoh_hx/exec'; var historyReady = false; var historyReadyPromise = null; var knownCloudMsgCount = 0; function withHistoryReady(fn) { if (historyReady) { fn(); return; } if (historyReadyPromise) { historyReadyPromise.then(fn); return; } fn(); }
 
 function applyTheme(theme) {
 if (theme === 'dark') {
@@ -546,7 +546,7 @@ function loadMemory() {
 var userEmail = localStorage.getItem('peptideUserEmail');
 
 if (!userEmail) {
-renderMemoryUI(null);
+renderMemoryUI(null); historyReady = true;
 return;
 }
 
@@ -554,7 +554,7 @@ return;
 // have profile/bloodwork/messages even if this browser's local storage
 // got cleared (a known iOS Safari behavior), so pull it down first.
 var db = firebase.firestore();
-db.collection('users').doc(userEmail).get().then(function(doc) {
+historyReadyPromise = db.collection('users').doc(userEmail).get().then(function(doc) {
 if (doc.exists) {
 var data = doc.data();
 if (data.profile) {
@@ -576,7 +576,7 @@ var rendered = renderMemoryUI(userEmail);
 if (!rendered) return;
 
 if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
-hist = doc.data().messages;
+hist = doc.data().messages; knownCloudMsgCount = hist.length;
 document.getElementById('msgs').innerHTML = '';
 addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
 hist.slice(2).forEach(function(msg) {
@@ -590,13 +590,12 @@ console.log('Loaded conversation history');
 }
 }).catch(function(e) {
 console.log('Could not reach saved conversation, using local data only');
-renderMemoryUI(userEmail);
-});
+renderMemoryUI(userEmail); }).then(function() { historyReady = true; });
 }
 
 function saveConversationAuto() {
 var userEmail = localStorage.getItem('peptideUserEmail');
-if (userEmail) {
+if (userEmail) { if (knownCloudMsgCount > 0 && hist.length < knownCloudMsgCount) { console.log('Auto-save skipped: history shorter than known cloud history'); return; }
 var db = firebase.firestore();
 var profileStr = localStorage.getItem('peptideUserProfile');
 var bloodwork = localStorage.getItem('peptideBloodwork') || '';
@@ -606,7 +605,7 @@ messages: hist,
 profile: profileStr ? JSON.parse(profileStr) : null,
 bloodwork: bloodwork,
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true }).catch(function(e) {
+}, { merge: true }).then(function() { knownCloudMsgCount = hist.length; }).catch(function(e) {
 console.log('Auto-save skipped');
 });
 }
@@ -687,7 +686,7 @@ read();
 
 function sendMsg(text) {
 if (busy) return;
-if (!text) return;
+if (!text) return; if (!historyReady) { withHistoryReady(function() { sendMsg(text); }); return; }
 busy = true;
 document.getElementById('sbtn').disabled = true;
 
@@ -762,7 +761,7 @@ document.getElementById('memory-banner').style.display = 'flex';
 
 function handleFileUpload(event) {
 var file = event.target.files[0];
-if (!file) return;
+if (!file) return; if (!historyReady) { withHistoryReady(function() { handleFileUpload(event); }); return; }
 
 var statusDiv = document.getElementById('upload-status');
 statusDiv.style.display = 'block';
