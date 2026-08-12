@@ -646,7 +646,7 @@ var fullText = '';
 var buffer = '';
 
 function read() {
-reader.read().then(function(result) {
+reader.read().catch(function(streamErr) { showTyping(false); addMsg('err', 'The connection dropped before the answer finished. Nothing was lost - ask again and Scout will pick up where it left off.'); busy = false; document.getElementById('sbtn').disabled = false; return null; }).then(function(result) { if (!result) return;
 if (result.done) {
 if (fullText) {
 hist.push({ role: 'assistant', content: fullText });
@@ -761,7 +761,7 @@ document.getElementById('memory-banner').style.display = 'flex';
 
 function handleFileUpload(event) {
 var file = event.target.files[0];
-if (!file) return; if (!historyReady) { withHistoryReady(function() { handleFileUpload(event); }); return; }
+if (!file) return; if (busy) { var sd0 = document.getElementById('upload-status'); sd0.style.display = 'block'; sd0.textContent = 'Please wait for the current answer to finish, then upload again.'; event.target.value = ''; return; } if (!historyReady) { withHistoryReady(function() { handleFileUpload(event); }); return; }
 
 var statusDiv = document.getElementById('upload-status');
 statusDiv.style.display = 'block';
@@ -775,7 +775,7 @@ return res.json();
 }).then(function(data) {
 if (data.extractedText) {
 localStorage.setItem('peptideBloodwork', data.extractedText);
-statusDiv.textContent = 'File saved! Analyzing...';
+statusDiv.textContent = 'File saved! Analyzing your results - this can take up to a minute, please keep this page open...';
 addMsg('usr', '[File uploaded and saved]');
 
 var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
