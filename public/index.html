@@ -401,7 +401,7 @@ box.appendChild(d);
 box.scrollTop = box.scrollHeight;
 }
 
-function fmt(t) {
+var UPLOAD_PREFIX = 'I have uploaded my file. Here is the extracted data:'; function escHtml(s) { return String(s === null || s === undefined ? '' : s).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;'); } /* Saved history stores the whole extracted lab text as the user message, so replaying it raw showed a wall of pipes. Render the same placeholder the live upload shows, escape HTML, and keep line breaks. */ function displayUserMsg(text) { var t = String(text === null || text === undefined ? '' : text); if (t.indexOf(UPLOAD_PREFIX) === 0) return '[File uploaded and saved]'; return escHtml(t).split(String.fromCharCode(10)).join('<br>'); } function fmt(t) {
 t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
 t = t.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>');
@@ -581,7 +581,7 @@ document.getElementById('msgs').innerHTML = '';
 addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
 hist.slice(2).forEach(function(msg) {
 if (msg.role === 'user') {
-addMsg('usr', msg.content);
+addMsg('usr', displayUserMsg(msg.content));
 } else {
 addMsg('bot', fmt(msg.content));
 }
@@ -690,7 +690,7 @@ if (!text) return; if (!historyReady) { withHistoryReady(function() { sendMsg(te
 busy = true;
 document.getElementById('sbtn').disabled = true;
 
-addMsg('usr', text);
+addMsg('usr', displayUserMsg(text));
 hist.push({ role: 'user', content: text });
 saveConversationAuto();
 
