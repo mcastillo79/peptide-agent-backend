@@ -164,12 +164,12 @@ body.dark #sbtn { background: var(--accent); }
 
 <div id="save-conv-overlay">
 <div id="save-conv-box">
-<h3>Save conversation?</h3>
-<p>Create a free account to save your conversation and unlock personalized guidance from our expert protocols.</p>
+<h3>Save your chat to the cloud</h3>
+<p>Use the same email on all your devices to sync conversations everywhere. Your chat stays safe and private.</p>
 <input type="email" id="save-conv-email" placeholder="your@email.com" autocomplete="email">
 <div id="save-conv-buttons">
 <button id="save-conv-submit" onclick="saveEmailAndConversation()">Save My Email</button>
-<button id="save-conv-skip" onclick="hideSaveModal()">Keep Browsing</button>
+<button id="save-conv-skip" onclick="hideSaveModal()">Skip for now</button>
 </div>
 </div>
 </div>
@@ -245,6 +245,8 @@ var busy = false;
 var CHAT_STORAGE_KEY = 'peptideChatHistory';
 var historyReady = false;
 var knownCloudMsgCount = 0;
+var userMessageCount = 0;
+var emailSaveModalShown = false;
 
 function saveChatHistory() {
 try {
@@ -443,14 +445,12 @@ if (v) document.getElementById('msgs').scrollTop = 99999;
 
 function showSaveModal() {
 if (localStorage.getItem('peptideUserEmail')) return;
-var dismissedAt = localStorage.getItem('peptideModalDismissedAt');
-var oneDayMs = 24 * 60 * 60 * 1000;
-if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < oneDayMs) return;
+if (emailSaveModalShown) return;
+emailSaveModalShown = true;
 document.getElementById('save-conv-overlay').style.display = 'flex';
 }
 
 function hideSaveModal() {
-localStorage.setItem('peptideModalDismissedAt', String(Date.now()));
 document.getElementById('save-conv-overlay').style.display = 'none';
 }
 
@@ -604,7 +604,7 @@ saveConversationAuto();
 addCopyButton(msgDiv);
 busy = false;
 document.getElementById('sbtn').disabled = false;
-setTimeout(showSaveModal, 800);
+showSaveModal();
 return;
 }
 buffer += decoder.decode(result.value, { stream: true });
@@ -649,6 +649,7 @@ addMsg('usr', displayUserMsg(text));
 hist.push({ role: 'user', content: text });
 saveChatHistory();
 saveConversationAuto();
+userMessageCount++;
 showTyping(true);
 fetch(BACKEND, {
 method: 'POST',
@@ -691,6 +692,7 @@ bloodwork: bloodwork,
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).then(function() {
 console.log('Conversation saved to cloud');
+maybeWriteSnapshot(email, 'email-save');
 }).catch(function(e) {
 console.error('Firebase error:', e);
 });
