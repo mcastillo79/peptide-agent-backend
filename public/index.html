@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<script src="https://js.stripe.com/v3/"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-compat.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -57,6 +57,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; bac
 #intake-submit { width: 100%; padding: 12px; background: var(--header-bg); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 6px; }
 body.dark #intake-submit { background: var(--accent); }
 #intake-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
+#save-conv-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+#save-conv-box { background: var(--card-bg); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+#save-conv-box h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+#save-conv-box p { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; line-height: 1.5; }
+#save-conv-email { width: 100%; padding: 10px 12px; border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg); color: var(--text-main); margin-bottom: 12px; outline: none; }
+#save-conv-email:focus { border-color: var(--accent); }
+#save-conv-buttons { display: flex; gap: 8px; }
+#save-conv-submit { flex: 1; padding: 10px; background: var(--header-bg); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+body.dark #save-conv-submit { background: var(--accent); }
+#save-conv-skip { flex: 1; padding: 10px; background: var(--input-bg); color: var(--text-soft); border: 1px solid var(--border-col); border-radius: 8px; font-size: 14px; cursor: pointer; font-family: inherit; }
 #memory-banner { background: rgba(26,107,60,0.08); border-bottom: 1px solid var(--border-col); padding: 8px 16px; font-size: 13px; color: var(--accent); display: none; align-items: center; justify-content: space-between; flex-shrink: 0; }
 #memory-banner span { font-weight: 500; }
 #reset-memory { font-size: 11px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
@@ -148,6 +158,19 @@ body.dark #sbtn { background: var(--accent); }
 </div>
 <button id="intake-submit" onclick="saveIntake()">Start My Personalized Session</button>
 <div id="intake-skip" onclick="skipIntake()" style="cursor: pointer;">Skip for now</div>
+<div id="intake-restore" onclick="restoreAccount()" style="cursor: pointer; text-align: center; margin-top: 12px; font-size: 13px; color: var(--accent); text-decoration: underline;">Already have an account? Restore by email</div>
+</div>
+</div>
+
+<div id="save-conv-overlay">
+<div id="save-conv-box">
+<h3>Save conversation?</h3>
+<p>Create a free account to save your conversation and unlock personalized guidance from our expert protocols.</p>
+<input type="email" id="save-conv-email" placeholder="your@email.com" autocomplete="email">
+<div id="save-conv-buttons">
+<button id="save-conv-submit" onclick="saveEmailAndConversation()">Save My Email</button>
+<button id="save-conv-skip" onclick="hideSaveModal()">Keep Browsing</button>
+</div>
 </div>
 </div>
 
@@ -205,17 +228,144 @@ To personalize my guidance, tell me:<br>
 </div>
 
 <script>
+var firebaseConfig = {
+apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
+authDomain: "peptide-agent-49020.firebaseapp.com",
+projectId: "peptide-agent-49020",
+storageBucket: "peptide-agent-49020.firebasestorage.app",
+messagingSenderId: "51195071651O",
+appId: "1:51195071651O:web:ed6f4d1608ed2ff3267ecf"
+};
+
+firebase.initializeApp(firebaseConfig);
+
 var BACKEND = '/chat';
 var hist = [];
 var busy = false;
+var CHAT_STORAGE_KEY = 'peptideChatHistory';
+var historyReady = false;
+var knownCloudMsgCount = 0;
+
+function saveChatHistory() {
+try {
+localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(hist));
+} catch(e) {}
+}
+
+function loadChatHistory() {
+try {
+var saved = localStorage.getItem(CHAT_STORAGE_KEY);
+if (saved) {
+hist = JSON.parse(saved);
+return true;
+}
+} catch(e) {}
+return false;
+}
+
+function saveConversationAuto() {
+var userEmail = localStorage.getItem('peptideUserEmail');
+if (userEmail) {
+if (knownCloudMsgCount > 0 && hist.length < knownCloudMsgCount) {
+console.log('Auto-save skipped: history shorter than known cloud history');
+return;
+}
+var db = firebase.firestore();
+var profileStr = localStorage.getItem('peptideUserProfile');
+var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+db.collection('users').doc(userEmail).set({
+email: userEmail,
+messages: hist,
+profile: profileStr ? JSON.parse(profileStr) : null,
+bloodwork: bloodwork,
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).then(function() {
+knownCloudMsgCount = hist.length;
+}).catch(function(e) {
+console.log('Auto-save skipped');
+});
+}
+}
+
+function writeSnapshot(userEmail, reason) {
+if (!userEmail) return;
+if (!hist || hist.length < 3) return;
+var db = firebase.firestore();
+db.collection('users').doc(userEmail).collection('snapshots').add({
+email: userEmail,
+messages: hist,
+messageCount: hist.length,
+reason: reason,
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).then(function() {
+localStorage.setItem('peptideLastSnapshotAt', String(Date.now()));
+}).catch(function(e) {
+console.log('Snapshot skipped');
+});
+}
+
+function maybeWriteSnapshot(userEmail, reason) {
+var last = parseInt(localStorage.getItem('peptideLastSnapshotAt') || '0', 10);
+if (last && (Date.now() - last) < 6 * 60 * 60 * 1000) return;
+writeSnapshot(userEmail, reason);
+}
+
+function listBackups(email) {
+email = email || localStorage.getItem('peptideUserEmail');
+if (!email) {
+console.log('No email on file. Try listBackups("you@example.com")');
+return;
+}
+return firebase.firestore().collection('users').doc(email).collection('snapshots').orderBy('createdAt', 'desc').limit(50).get().then(function(snap) {
+var rows = [];
+snap.forEach(function(d) {
+var v = d.data();
+rows.push({
+index: rows.length,
+messages: v.messageCount,
+reason: v.reason,
+saved: (v.createdAt && v.createdAt.toDate) ? v.createdAt.toDate().toLocaleString() : 'just now'
+});
+});
+window.__backups = snap.docs;
+if (rows.length) {
+console.table(rows);
+} else {
+console.log('No backups found for ' + email);
+}
+return rows;
+});
+}
+
+function restoreBackup(index, email) {
+email = email || localStorage.getItem('peptideUserEmail');
+if (!window.__backups || !window.__backups.length) {
+console.log('Run listBackups() first.');
+return;
+}
+var doc = window.__backups[index || 0];
+if (!doc) {
+console.log('No backup at that index.');
+return;
+}
+var msgs = doc.data().messages;
+return firebase.firestore().collection('users').doc(email).set({
+email: email,
+messages: msgs,
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).then(function() {
+console.log('Restored ' + msgs.length + ' messages. Reloading...');
+location.reload();
+});
+}
 
 function applyTheme(theme) {
 if (theme === 'dark') {
 document.body.classList.add('dark');
-document.getElementById('theme-toggle').textContent = '☀️';
+document.getElementById('theme-toggle').textContent = '\u2600\uFE0F';
 } else {
 document.body.classList.remove('dark');
-document.getElementById('theme-toggle').textContent = '🌙';
+document.getElementById('theme-toggle').textContent = '\uD83C\uDF19';
 }
 }
 
@@ -243,13 +393,13 @@ el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 function addCopyButton(msgDiv) {
+var cleanText = msgDiv.innerText.trim();
 var copyBtn = document.createElement('button');
 copyBtn.className = 'msg-copy';
 copyBtn.textContent = 'Copy';
 copyBtn.onclick = function(e) {
 e.preventDefault();
-var text = msgDiv.innerText.replace(/Copy$/, '').trim();
-navigator.clipboard.writeText(text).then(function() {
+navigator.clipboard.writeText(cleanText).then(function() {
 copyBtn.textContent = 'Copied!';
 setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
 });
@@ -269,6 +419,14 @@ box.appendChild(d);
 box.scrollTop = box.scrollHeight;
 }
 
+function displayUserMsg(text) {
+var t = String(text === null || text === undefined ? '' : text);
+var prefix = 'I have uploaded my file. Here is the extracted data:';
+if (t.indexOf(prefix) === 0) return '[File uploaded and saved]';
+var s = String(t === null || t === undefined ? '' : t);
+return s.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split(String.fromCharCode(10)).join('<br>');
+}
+
 function fmt(t) {
 t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
@@ -281,6 +439,19 @@ return t;
 function showTyping(v) {
 document.getElementById('typer').style.display = v ? 'flex' : 'none';
 if (v) document.getElementById('msgs').scrollTop = 99999;
+}
+
+function showSaveModal() {
+if (localStorage.getItem('peptideUserEmail')) return;
+var dismissedAt = localStorage.getItem('peptideModalDismissedAt');
+var oneDayMs = 24 * 60 * 60 * 1000;
+if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < oneDayMs) return;
+document.getElementById('save-conv-overlay').style.display = 'flex';
+}
+
+function hideSaveModal() {
+localStorage.setItem('peptideModalDismissedAt', String(Date.now()));
+document.getElementById('save-conv-overlay').style.display = 'none';
 }
 
 function saveIntake() {
@@ -298,7 +469,11 @@ document.getElementById('memory-greeting').textContent = 'Profile saved - ' + na
 banner.style.display = 'flex';
 var contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. State: ' + state + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
 hist.push({ role: 'user', content: contextMsg });
+saveChatHistory();
+saveConversationAuto();
 hist.push({ role: 'assistant', content: 'Thanks ' + name + '! Your profile is saved. You are focused on ' + goal + '. How can I help you today?' });
+saveChatHistory();
+saveConversationAuto();
 addMsg('bot', 'Thanks <strong>' + name + '</strong>! Your profile is saved. Next time you visit I will remember you. You are focused on <strong>' + goal + '</strong>. What would you like to know?');
 }
 
@@ -309,21 +484,44 @@ document.getElementById('intake-overlay').style.display = 'none';
 function resetMemory() {
 localStorage.removeItem('peptideUserProfile');
 localStorage.removeItem('peptideBloodwork');
+localStorage.removeItem('peptideChatHistory');
+localStorage.removeItem('peptideUserEmail');
 location.reload();
 }
 
-function loadMemory() {
+function restoreAccount() {
+var email = prompt('Enter the email you used to save your conversation:');
+if (!email) return;
+email = email.trim();
+if (!email) return;
+var db = firebase.firestore();
+db.collection('users').doc(email).get().then(function(doc) {
+if (doc.exists) {
+localStorage.setItem('peptideUserEmail', email);
+var data = doc.data();
+if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+location.reload();
+} else {
+alert('No saved account found for that email. Double check you typed it exactly as before.');
+}
+}).catch(function(e) {
+alert('Something went wrong trying to restore your account. Please try again in a moment.');
+});
+}
+
+function renderMemoryUI(userEmail) {
 var profileStr = localStorage.getItem('peptideUserProfile');
 if (!profileStr) {
 document.getElementById('intake-overlay').style.display = 'flex';
-return;
+return null;
 }
 var profile = JSON.parse(profileStr);
 document.getElementById('intake-overlay').style.display = 'none';
 var banner = document.getElementById('memory-banner');
 banner.style.display = 'flex';
 var bloodwork = localStorage.getItem('peptideBloodwork') || '';
-document.getElementById('memory-greeting').textContent = 'Welcome back, ' + profile.name + ' - your profile is loaded.';
+document.getElementById('memory-greeting').textContent = userEmail ? 'Conversation saved - ' + userEmail : 'Welcome back, ' + profile.name + ' - your profile is loaded.';
 var state = profile.state || 'Not specified';
 var contextMsg = 'My profile: Name: ' + profile.name + '. Age/Sex: ' + profile.age + '. State: ' + state + '. Primary goal: ' + profile.goal + '. Conditions/medications: ' + (profile.conditions || 'None noted') + '. Peptide experience: ' + profile.experience + '.';
 if (bloodwork) {
@@ -331,13 +529,61 @@ contextMsg += ' My previously uploaded bloodwork results: ' + bloodwork;
 }
 contextMsg += ' Please keep this context in mind and personalize your guidance accordingly.';
 hist.push({ role: 'user', content: contextMsg });
+saveChatHistory();
 var bloodworkNote = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
 hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
-var bloodworkBadge = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
-addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkBadge + ' How can I help you today?');
+saveChatHistory();
+addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+return { profile: profile, bloodworkNote: bloodworkNote };
 }
 
-function streamResponse(response, maxHandler) {
+function loadMemory() {
+var userEmail = localStorage.getItem('peptideUserEmail');
+if (!userEmail) {
+renderMemoryUI(null);
+historyReady = true;
+return;
+}
+var db = firebase.firestore();
+db.collection('users').doc(userEmail).get().then(function(doc) {
+if (doc.exists) {
+var data = doc.data();
+if (data.profile) {
+localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
+} else if (!localStorage.getItem('peptideUserProfile')) {
+localStorage.setItem('peptideUserProfile', JSON.stringify({
+name: 'Friend', age: 'Not specified', goal: 'General wellness and optimization',
+conditions: 'None noted', experience: 'Not specified', state: 'Not specified'
+}));
+}
+if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+}
+var rendered = renderMemoryUI(userEmail);
+if (!rendered) return;
+if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
+hist = doc.data().messages;
+knownCloudMsgCount = hist.length;
+maybeWriteSnapshot(userEmail, 'load');
+document.getElementById('msgs').innerHTML = '';
+addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
+hist.slice(2).forEach(function(msg) {
+if (msg.role === 'user') {
+addMsg('usr', displayUserMsg(msg.content));
+} else {
+addMsg('bot', fmt(msg.content));
+}
+});
+console.log('Loaded conversation history from cloud');
+}
+historyReady = true;
+}).catch(function(e) {
+console.log('Could not reach saved conversation, using local data only');
+renderMemoryUI(userEmail);
+historyReady = true;
+});
+}
+
+function streamResponse(response) {
 showTyping(false);
 var msgs = document.getElementById('msgs');
 var msgDiv = document.createElement('div');
@@ -350,11 +596,15 @@ var buffer = '';
 function read() {
 reader.read().then(function(result) {
 if (result.done) {
-if (fullText) hist.push({ role: 'assistant', content: fullText });
+if (fullText) {
+hist.push({ role: 'assistant', content: fullText });
+saveChatHistory();
+saveConversationAuto();
+}
 addCopyButton(msgDiv);
 busy = false;
 document.getElementById('sbtn').disabled = false;
-if (maxHandler) maxHandler();
+setTimeout(showSaveModal, 800);
 return;
 }
 buffer += decoder.decode(result.value, { stream: true });
@@ -376,6 +626,11 @@ msgs.scrollTop = msgs.scrollHeight;
 }
 }
 read();
+}).catch(function(streamErr) {
+showTyping(false);
+addMsg('err', 'The connection dropped before the answer finished. Nothing was lost - ask again and the agent will pick up where it left off.');
+busy = false;
+document.getElementById('sbtn').disabled = false;
 });
 }
 read();
@@ -384,17 +639,23 @@ read();
 function sendMsg(text) {
 if (busy) return;
 if (!text) return;
+if (!historyReady) {
+setTimeout(function() { sendMsg(text); }, 100);
+return;
+}
 busy = true;
 document.getElementById('sbtn').disabled = true;
-addMsg('usr', text);
+addMsg('usr', displayUserMsg(text));
 hist.push({ role: 'user', content: text });
+saveChatHistory();
+saveConversationAuto();
 showTyping(true);
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 5000, messages: hist })
 }).then(function(response) {
-streamResponse(response, null);
+streamResponse(response);
 }).catch(function(e) {
 showTyping(false);
 addMsg('err', 'Error: ' + e.message);
@@ -412,9 +673,39 @@ el.style.height = 'auto';
 sendMsg(txt);
 }
 
+function saveEmailAndConversation() {
+var email = document.getElementById('save-conv-email').value.trim();
+if (!email) {
+alert('Please enter your email');
+return;
+}
+localStorage.setItem('peptideUserEmail', email);
+var db = firebase.firestore();
+var profileStr = localStorage.getItem('peptideUserProfile');
+var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+db.collection('users').doc(email).set({
+email: email,
+messages: hist,
+profile: profileStr ? JSON.parse(profileStr) : null,
+bloodwork: bloodwork,
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).then(function() {
+console.log('Conversation saved to cloud');
+}).catch(function(e) {
+console.error('Firebase error:', e);
+});
+hideSaveModal();
+document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
+document.getElementById('memory-banner').style.display = 'flex';
+}
+
 function handleFileUpload(event) {
 var file = event.target.files[0];
 if (!file) return;
+if (!historyReady) {
+setTimeout(function() { handleFileUpload(event); }, 100);
+return;
+}
 var statusDiv = document.getElementById('upload-status');
 statusDiv.style.display = 'block';
 statusDiv.textContent = 'Reading your file...';
@@ -429,6 +720,8 @@ statusDiv.textContent = 'File saved! Analyzing...';
 addMsg('usr', '[File uploaded and saved]');
 var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
 hist.push({ role: 'user', content: uploadPrompt });
+saveChatHistory();
+saveConversationAuto();
 busy = true;
 document.getElementById('sbtn').disabled = true;
 showTyping(true);
@@ -437,7 +730,58 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8000, messages: hist })
 }).then(function(response) {
-streamResponse(response, function() { statusDiv.style.display = 'none'; });
+var msgs = document.getElementById('msgs');
+var msgDiv = document.createElement('div');
+msgDiv.className = 'msg bot';
+msgs.appendChild(msgDiv);
+var reader = response.body.getReader();
+var decoder = new TextDecoder();
+var fullText = '';
+var buffer = '';
+function read() {
+reader.read().then(function(result) {
+if (result.done) {
+if (fullText) {
+hist.push({ role: 'assistant', content: fullText });
+saveChatHistory();
+saveConversationAuto();
+}
+addCopyButton(msgDiv);
+statusDiv.style.display = 'none';
+busy = false;
+document.getElementById('sbtn').disabled = false;
+showTyping(false);
+return;
+}
+buffer += decoder.decode(result.value, { stream: true });
+var lines = buffer.split('\n');
+buffer = lines.pop();
+for (var i = 0; i < lines.length; i++) {
+var line = lines[i];
+if (line.indexOf('data: ') === 0) {
+var d = line.slice(6).trim();
+if (d === '[DONE]') continue;
+try {
+var parsed = JSON.parse(d);
+if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+fullText += parsed.delta.text;
+msgDiv.innerHTML = fmt(fullText);
+msgs.scrollTop = msgs.scrollHeight;
+}
+} catch(e) {}
+}
+}
+read();
+}).catch(function(streamErr) {
+statusDiv.style.display = 'none';
+showTyping(false);
+addMsg('err', 'Connection dropped during file analysis.');
+busy = false;
+document.getElementById('sbtn').disabled = false;
+});
+}
+showTyping(true);
+read();
 }).catch(function(e) {
 showTyping(false);
 addMsg('err', 'Error analyzing file: ' + e.message);
@@ -464,6 +808,7 @@ sendMsgFromInput();
 });
 document.getElementById('cinput').addEventListener('input', function() { ag(this); });
 document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+loadChatHistory();
 loadMemory();
 });
 </script>
