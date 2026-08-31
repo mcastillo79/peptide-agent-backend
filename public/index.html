@@ -86,6 +86,8 @@ body.dark .usr { background: #1f6feb; }
 .msg a { color: var(--accent); text-decoration: underline; overflow-wrap: anywhere; }
 .msg-copy { display: block; font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 6px; background: none; border: none; padding: 0; font-family: inherit; }
 .msg-copy:hover { opacity: 0.8; }
+.msg-edit { display: block; font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: underline; background: none; border: none; padding: 0; font-family: inherit; margin-left: 12px; }
+.msg-edit:hover { opacity: 0.8; }
 #typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
 #typer span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-soft); animation: bb 1s infinite; display: inline-block; }
 #typer span:nth-child(2) { animation-delay: 0.2s; }
@@ -95,6 +97,9 @@ body.dark .usr { background: #1f6feb; }
 #qps::-webkit-scrollbar { display: none; }
 .qb { flex-shrink: 0; padding: 6px 12px; border: 1px solid var(--border-col); border-radius: 20px; font-size: 12px; color: var(--qb-text); background: var(--qb-bg); cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s; }
 .qb:hover { background: var(--header-bg); color: #fff; border-color: var(--header-bg); }
+#file-queue { padding: 8px 16px; background: var(--input-bg); border-top: 1px solid var(--border-col); display: none; max-height: 100px; overflow-y: auto; flex-shrink: 0; }
+.file-queue-item { font-size: 12px; color: var(--text-soft); padding: 4px 0; display: flex; justify-content: space-between; align-items: center; }
+.file-queue-remove { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 11px; text-decoration: underline; padding: 0; font-family: inherit; }
 #inp-area { display: flex; gap: 8px; padding: 14px 16px; background: var(--card-bg); border-top: 1px solid var(--border-col); align-items: flex-end; flex-shrink: 0; }
 #upload-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border-col); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 #upload-status { padding: 6px 16px; font-size: 12px; color: var(--accent); background: rgba(26,107,60,0.08); border-top: 1px solid var(--border-col); display: none; flex-shrink: 0; }
@@ -217,10 +222,12 @@ To personalize my guidance, tell me:<br>
 
 <div id="upload-status"></div>
 
+<div id="file-queue"></div>
+
 <div id="inp-area">
-<label for="file-upload" id="upload-btn">📎</label>
-<input type="file" id="file-upload" accept=".pdf,image/*" style="display:none">
-<textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1"></textarea>
+<label for="file-upload" id="upload-btn" title="Click to select files, or drag & drop, or paste images">📎</label>
+<input type="file" id="file-upload" accept=".pdf,image/*" multiple style="display:none">
+<textarea id="cinput" placeholder="Ask about peptides, or paste files & images here..." rows="1"></textarea>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
 </div>
 
@@ -247,6 +254,7 @@ var historyReady = false;
 var knownCloudMsgCount = 0;
 var userMessageCount = 0;
 var emailSaveModalShown = false;
+var fileQueue = [];
 
 function saveChatHistory() {
 try {
@@ -409,6 +417,44 @@ setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
 msgDiv.appendChild(copyBtn);
 }
 
+function addEditButton(msgDiv, msgIndex) {
+var editBtn = document.createElement('button');
+editBtn.className = 'msg-edit';
+editBtn.textContent = 'Edit';
+editBtn.onclick = function(e) {
+e.preventDefault();
+editMessage(msgIndex);
+};
+var copyButton = msgDiv.querySelector('.msg-copy');
+if (copyButton) {
+copyButton.parentNode.insertBefore(editBtn, copyButton.nextSibling);
+} else {
+msgDiv.appendChild(editBtn);
+}
+}
+
+function editMessage(msgIndex) {
+if (msgIndex < 0 || msgIndex >= hist.length) return;
+var originalText = hist[msgIndex].content;
+var newText = prompt('Edit your message:', originalText);
+if (newText === null || newText.trim() === '') return;
+if (newText === originalText) return;
+hist.splice(msgIndex);
+saveChatHistory();
+saveConversationAuto();
+document.getElementById('msgs').innerHTML = '';
+addMsg('bot', 'Welcome to the Peptide Guidance Agent.<br><br>Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds, Dr. Rhonda Patrick, and leading peptide physicians.<br><br>To personalize my guidance, tell me:<br>- What is your main health goal?<br>- Any existing conditions or medications?<br>- Have you used peptides before?');
+hist.slice(0, msgIndex).forEach(function(msg) {
+if (msg.role === 'user') {
+addMsg('usr', displayUserMsg(msg.content));
+} else {
+addMsg('bot', fmt(msg.content));
+}
+});
+document.getElementById('cinput').value = newText;
+ag(document.getElementById('cinput'));
+}
+
 function addMsg(cls, html) {
 var box = document.getElementById('msgs');
 var d = document.createElement('div');
@@ -416,6 +462,8 @@ d.className = 'msg ' + cls;
 d.innerHTML = html;
 if (cls === 'bot') {
 addCopyButton(d);
+} else if (cls === 'usr') {
+addEditButton(d, hist.length - 1);
 }
 box.appendChild(d);
 box.scrollTop = box.scrollHeight;
@@ -454,6 +502,27 @@ function hideSaveModal() {
 document.getElementById('save-conv-overlay').style.display = 'none';
 }
 
+function updateFileQueueUI() {
+var queueDiv = document.getElementById('file-queue');
+if (fileQueue.length === 0) {
+queueDiv.style.display = 'none';
+queueDiv.innerHTML = '';
+return;
+}
+queueDiv.style.display = 'block';
+var html = '';
+for (var i = 0; i < fileQueue.length; i++) {
+var f = fileQueue[i];
+html += '<div class="file-queue-item">' + f.name + ' (' + (f.size / 1024).toFixed(1) + ' KB) <button class="file-queue-remove" onclick="removeFromQueue(' + i + ')">Remove</button></div>';
+}
+queueDiv.innerHTML = html;
+}
+
+function removeFromQueue(index) {
+fileQueue.splice(index, 1);
+updateFileQueueUI();
+}
+
 function saveIntake() {
 var name = document.getElementById('intake-name').value.trim() || 'Friend';
 var age = document.getElementById('intake-age').value.trim() || 'Not specified';
@@ -486,6 +555,8 @@ localStorage.removeItem('peptideUserProfile');
 localStorage.removeItem('peptideBloodwork');
 localStorage.removeItem('peptideChatHistory');
 localStorage.removeItem('peptideUserEmail');
+fileQueue = [];
+updateFileQueueUI();
 location.reload();
 }
 
@@ -668,10 +739,14 @@ document.getElementById('sbtn').disabled = false;
 function sendMsgFromInput() {
 var el = document.getElementById('cinput');
 var txt = el.value.trim();
-if (!txt) return;
+if (!txt && fileQueue.length === 0) return;
 el.value = '';
 el.style.height = 'auto';
+if (fileQueue.length > 0) {
+processFileQueue(txt);
+} else {
 sendMsg(txt);
+}
 }
 
 function saveEmailAndConversation() {
@@ -701,29 +776,28 @@ document.getElementById('memory-greeting').textContent = 'Conversation saved - '
 document.getElementById('memory-banner').style.display = 'flex';
 }
 
-function handleFileUpload(event) {
-var file = event.target.files[0];
-if (!file) return;
-if (!historyReady) {
-setTimeout(function() { handleFileUpload(event); }, 100);
+function processFileQueue(additionalText) {
+if (fileQueue.length === 0) {
+if (additionalText) sendMsg(additionalText);
 return;
 }
+var file = fileQueue.shift();
+updateFileQueueUI();
 var statusDiv = document.getElementById('upload-status');
 statusDiv.style.display = 'block';
-statusDiv.textContent = 'Reading your file...';
-var formData = new FormData();
-formData.append('file', file);
-fetch('/upload', { method: 'POST', body: formData }).then(function(res) {
-return res.json();
-}).then(function(data) {
-if (data.extractedText) {
-localStorage.setItem('peptideBloodwork', data.extractedText);
-statusDiv.textContent = 'File saved! Analyzing...';
-addMsg('usr', '[File uploaded and saved]');
-var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
+statusDiv.textContent = 'Reading ' + file.name + '...';
+var reader = new FileReader();
+reader.onload = function(e) {
+localStorage.setItem('peptideBloodwork', '[' + file.name + ' uploaded]');
+addMsg('usr', '[' + file.name + ' uploaded]');
+var uploadPrompt = 'I have uploaded my file. File name: ' + file.name + '. Please analyze this file in the context of peptide guidance and my profile.';
+if (additionalText) uploadPrompt = additionalText + '\n\n' + uploadPrompt;
 hist.push({ role: 'user', content: uploadPrompt });
 saveChatHistory();
 saveConversationAuto();
+if (fileQueue.length > 0) {
+processFileQueue('');
+} else {
 busy = true;
 document.getElementById('sbtn').disabled = true;
 showTyping(true);
@@ -736,12 +810,12 @@ var msgs = document.getElementById('msgs');
 var msgDiv = document.createElement('div');
 msgDiv.className = 'msg bot';
 msgs.appendChild(msgDiv);
-var reader = response.body.getReader();
-var decoder = new TextDecoder();
+var rd = response.body.getReader();
+var dec = new TextDecoder();
 var fullText = '';
-var buffer = '';
-function read() {
-reader.read().then(function(result) {
+var buf = '';
+function readChunk() {
+rd.read().then(function(result) {
 if (result.done) {
 if (fullText) {
 hist.push({ role: 'assistant', content: fullText });
@@ -755,9 +829,9 @@ document.getElementById('sbtn').disabled = false;
 showTyping(false);
 return;
 }
-buffer += decoder.decode(result.value, { stream: true });
-var lines = buffer.split('\n');
-buffer = lines.pop();
+buf += dec.decode(result.value, { stream: true });
+var lines = buf.split('\n');
+buf = lines.pop();
 for (var i = 0; i < lines.length; i++) {
 var line = lines[i];
 if (line.indexOf('data: ') === 0) {
@@ -773,17 +847,11 @@ msgs.scrollTop = msgs.scrollHeight;
 } catch(e) {}
 }
 }
-read();
-}).catch(function(streamErr) {
-statusDiv.style.display = 'none';
-showTyping(false);
-addMsg('err', 'Connection dropped during file analysis.');
-busy = false;
-document.getElementById('sbtn').disabled = false;
+readChunk();
 });
 }
 showTyping(true);
-read();
+readChunk();
 }).catch(function(e) {
 showTyping(false);
 addMsg('err', 'Error analyzing file: ' + e.message);
@@ -791,13 +859,35 @@ busy = false;
 document.getElementById('sbtn').disabled = false;
 statusDiv.style.display = 'none';
 });
-} else {
-statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
 }
-}).catch(function(e) {
-statusDiv.textContent = 'Upload failed: ' + e.message;
-});
+}
+};
+reader.readAsArrayBuffer(file);
+}
+
+function handleFileUpload(event) {
+var files = event.target.files;
+for (var i = 0; i < files.length; i++) {
+fileQueue.push(files[i]);
+}
+updateFileQueueUI();
 event.target.value = '';
+}
+
+function handlePaste(event) {
+var items = event.clipboardData.items;
+for (var i = 0; i < items.length; i++) {
+if (items[i].kind === 'file') {
+var file = items[i].getAsFile();
+if (file) {
+fileQueue.push(file);
+}
+}
+}
+if (fileQueue.length > 0) {
+updateFileQueueUI();
+event.preventDefault();
+}
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -809,7 +899,23 @@ sendMsgFromInput();
 }
 });
 document.getElementById('cinput').addEventListener('input', function() { ag(this); });
+document.getElementById('cinput').addEventListener('paste', handlePaste);
 document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+document.addEventListener('dragover', function(e) {
+e.preventDefault();
+e.stopPropagation();
+});
+document.addEventListener('drop', function(e) {
+e.preventDefault();
+e.stopPropagation();
+var files = e.dataTransfer.files;
+for (var i = 0; i < files.length; i++) {
+if (files[i].type.startsWith('image/') || files[i].type === 'application/pdf') {
+fileQueue.push(files[i]);
+}
+}
+if (fileQueue.length > 0) updateFileQueueUI();
+});
 loadChatHistory();
 loadMemory();
 });
