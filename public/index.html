@@ -98,6 +98,18 @@ body.dark .usr { background: #1f6feb; }
 #inp-area { display: flex; gap: 8px; padding: 14px 16px; background: var(--card-bg); border-top: 1px solid var(--border-col); align-items: flex-end; flex-shrink: 0; }
 #upload-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border-col); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 #upload-status { padding: 6px 16px; font-size: 12px; color: var(--accent); background: rgba(26,107,60,0.08); border-top: 1px solid var(--border-col); display: none; flex-shrink: 0; }
+#upload-status.error { color: #c53030; background: #fff5f5; }
+body.dark #upload-status.error { color: #ffb4b4; background: rgba(197,48,48,0.16); }
+#file-chips { display: none; gap: 8px; padding: 10px 16px 0; background: var(--card-bg); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
+#file-chips::-webkit-scrollbar { display: none; }
+#file-chips.has-files { display: flex; }
+.file-chip { display: flex; align-items: center; gap: 6px; max-width: 230px; padding: 4px 4px 4px 4px; border: 1px solid var(--border-col); border-radius: 999px; background: var(--input-bg); flex-shrink: 0; }
+.file-chip img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--border-col); flex-shrink: 0; }
+.file-chip-pdf { width: 36px; height: 36px; border-radius: 50%; background: var(--header-bg); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; letter-spacing: 0.3px; flex-shrink: 0; }
+body.dark .file-chip-pdf { background: var(--accent); color: #0d1117; }
+.file-chip-name { font-size: 12px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-chip-remove { width: 32px; height: 32px; border: none; background: transparent; color: var(--text-soft); cursor: pointer; font-size: 18px; line-height: 1; border-radius: 50%; flex-shrink: 0; font-family: inherit; padding: 0; }
+.file-chip-remove:hover { color: var(--text-main); background: var(--border-col); }
 #cinput { flex: 1; resize: none; font-size: 14px; padding: 10px 14px; border-radius: 24px; font-family: inherit; background: var(--input-bg); color: var(--text-main); min-height: 44px; max-height: 120px; line-height: 1.5; border: 1px solid var(--border-col); outline: none; }
 #cinput:focus { border-color: var(--accent); }
 #sbtn { width: 44px; height: 44px; border-radius: 50%; background: var(--header-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; color: #fff; }
@@ -216,11 +228,12 @@ To personalize my guidance, tell me:<br>
 </div>
 
 <div id="upload-status"></div>
+<div id="file-chips"></div>
 
 <div id="inp-area">
-<label for="file-upload" id="upload-btn">📎</label>
-<input type="file" id="file-upload" accept=".pdf,image/*" style="display:none">
-<textarea id="cinput" placeholder="Ask about peptides, or upload your bloodwork above..." rows="1"></textarea>
+<label for="file-upload" id="upload-btn" title="Add bloodwork files" aria-label="Add bloodwork files">📎</label>
+<input type="file" id="file-upload" accept=".pdf,image/*" multiple style="display:none">
+<textarea id="cinput" placeholder="Ask about peptides, or attach bloodwork and tap send..." rows="1"></textarea>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
 </div>
 
@@ -421,12 +434,37 @@ box.appendChild(d);
 box.scrollTop = box.scrollHeight;
 }
 
+function escapeChatText(value) {
+var s = String(value === null || value === undefined ? '' : value);
+return s.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split(String.fromCharCode(10)).join('<br>');
+}
+
 function displayUserMsg(text) {
 var t = String(text === null || text === undefined ? '' : text);
 var prefix = 'I have uploaded my file. Here is the extracted data:';
-if (t.indexOf(prefix) === 0) return '[File uploaded and saved]';
-var s = String(t === null || t === undefined ? '' : t);
-return s.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split(String.fromCharCode(10)).join('<br>');
+if (t.indexOf(prefix) === 0) {
+var note = '';
+var attached = '';
+var basis = '\n\nBased on this information';
+var noteMarker = '\n\nUser message: ';
+var noteIdx = t.lastIndexOf(noteMarker);
+if (noteIdx !== -1) {
+var noteRest = t.slice(noteIdx + noteMarker.length);
+var noteEnd = noteRest.indexOf(basis);
+note = noteEnd === -1 ? noteRest : noteRest.slice(0, noteEnd);
+}
+var fileMarker = '\n\nFiles attached: ';
+var fileIdx = t.lastIndexOf(fileMarker);
+if (fileIdx !== -1) {
+var fileRest = t.slice(fileIdx + fileMarker.length);
+var fileEnd = fileRest.indexOf('\n');
+attached = fileEnd === -1 ? fileRest : fileRest.slice(0, fileEnd);
+}
+var label = attached.trim() ? '[File uploaded and saved: ' + escapeChatText(attached.trim()) + ']' : '[File uploaded and saved]';
+if (note.trim()) return escapeChatText(note.trim()) + '<br>' + label;
+return label;
+}
+return escapeChatText(t);
 }
 
 function fmt(t) {
@@ -583,7 +621,8 @@ historyReady = true;
 });
 }
 
-function streamResponse(response) {
+function streamResponse(response, options) {
+var opts = options || {};
 showTyping(false);
 var msgs = document.getElementById('msgs');
 var msgDiv = document.createElement('div');
@@ -604,7 +643,8 @@ saveConversationAuto();
 addCopyButton(msgDiv);
 busy = false;
 document.getElementById('sbtn').disabled = false;
-showSaveModal();
+if (opts.onDone) opts.onDone();
+if (!opts.skipSaveModal) showSaveModal();
 return;
 }
 buffer += decoder.decode(result.value, { stream: true });
@@ -628,9 +668,10 @@ msgs.scrollTop = msgs.scrollHeight;
 read();
 }).catch(function(streamErr) {
 showTyping(false);
-addMsg('err', 'The connection dropped before the answer finished. Nothing was lost - ask again and the agent will pick up where it left off.');
+addMsg('err', opts.streamError || 'The connection dropped before the answer finished. Nothing was lost - ask again and the agent will pick up where it left off.');
 busy = false;
 document.getElementById('sbtn').disabled = false;
+if (opts.onDone) opts.onDone();
 });
 }
 read();
@@ -666,8 +707,15 @@ document.getElementById('sbtn').disabled = false;
 }
 
 function sendMsgFromInput() {
+if (busy) return;
 var el = document.getElementById('cinput');
 var txt = el.value.trim();
+if (pendingFiles.length) {
+el.value = '';
+el.style.height = 'auto';
+submitBloodwork(txt);
+return;
+}
 if (!txt) return;
 el.value = '';
 el.style.height = 'auto';
@@ -701,102 +749,229 @@ document.getElementById('memory-greeting').textContent = 'Conversation saved - '
 document.getElementById('memory-banner').style.display = 'flex';
 }
 
-function handleFileUpload(event) {
-var file = event.target.files[0];
-if (!file) return;
-if (!historyReady) {
-setTimeout(function() { handleFileUpload(event); }, 100);
+var pendingFiles = [];
+var pendingFileSeq = 0;
+var MAX_PENDING_FILES = 10;
+var MAX_PENDING_BYTES = 10 * 1024 * 1024;
+
+function pendingFileKind(file) {
+var type = String(file && file.type || '').toLowerCase();
+var name = String(file && file.name || '').toLowerCase();
+if (type === 'application/pdf' || type === 'application/x-pdf' || name.endsWith('.pdf')) return 'pdf';
+if (type.indexOf('image/') === 0 || /\.(png|jpe?g|gif|webp|heic|heif|bmp|tiff?)$/.test(name)) return 'image';
+return '';
+}
+
+function showUploadNote(message, isError) {
+var statusDiv = document.getElementById('upload-status');
+if (!message) {
+statusDiv.style.display = 'none';
+statusDiv.textContent = '';
+statusDiv.className = '';
 return;
 }
-var statusDiv = document.getElementById('upload-status');
 statusDiv.style.display = 'block';
-statusDiv.textContent = 'Reading your file...';
+statusDiv.className = isError ? 'error' : '';
+statusDiv.textContent = message;
+}
+
+function renderFileChips() {
+var box = document.getElementById('file-chips');
+box.innerHTML = '';
+if (!pendingFiles.length) {
+box.className = '';
+return;
+}
+box.className = 'has-files';
+pendingFiles.forEach(function(item) {
+var chip = document.createElement('div');
+chip.className = 'file-chip';
+if (item.kind === 'image' && item.previewUrl) {
+var img = document.createElement('img');
+img.src = item.previewUrl;
+img.alt = '';
+img.onerror = function() {
+var badge = document.createElement('div');
+badge.className = 'file-chip-pdf';
+badge.textContent = 'IMG';
+if (img.parentNode) img.parentNode.replaceChild(badge, img);
+};
+chip.appendChild(img);
+} else {
+var badge = document.createElement('div');
+badge.className = 'file-chip-pdf';
+badge.textContent = item.kind === 'pdf' ? 'PDF' : 'IMG';
+chip.appendChild(badge);
+}
+var name = document.createElement('span');
+name.className = 'file-chip-name';
+name.textContent = item.file.name;
+chip.appendChild(name);
+var remove = document.createElement('button');
+remove.type = 'button';
+remove.className = 'file-chip-remove';
+remove.setAttribute('aria-label', 'Remove ' + item.file.name);
+remove.textContent = '\u00D7';
+remove.onclick = function() { removePendingFile(item.id); };
+chip.appendChild(remove);
+box.appendChild(chip);
+});
+}
+
+function readyUploadNote() {
+if (!pendingFiles.length) {
+showUploadNote('', false);
+return;
+}
+var n = pendingFiles.length;
+showUploadNote(n + (n === 1 ? ' file' : ' files') + ' ready. Tap send to analyze.', false);
+}
+
+function removePendingFile(id) {
+var next = [];
+pendingFiles.forEach(function(item) {
+if (item.id === id) {
+if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+} else {
+next.push(item);
+}
+});
+pendingFiles = next;
+renderFileChips();
+readyUploadNote();
+}
+
+function clearPendingFiles() {
+pendingFiles.forEach(function(item) {
+if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+});
+pendingFiles = [];
+renderFileChips();
+}
+
+function restoreComposerNote(note) {
+var el = document.getElementById('cinput');
+if (note && !el.value.trim()) {
+el.value = note;
+ag(el);
+}
+}
+
+function finishBloodworkUi() {
+showUploadNote('', false);
+}
+
+function submitBloodwork(note, waiting) {
+if (!waiting && busy) return;
+if (!pendingFiles.length) {
+busy = false;
+document.getElementById('sbtn').disabled = false;
+return;
+}
+if (!historyReady) {
+busy = true;
+document.getElementById('sbtn').disabled = true;
+setTimeout(function() { submitBloodwork(note, true); }, 100);
+return;
+}
+busy = true;
+document.getElementById('sbtn').disabled = true;
+showUploadNote('Reading your files...', false);
+var files = pendingFiles.slice();
 var formData = new FormData();
-formData.append('file', file);
+files.forEach(function(item) {
+formData.append('file', item.file, item.file.name);
+});
 fetch('/upload', { method: 'POST', body: formData }).then(function(res) {
-return res.json();
-}).then(function(data) {
-if (data.extractedText) {
+return res.json().then(function(data) {
+return { ok: res.ok, data: data || {} };
+}).catch(function() {
+return { ok: false, data: {} };
+});
+}).then(function(result) {
+var data = result.data || {};
+if (!result.ok || !data.extractedText) {
+var message = data.error || 'Could not read those files. Try a clearer image or PDF.';
+showUploadNote(message, true);
+addMsg('err', message);
+restoreComposerNote(note);
+busy = false;
+document.getElementById('sbtn').disabled = false;
+return;
+}
 localStorage.setItem('peptideBloodwork', data.extractedText);
-statusDiv.textContent = 'File saved! Analyzing...';
-addMsg('usr', '[File uploaded and saved]');
-var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText + '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
+clearPendingFiles();
+var names = files.map(function(item) { return item.file.name; }).join(', ');
+var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText;
+uploadPrompt += '\n\nFiles attached: ' + names;
+if (note) uploadPrompt += '\n\nUser message: ' + note;
+uploadPrompt += '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
+addMsg('usr', displayUserMsg(uploadPrompt));
 hist.push({ role: 'user', content: uploadPrompt });
 saveChatHistory();
 saveConversationAuto();
-busy = true;
-document.getElementById('sbtn').disabled = true;
+showUploadNote('Analyzing your bloodwork...', false);
 showTyping(true);
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8000, messages: hist })
 }).then(function(response) {
-var msgs = document.getElementById('msgs');
-var msgDiv = document.createElement('div');
-msgDiv.className = 'msg bot';
-msgs.appendChild(msgDiv);
-var reader = response.body.getReader();
-var decoder = new TextDecoder();
-var fullText = '';
-var buffer = '';
-function read() {
-reader.read().then(function(result) {
-if (result.done) {
-if (fullText) {
-hist.push({ role: 'assistant', content: fullText });
-saveChatHistory();
-saveConversationAuto();
-}
-addCopyButton(msgDiv);
-statusDiv.style.display = 'none';
+streamResponse(response, {
+skipSaveModal: true,
+streamError: 'Connection dropped during file analysis.',
+onDone: finishBloodworkUi
+});
+}).catch(function() {
+showTyping(false);
+finishBloodworkUi();
+addMsg('err', 'Something went wrong analyzing those files. Please try again.');
 busy = false;
 document.getElementById('sbtn').disabled = false;
-showTyping(false);
+});
+}).catch(function() {
+showUploadNote('Upload failed. Check your connection and try again.', true);
+addMsg('err', 'Upload failed. Check your connection and try again.');
+restoreComposerNote(note);
+busy = false;
+document.getElementById('sbtn').disabled = false;
+});
+}
+
+function handleFileUpload(event) {
+var selected = Array.prototype.slice.call(event.target.files || []);
+if (!selected.length) {
+event.target.value = '';
 return;
 }
-buffer += decoder.decode(result.value, { stream: true });
-var lines = buffer.split('\n');
-buffer = lines.pop();
-for (var i = 0; i < lines.length; i++) {
-var line = lines[i];
-if (line.indexOf('data: ') === 0) {
-var d = line.slice(6).trim();
-if (d === '[DONE]') continue;
-try {
-var parsed = JSON.parse(d);
-if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
-fullText += parsed.delta.text;
-msgDiv.innerHTML = fmt(fullText);
-msgs.scrollTop = msgs.scrollHeight;
+var errors = [];
+selected.forEach(function(file) {
+if (pendingFiles.length >= MAX_PENDING_FILES) {
+if (errors.indexOf('You can upload up to 10 files at a time.') === -1) {
+errors.push('You can upload up to 10 files at a time.');
 }
-} catch(e) {}
+return;
 }
+var kind = pendingFileKind(file);
+if (!kind) {
+errors.push(file.name + ' is not supported. Only PDF and image files are supported.');
+return;
 }
-read();
-}).catch(function(streamErr) {
-statusDiv.style.display = 'none';
-showTyping(false);
-addMsg('err', 'Connection dropped during file analysis.');
-busy = false;
-document.getElementById('sbtn').disabled = false;
+if (file.size > MAX_PENDING_BYTES) {
+errors.push('Each file must be 10 MB or smaller.');
+return;
+}
+pendingFileSeq += 1;
+var previewUrl = kind === 'image' ? URL.createObjectURL(file) : '';
+pendingFiles.push({ id: pendingFileSeq, file: file, kind: kind, previewUrl: previewUrl });
 });
-}
-showTyping(true);
-read();
-}).catch(function(e) {
-showTyping(false);
-addMsg('err', 'Error analyzing file: ' + e.message);
-busy = false;
-document.getElementById('sbtn').disabled = false;
-statusDiv.style.display = 'none';
-});
+renderFileChips();
+if (errors.length) {
+var unique = errors.filter(function(msg, index) { return errors.indexOf(msg) === index; });
+showUploadNote(unique.join(' '), true);
 } else {
-statusDiv.textContent = 'Could not read file. Try a clearer image or PDF.';
+readyUploadNote();
 }
-}).catch(function(e) {
-statusDiv.textContent = 'Upload failed: ' + e.message;
-});
 event.target.value = '';
 }
 
