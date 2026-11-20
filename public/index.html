@@ -157,7 +157,9 @@ html.skip-intake #intake-overlay { display: none; }
 #logo { font-size: 18px; font-weight: 700; }
 #sub { line-height: 1.35; }
 #intake-overlay { overflow: hidden; }
-#intake-box { max-height: calc(100dvh - 24px); overflow-y: auto; }
+#intake-box { max-height: calc(100dvh - 24px); overflow: hidden; display: flex; flex-direction: column; }
+#intake-quiz { overflow-x: hidden; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+#intake-restore-panel { overflow-y: auto; min-height: 0; }
 #tabs { display: flex; gap: 4px; padding: 0 10px 8px; background: var(--header-bg); flex-shrink: 0; }
 .tab { flex: 1; appearance: none; border: none; background: transparent; color: #9fb4c8; border-radius: 8px; padding: 7px 4px; font-size: 12px; font-weight: 650; font-family: inherit; line-height: 1.2; cursor: pointer; }
 .tab.active { background: rgba(255,255,255,0.14); color: #fff; }
@@ -190,7 +192,23 @@ body.dark .quiz-next { background: var(--accent); color: #04140a; }
 .quiz-nav .quiz-next { flex: 1; width: auto; margin-top: 8px; }
 .quiz-back { margin-top: 8px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); font-family: inherit; font-weight: 600; cursor: pointer; }
 .quiz-back-block { width: 100%; }
-#intake-restore { cursor: pointer; text-align: center; margin-top: 12px; font-size: 13px; color: var(--accent); text-decoration: underline; }
+#intake-signin { display: block; width: 100%; margin: 0 0 16px; padding: 14px 16px; min-height: 48px; background: transparent; color: var(--accent); border: 2px solid var(--accent); border-radius: 10px; font-size: 15px; font-weight: 700; line-height: 1.35; text-align: center; cursor: pointer; font-family: inherit; }
+#intake-signin:hover, #intake-signin:focus-visible { background: rgba(26,107,60,0.08); }
+body.dark #intake-signin:hover, body.dark #intake-signin:focus-visible { background: rgba(63,185,80,0.14); }
+#intake-restore { display: block; width: 100%; background: none; border: none; cursor: pointer; text-align: center; margin-top: 12px; padding: 8px 4px; font-size: 13px; color: var(--accent); text-decoration: underline; font-family: inherit; }
+#intake-restore-panel[hidden], #intake-quiz[hidden], #quiz-track[hidden], #hdr-menu-panel[hidden], #intake-restore[hidden] { display: none !important; }
+.quiz-top, #quiz-track, #quiz-error, #intake-restore { flex-shrink: 0; }
+#restore-error { min-height: 18px; margin: 0 0 8px; color: #c53030; font-size: 13px; line-height: 1.4; }
+body.dark #restore-error { color: #ffb4b4; }
+#restore-submit { width: 100%; padding: 12px; min-height: 48px; background: var(--header-bg); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+body.dark #restore-submit { background: var(--accent); color: #04140a; }
+#restore-submit:disabled { opacity: 0.65; cursor: progress; }
+#restore-cancel { display: block; width: 100%; background: none; border: none; text-align: center; margin-top: 12px; padding: 8px 4px; font-size: 13px; color: var(--text-soft); cursor: pointer; text-decoration: underline; font-family: inherit; }
+#hdr-menu-btn { appearance: none; background: transparent; border: none; color: #fff; cursor: pointer; font-size: 22px; line-height: 1; width: 40px; height: 40px; padding: 0; flex-shrink: 0; border-radius: 8px; }
+#hdr-menu-btn:hover, #hdr-menu-btn:focus-visible { background: rgba(255,255,255,0.12); }
+#hdr-menu-panel { position: fixed; z-index: 1100; min-width: 220px; max-width: calc(100vw - 16px); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.28); padding: 6px; }
+#hdr-account { display: block; width: 100%; text-align: left; background: transparent; border: none; color: var(--text-main); font-family: inherit; font-size: 15px; font-weight: 650; padding: 12px; border-radius: 8px; cursor: pointer; min-height: 44px; }
+#hdr-account:hover, #hdr-account:focus-visible { background: var(--input-bg); }
 .source-card { border: 1px solid var(--border-col); border-radius: 14px; padding: 14px; background: var(--card-bg); margin-bottom: 12px; }
 .source-card.pharmacy { box-shadow: inset 0 3px 0 var(--accent); }
 .source-card.altura { box-shadow: inset 0 3px 0 #1f6feb; }
@@ -272,9 +290,11 @@ document.documentElement.classList.add('skip-intake');
 <div id="intake-overlay">
 <div id="intake-box">
 <div class="quiz-top"><strong>Scout</strong><span id="quiz-step-label">Step 1 of 3</span></div>
-<div class="quiz-track" aria-hidden="true"><div id="quiz-bar"></div></div>
+<div class="quiz-track" id="quiz-track" aria-hidden="true"><div id="quiz-bar"></div></div>
 <div id="quiz-error" role="alert"></div>
+<div id="intake-quiz">
 <div class="quiz-step on" id="quiz-step-1">
+<button type="button" id="intake-signin" onclick="showRestorePanel(false)">Already have an account? Sign in with your email</button>
 <h2>Primary goal</h2>
 <p>Choose what you want Scout to focus on, and how familiar you already are with peptides.</p>
 <div class="pill-row" id="goal-pills">
@@ -336,8 +356,20 @@ document.documentElement.classList.add('skip-intake');
 </div>
 <button type="button" id="intake-submit" onclick="saveIntake()">Save and start</button>
 <div id="intake-skip" onclick="skipIntake()">Skip for now</div>
-<div id="intake-restore" onclick="restoreAccount()">Already have an account? Restore by email</div>
 <button type="button" class="quiz-back quiz-back-block" onclick="quizBack(2)">Back</button>
+</div>
+</div>
+<button type="button" id="intake-restore" onclick="showRestorePanel(false)">Already have an account? Restore by email</button>
+<div id="intake-restore-panel" hidden>
+<h2>Sign in with your email</h2>
+<p>Use the email you saved before. Your profile and chat history will load on this device.</p>
+<div class="intake-field">
+<label for="restore-email">Email</label>
+<input type="email" id="restore-email" placeholder="you@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email" aria-describedby="restore-error">
+</div>
+<div id="restore-error" role="alert"></div>
+<button type="button" id="restore-submit" onclick="restoreAccount()">Restore</button>
+<button type="button" id="restore-cancel" onclick="hideRestorePanel()">Back</button>
 </div>
 </div>
 </div>
@@ -362,6 +394,7 @@ document.documentElement.classList.add('skip-intake');
 <div id="ttl">Scout</div>
 <div id="sub">Peptide & Longevity Guidance · Educational AI</div>
 </div>
+<button type="button" id="hdr-menu-btn" aria-label="Menu" aria-haspopup="true" aria-expanded="false" aria-controls="hdr-menu-panel" title="Menu" onclick="toggleHeaderMenu(event)">☰</button>
 <button id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
 <div id="dot"></div>
 </div>
@@ -501,6 +534,9 @@ To personalize my guidance, tell me:<br>
 <div id="ftr">Independent educational AI tool - No products sold - Always consult a physician</div>
 </div>
 <div id="print-report"></div>
+<div id="hdr-menu-panel" hidden role="menu">
+<button type="button" id="hdr-account" role="menuitem" onclick="openAccountRestore()">Sign in / Switch account</button>
+</div>
 
 <script>
 var firebaseConfig = {
@@ -882,27 +918,185 @@ localStorage.removeItem('peptideUserEmail');
 location.reload();
 }
 
-function restoreAccount() {
-var email = prompt('Enter the email you used to save your conversation:');
-if (!email) return;
-email = email.trim();
-if (!email) return;
-var db = firebase.firestore();
-db.collection('users').doc(email).get().then(function(doc) {
-if (doc.exists) {
+var restoreBusy = false;
+var restoreRequest = 0;
+var restoreFromAccountMenu = false;
+
+function setRestoreError(message) {
+var err = document.getElementById('restore-error');
+var input = document.getElementById('restore-email');
+if (err) err.textContent = message || '';
+if (input) input.setAttribute('aria-invalid', message ? 'true' : 'false');
+}
+
+function setRestoreBusy(busy) {
+restoreBusy = !!busy;
+var submit = document.getElementById('restore-submit');
+var input = document.getElementById('restore-email');
+if (submit) {
+submit.disabled = restoreBusy;
+submit.textContent = restoreBusy ? 'Restoring...' : 'Restore';
+submit.setAttribute('aria-busy', restoreBusy ? 'true' : 'false');
+}
+if (input) input.disabled = restoreBusy;
+}
+
+function showRestorePanel(fromMenu) {
+restoreFromAccountMenu = !!fromMenu;
+var quiz = document.getElementById('intake-quiz');
+var panel = document.getElementById('intake-restore-panel');
+if (quiz) quiz.hidden = true;
+if (panel) panel.hidden = false;
+var restoreLink = document.getElementById('intake-restore');
+if (restoreLink) restoreLink.hidden = true;
+var track = document.getElementById('quiz-track');
+if (track) track.hidden = true;
+var label = document.getElementById('quiz-step-label');
+if (label) label.textContent = 'Sign in';
+var quizErr = document.getElementById('quiz-error');
+if (quizErr) {
+quizErr.textContent = '';
+quizErr.hidden = true;
+}
+setRestoreError('');
+document.documentElement.classList.remove('skip-intake');
+var overlay = document.getElementById('intake-overlay');
+if (overlay) overlay.style.display = 'flex';
+closeHeaderMenu();
+var input = document.getElementById('restore-email');
+if (input && !input.disabled) setTimeout(function() { input.focus(); }, 30);
+}
+
+function hideRestorePanel() {
+restoreRequest += 1;
+setRestoreBusy(false);
+var quiz = document.getElementById('intake-quiz');
+var panel = document.getElementById('intake-restore-panel');
+if (panel) panel.hidden = true;
+if (quiz) quiz.hidden = false;
+var restoreLink = document.getElementById('intake-restore');
+if (restoreLink) restoreLink.hidden = false;
+var track = document.getElementById('quiz-track');
+if (track) track.hidden = false;
+var quizErr = document.getElementById('quiz-error');
+if (quizErr) quizErr.hidden = false;
+setRestoreError('');
+var hasAccount = false;
+try {
+hasAccount = !!(localStorage.getItem('peptideUserProfile') || localStorage.getItem('peptideUserEmail'));
+} catch (e) {}
+if (restoreFromAccountMenu && hasAccount) {
+document.documentElement.classList.add('skip-intake');
+var overlay = document.getElementById('intake-overlay');
+if (overlay) overlay.style.display = 'none';
+return;
+}
+var current = 1;
+for (var i = 1; i <= 3; i++) {
+var el = document.getElementById('quiz-step-' + i);
+if (el && el.classList.contains('on')) current = i;
+}
+showQuizStep(current);
+}
+
+function closeHeaderMenu() {
+var panel = document.getElementById('hdr-menu-panel');
+var btn = document.getElementById('hdr-menu-btn');
+if (panel) panel.hidden = true;
+if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+function toggleHeaderMenu(event) {
+if (event) event.stopPropagation();
+var panel = document.getElementById('hdr-menu-panel');
+var btn = document.getElementById('hdr-menu-btn');
+if (!panel || !btn) return;
+if (!panel.hidden) {
+closeHeaderMenu();
+return;
+}
+var rect = btn.getBoundingClientRect();
+panel.style.top = Math.round(rect.bottom + 6) + 'px';
+panel.style.right = Math.round(Math.max(8, window.innerWidth - rect.right)) + 'px';
+panel.style.left = 'auto';
+panel.hidden = false;
+btn.setAttribute('aria-expanded', 'true');
+}
+
+function openAccountRestore() {
+closeHeaderMenu();
+showRestorePanel(true);
+}
+
+function isRestoreEmail(email) {
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function fetchUserDoc(db, email) {
+return db.collection('users').doc(email).get().then(function(doc) {
+if (doc.exists) return doc;
+var lower = email.toLowerCase();
+if (lower === email) return doc;
+return db.collection('users').doc(lower).get();
+});
+}
+
+function applyRestoredAccount(email, data) {
+localStorage.removeItem('peptideUserProfile');
+localStorage.removeItem('peptideBloodwork');
+localStorage.removeItem('peptideUserStack');
+localStorage.removeItem('peptideLabHistory');
+localStorage.removeItem('proWaitlist');
+localStorage.removeItem('peptideLastSnapshotAt');
+localStorage.removeItem(CHAT_STORAGE_KEY);
 localStorage.setItem('peptideUserEmail', email);
-var data = doc.data() || {};
 if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
 if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
 if (Array.isArray(data.stack)) localStorage.setItem('peptideUserStack', JSON.stringify(data.stack));
 if (Array.isArray(data.labHistory)) localStorage.setItem('peptideLabHistory', JSON.stringify(data.labHistory));
 if (data.proWaitlist) localStorage.setItem('proWaitlist', 'true');
-location.reload();
-} else {
-alert('No saved account found for that email. Double check you typed it exactly as before.');
+if (Array.isArray(data.messages)) localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(data.messages));
 }
-}).catch(function(e) {
-alert('Something went wrong trying to restore your account. Please try again in a moment.');
+
+function restoreAccount() {
+if (restoreBusy) return;
+var input = document.getElementById('restore-email');
+var email = input ? input.value.trim() : '';
+if (!email) {
+setRestoreError('Enter the email you used to save your account.');
+if (input) input.focus();
+return;
+}
+if (!isRestoreEmail(email)) {
+setRestoreError('Enter a valid email address.');
+if (input) input.focus();
+return;
+}
+if (!window.firebase || !firebase.apps || !firebase.apps.length || !firebase.firestore) {
+setRestoreError('Something went wrong trying to restore your account. Please try again in a moment.');
+return;
+}
+setRestoreError('');
+setRestoreBusy(true);
+var requestId = ++restoreRequest;
+var db = firebase.firestore();
+fetchUserDoc(db, email).then(function(doc) {
+if (requestId !== restoreRequest) return;
+if (!doc || !doc.exists) {
+setRestoreBusy(false);
+setRestoreError('No saved account found for that email. Double check you typed it exactly as before.');
+return;
+}
+try {
+applyRestoredAccount(doc.id || email, doc.data() || {});
+} catch (e) {
+try { localStorage.setItem('peptideUserEmail', doc.id || email); } catch (err) {}
+}
+location.reload();
+}).catch(function() {
+if (requestId !== restoreRequest) return;
+setRestoreBusy(false);
+setRestoreError('Something went wrong trying to restore your account. Please try again in a moment.');
 });
 }
 
@@ -1974,6 +2168,24 @@ if (!btn || btn === this) return;
 var id = btn.getAttribute('data-id');
 if (btn.getAttribute('data-action') === 'toggle') toggleStackItem(id);
 if (btn.getAttribute('data-action') === 'remove') removeStackItem(id);
+});
+var restoreEmail = document.getElementById('restore-email');
+if (restoreEmail) {
+restoreEmail.addEventListener('keydown', function(e) {
+if (e.key === 'Enter') {
+e.preventDefault();
+restoreAccount();
+}
+});
+restoreEmail.addEventListener('input', function() {
+if (!restoreBusy) setRestoreError('');
+});
+}
+document.addEventListener('click', function() {
+closeHeaderMenu();
+});
+document.addEventListener('keydown', function(e) {
+if (e.key === 'Escape') closeHeaderMenu();
 });
 showQuizStep(1);
 renderStack();
