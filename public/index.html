@@ -111,7 +111,15 @@ body.dark .file-chip-pdf { background: var(--accent); color: #0d1117; }
 .file-chip-remove { width: 32px; height: 32px; border: none; background: transparent; color: var(--text-soft); cursor: pointer; font-size: 18px; line-height: 1; border-radius: 50%; flex-shrink: 0; font-family: inherit; padding: 0; }
 .file-chip-remove:hover { color: var(--text-main); background: var(--border-col); }
 #cinput { flex: 1; resize: none; font-size: 14px; padding: 10px 14px; border-radius: 24px; font-family: inherit; background: var(--input-bg); color: var(--text-main); min-height: 44px; max-height: 120px; line-height: 1.5; border: 1px solid var(--border-col); outline: none; }
+#cinput::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #cinput:focus { border-color: var(--accent); }
+@media (max-width: 520px) {
+#cinput { min-height: 72px; }
+#cinput::placeholder { white-space: normal; overflow: visible; text-overflow: clip; }
+}
+@media (max-width: 359px) {
+#cinput { min-height: 96px; }
+}
 #sbtn { width: 44px; height: 44px; border-radius: 50%; background: var(--header-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; color: #fff; }
 body.dark #sbtn { background: var(--accent); }
 #sbtn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -233,7 +241,7 @@ To personalize my guidance, tell me:<br>
 <div id="inp-area">
 <label for="file-upload" id="upload-btn" title="Add bloodwork files" aria-label="Add bloodwork files">📎</label>
 <input type="file" id="file-upload" accept=".pdf,image/*" multiple style="display:none">
-<textarea id="cinput" placeholder="Ask about peptides, or attach bloodwork and tap send..." rows="1"></textarea>
+<textarea id="cinput" placeholder="Ask about peptides or attach labs..." rows="1"></textarea>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
 </div>
 
@@ -621,9 +629,48 @@ historyReady = true;
 });
 }
 
+function escapeHtml(s) {
+return String(s == null ? '' : s).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;');
+}
+
+function showStreamError(message) {
+addMsg('err', escapeHtml(message || 'The agent could not answer just now. Please try again.'));
+}
+
+function finishStream(opts) {
+busy = false;
+var sendBtn = document.getElementById('sbtn');
+if (sendBtn) sendBtn.disabled = false;
+if (opts && opts.onDone) opts.onDone();
+}
+
+function friendlyStreamError(parsed) {
+var errType = parsed && parsed.error && parsed.error.type;
+if (errType === 'rate_limit_error') return 'The agent is getting too many requests right now. Wait a moment and try again.';
+if (errType === 'overloaded_error') return 'The agent is temporarily overloaded. Please try again in a moment.';
+if (parsed && parsed.error && parsed.error.message) return parsed.error.message;
+return 'The agent could not answer just now. Please try again.';
+}
+
 function streamResponse(response, options) {
 var opts = options || {};
 showTyping(false);
+if (!response.ok) {
+response.json().then(function(data) {
+var message = data && data.error && data.error.message;
+showStreamError(message || 'The agent could not answer just now. Please try again.');
+}).catch(function() {
+showStreamError('The agent could not answer just now. Please try again.');
+}).then(function() {
+finishStream(opts);
+});
+return;
+}
+if (!response.body || !response.body.getReader) {
+showStreamError('The agent could not answer just now. Please try again.');
+finishStream(opts);
+return;
+}
 var msgs = document.getElementById('msgs');
 var msgDiv = document.createElement('div');
 msgDiv.className = 'msg bot';
@@ -632,46 +679,52 @@ var reader = response.body.getReader();
 var decoder = new TextDecoder();
 var fullText = '';
 var buffer = '';
-function read() {
-reader.read().then(function(result) {
-if (result.done) {
-if (fullText) {
-hist.push({ role: 'assistant', content: fullText });
-saveChatHistory();
-saveConversationAuto();
-}
-addCopyButton(msgDiv);
-busy = false;
-document.getElementById('sbtn').disabled = false;
-if (opts.onDone) opts.onDone();
-if (!opts.skipSaveModal) showSaveModal();
-return;
-}
-buffer += decoder.decode(result.value, { stream: true });
-var lines = buffer.split('\n');
-buffer = lines.pop();
-for (var i = 0; i < lines.length; i++) {
-var line = lines[i];
-if (line.indexOf('data: ') === 0) {
+var sawError = false;
+function consumeLine(line) {
+if (line.indexOf('data: ') !== 0) return;
 var d = line.slice(6).trim();
-if (d === '[DONE]') continue;
+if (!d || d === '[DONE]') return;
 try {
 var parsed = JSON.parse(d);
-if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+if (parsed.type === 'error') {
+sawError = true;
+showStreamError(friendlyStreamError(parsed));
+} else if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
 fullText += parsed.delta.text;
 msgDiv.innerHTML = fmt(fullText);
 msgs.scrollTop = msgs.scrollHeight;
 }
 } catch(e) {}
 }
+function read() {
+reader.read().then(function(result) {
+if (result.done) {
+if (buffer.trim()) consumeLine(buffer);
+if (fullText) {
+hist.push({ role: 'assistant', content: fullText });
+saveChatHistory();
+saveConversationAuto();
+addCopyButton(msgDiv);
+} else if (msgDiv.parentNode) {
+msgDiv.parentNode.removeChild(msgDiv);
 }
+if (!fullText && !sawError) {
+showStreamError('The agent returned an empty response. Please try again.');
+}
+finishStream(opts);
+if (fullText && !opts.skipSaveModal) showSaveModal();
+return;
+}
+buffer += decoder.decode(result.value, { stream: true });
+var lines = buffer.split('\n');
+buffer = lines.pop();
+for (var i = 0; i < lines.length; i++) consumeLine(lines[i]);
 read();
 }).catch(function(streamErr) {
 showTyping(false);
+if (!fullText && msgDiv.parentNode) msgDiv.parentNode.removeChild(msgDiv);
 addMsg('err', opts.streamError || 'The connection dropped before the answer finished. Nothing was lost - ask again and the agent will pick up where it left off.');
-busy = false;
-document.getElementById('sbtn').disabled = false;
-if (opts.onDone) opts.onDone();
+finishStream(opts);
 });
 }
 read();
