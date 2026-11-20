@@ -6,15 +6,21 @@ const multer = require('multer');
 const { Pinecone } = require('@pinecone-database/pinecone');
 const OpenAI = require('openai');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+app.use(express.text({ type: ['text/plain', 'application/octet-stream'], limit: '1mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const uploadDir = path.join(__dirname, 'uploads');
+const dataDir = path.join(__dirname, 'data');
 const MAX_UPLOAD_FILES = 10;
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+fs.mkdirSync(uploadDir, { recursive: true });
+fs.mkdirSync(dataDir, { recursive: true });
 
 const upload = multer({
   dest: uploadDir,
@@ -142,6 +148,121 @@ function combineExtractedTexts(parts) {
   }).join('\n\n');
 }
 
+function clipText(value, max) {
+  return String(value == null ? '' : value).replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
+}
+
+function normalizeFlag(raw) {
+  const flag = String(raw || '').toLowerCase().replace(/[^a-z]/g, '');
+  if (!flag) return '';
+  if (flag === 'high' || flag === 'h' || flag === 'hh' || flag === 'elevated' || flag === 'above' || flag.indexOf('high') !== -1) return 'high';
+  if (flag === 'low' || flag === 'l' || flag === 'll' || flag === 'below' || flag === 'decreased' || flag === 'deficient' || flag.indexOf('low') !== -1) return 'low';
+  if (flag === 'normal' || flag === 'n' || flag === 'wnl' || flag.indexOf('normal') !== -1) return 'normal';
+  if (flag === 'info' || flag === 'note' || flag === 'unknown') return 'info';
+  return '';
+}
+
+function normalizeBiomarker(item) {
+  if (!item || typeof item !== 'object') return null;
+  const name = clipText(item.name || item.marker || '', 80);
+  const value = clipText(item.value == null ? '' : item.value, 40);
+  if (!name || !value) return null;
+  const unit = clipText(item.unit || '', 24);
+  const flag = normalizeFlag(item.flag) || 'info';
+  return { name: name, value: value, unit: unit, flag: flag };
+}
+
+function extractBiomarkerJson(text) {
+  const marker = 'BIOMARKERS_JSON';
+  const idx = text.lastIndexOf(marker);
+  if (idx === -1) return null;
+  const slice = text.slice(idx + marker.length);
+  const start = slice.indexOf('[');
+  const end = slice.lastIndexOf(']');
+  if (start === -1 || end <= start) return null;
+  try {
+    const parsed = JSON.parse(slice.slice(start, end + 1));
+    if (!Array.isArray(parsed)) return null;
+    return parsed.map(normalizeBiomarker).filter(Boolean);
+  } catch (err) {
+    return null;
+  }
+}
+
+function splitExtractedText(text) {
+  const raw = typeof text === 'string' ? text : '';
+  const idx = raw.indexOf('BIOMARKERS_JSON');
+  if (idx === -1) return raw;
+  const prose = raw.slice(0, idx).replace(/\s+$/, '');
+  return prose || raw;
+}
+
+function looksLikeUnit(unit) {
+  if (!unit) return false;
+  if (unit === '%') return true;
+  return /\/|(?:mg|mcg|ug|µg|ng|pg|mol|iu|dl|ml|meq|fl)\b/i.test(unit);
+}
+
+function parseBiomarkerLines(text) {
+  const results = [];
+  const seen = new Set();
+  String(text || '').split(/\r?\n/).forEach(function(line) {
+    let clean = line.replace(/^[\s>*\-•\u2022]+/, '').trim();
+    if (!clean || clean.length > 200) return;
+    if (!/-?\d+(?:\.\d+)?/.test(clean)) return;
+    if (/^(file|based on|user message|please|here is|this is)\b/i.test(clean)) return;
+    clean = clean.replace(/\((?:[^()]{0,80})\)/g, ' ').replace(/\s+/g, ' ').trim();
+    let flag = '';
+    const flagMatch = clean.match(/(?:^|[\s(])(high|low|normal|elevated|above|below|hh|ll|h|l|n)\)?\s*$/i);
+    if (flagMatch) {
+      flag = normalizeFlag(flagMatch[1]);
+      clean = clean.slice(0, flagMatch.index).trim();
+    }
+    const matched = clean.match(/^([A-Za-z][A-Za-z0-9][A-Za-z0-9 /+\-(),.]{0,70}?)\s*[:|]\s*(-?\d+(?:\.\d+)?)\s*(%|[A-Za-zµμ][A-Za-z0-9µμ/^.%]{0,18})?$/)
+      || clean.match(/^([A-Za-z][A-Za-z0-9][A-Za-z0-9 /+\-(),.]{0,70}?)\s+(-?\d+(?:\.\d+)?)\s*(%|[A-Za-zµμ][A-Za-z0-9µμ/^.%]{0,18})$/);
+    if (!matched) return;
+    const name = matched[1].replace(/[\s:;|,.-]+$/, '').trim();
+    if (name.length < 2) return;
+    if (/^(the|and|with|from|result|results|marker|markers|value|range|reference|lab|labs|test|note|notes)$/i.test(name)) return;
+    const value = matched[2];
+    const unit = (matched[3] || '').trim();
+    const hadColon = /[:|]/.test(line);
+    if (!hadColon && !flag && !looksLikeUnit(unit)) return;
+    const key = name.toLowerCase() + '|' + value + '|' + unit.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    results.push({ name: name, value: value, unit: unit, flag: flag || 'info' });
+  });
+  return results;
+}
+
+function parseBiomarkers(text) {
+  try {
+    if (!text || typeof text !== 'string') return [];
+    const fromJson = extractBiomarkerJson(text);
+    if (fromJson && fromJson.length) return fromJson.slice(0, 100);
+    return parseBiomarkerLines(splitExtractedText(text)).slice(0, 100);
+  } catch (err) {
+    return [];
+  }
+}
+
+function collectBiomarkers(parts) {
+  const all = [];
+  const seen = new Set();
+  (parts || []).forEach(function(part) {
+    parseBiomarkers(part && part.text).forEach(function(item) {
+      const key = item.name.toLowerCase() + '|' + item.value + '|' + item.unit.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      all.push(item);
+    });
+  });
+  return all.slice(0, 100);
+}
+
+const BIOMARKER_PROMPT_SUFFIX = '\n\nAfter the extraction, end your reply with a machine-readable block and nothing after it:\nBIOMARKERS_JSON\n[{"name":"Marker","value":"0","unit":"","flag":"info"}]\nflag must be exactly "normal", "high", "low", or "info". Put the measured result in value and the unit separately. If no markers are visible, end with BIOMARKERS_JSON followed by [].';
+
 async function extractLabReport(file) {
   const kind = uploadKind(file);
   const name = safeUploadName(file.originalname);
@@ -151,13 +272,13 @@ async function extractLabReport(file) {
     const imageData = fs.readFileSync(file.path);
     content = [
       { type: 'image', source: { type: 'base64', media_type: imageMediaType(file), data: imageData.toString('base64') } },
-      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results you can see. List each marker with its value and reference range if visible. Be thorough and accurate.' }
+      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results you can see. List each marker with its value and reference range if visible. Be thorough and accurate.' + BIOMARKER_PROMPT_SUFFIX }
     ];
   } else if (kind === 'pdf') {
     const pdfData = fs.readFileSync(file.path);
     content = [
       { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfData.toString('base64') } },
-      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results. List each marker with its value and reference range if visible. Be thorough and accurate.' }
+      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results. List each marker with its value and reference range if visible. Be thorough and accurate.' + BIOMARKER_PROMPT_SUFFIX }
     ];
   } else {
     const err = new Error(name + ' is not supported. Only PDF and image files are supported.');
@@ -175,7 +296,7 @@ async function extractLabReport(file) {
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
-      max_tokens: 2000,
+      max_tokens: 2400,
       messages: [{ role: 'user', content: content }]
     })
   });
@@ -240,7 +361,18 @@ app.post('/upload', bloodworkUpload, async (req, res) => {
       parts.push({ name: safeUploadName(file.originalname), text: text });
     }
 
-    res.json({ success: true, extractedText: combineExtractedTexts(parts) });
+    let biomarkers = [];
+    try {
+      biomarkers = collectBiomarkers(parts);
+    } catch (parseErr) {
+      console.error('Biomarker parse skipped:', parseErr);
+      biomarkers = [];
+    }
+    const cleanedParts = parts.map(function(part) {
+      return { name: part.name, text: splitExtractedText(part.text) };
+    });
+
+    res.json({ success: true, extractedText: combineExtractedTexts(cleanedParts), biomarkers: biomarkers });
   } catch (err) {
     console.error('Upload error:', err);
     const status = err.status >= 400 && err.status < 600 ? err.status : 500;
@@ -430,6 +562,34 @@ function prepareMessagesForModel(raw) {
   return combined.filter(message => hasMessageContent(message.content));
 }
 
+function formatActiveStack(activeStack) {
+  if (!Array.isArray(activeStack) || !activeStack.length) return '';
+  const lines = [];
+  activeStack.slice(0, 40).forEach(function(item) {
+    if (typeof item === 'string') {
+      const name = clipText(item, 80);
+      if (name) lines.push('- ' + name);
+      return;
+    }
+    if (!item || typeof item !== 'object') return;
+    if (item.active === false || item.paused === true) return;
+    const name = clipText(item.name, 80);
+    if (!name) return;
+    const dose = clipText(item.dose, 60);
+    const schedule = clipText(item.schedule, 60);
+    const startDate = clipText(item.startDate, 32);
+    const notes = clipText(item.notes, 140);
+    let line = '- ' + name;
+    if (dose) line += ' ' + dose;
+    if (schedule) line += ', ' + schedule;
+    if (startDate) line += ' (started ' + startDate + ')';
+    if (notes) line += '. ' + notes;
+    lines.push(line);
+  });
+  if (!lines.length) return '';
+  return '\n\nUSER\'S CURRENT ACTIVE STACK:\n' + lines.join('\n');
+}
+
 function friendlyAnthropicMessage(status, bodyText) {
   let apiType = '';
   try {
@@ -463,7 +623,10 @@ app.post('/chat', async (req, res) => {
     let question = lastUserMessage ? plainText(lastUserMessage.content) : '';
     if (question.length > 4000) question = question.slice(-4000);
     const context = await getRelevantContext(question);
-    const systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
+    let systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
+    const stackBlock = formatActiveStack(body.activeStack);
+    if (stackBlock) systemWithContext += stackBlock;
+    console.log('[chat] activeStack=' + (stackBlock ? 'yes' : 'no'));
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -525,8 +688,95 @@ app.post('/chat', async (req, res) => {
   }
 });
 
+function appendJsonl(filename, record) {
+  fs.mkdirSync(dataDir, { recursive: true });
+  fs.appendFileSync(path.join(dataDir, filename), JSON.stringify(record) + '\n', 'utf8');
+}
+
+function readJsonl(filename) {
+  try {
+    const text = fs.readFileSync(path.join(dataDir, filename), 'utf8');
+    const rows = [];
+    text.split('\n').forEach(function(line) {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+      try {
+        rows.push(JSON.parse(trimmed));
+      } catch (err) {}
+    });
+    return rows;
+  } catch (err) {
+    return [];
+  }
+}
+
+function jsonBody(req) {
+  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body) && !Array.isArray(req.body)) return req.body;
+  if (typeof req.body === 'string') {
+    try {
+      const parsed = JSON.parse(req.body);
+      if (parsed && typeof parsed === 'object') return parsed;
+    } catch (err) {}
+  }
+  return {};
+}
+
+app.post('/api/track-click', function(req, res) {
+  const src = jsonBody(req);
+  const record = {
+    ts: new Date().toISOString(),
+    partner: clipText(src.partner, 80),
+    destination: clipText(src.destination, 500),
+    state: clipText(src.state, 80),
+    page: clipText(src.page, 120)
+  };
+  if (src.email) record.emailHash = crypto.createHash('sha256').update(String(src.email).trim().toLowerCase()).digest('hex').slice(0, 16);
+  if (!record.partner || !record.destination) {
+    return res.status(400).json({ error: 'partner and destination are required' });
+  }
+  try {
+    appendJsonl('clicks.jsonl', record);
+  } catch (err) {
+    console.error('Click track failed:', err.message);
+    return res.status(500).json({ error: 'Could not record click' });
+  }
+  res.json({ ok: true });
+});
+
+app.post('/api/waitlist', function(req, res) {
+  const src = jsonBody(req);
+  const email = clipText(src.email, 200).toLowerCase();
+  const record = {
+    ts: new Date().toISOString(),
+    source: clipText(src.source || 'scout-pro', 80),
+    plan: '9'
+  };
+  if (email) {
+    record.emailHash = crypto.createHash('sha256').update(email).digest('hex');
+    if (email.indexOf('@') !== -1) record.email = email;
+  }
+  try {
+    appendJsonl('waitlist.jsonl', record);
+  } catch (err) {
+    console.error('Waitlist write failed:', err.message);
+    return res.status(500).json({ error: 'Could not join the waitlist' });
+  }
+  res.json({ ok: true });
+});
+
+app.get('/api/stats', function(req, res) {
+  const clicks = readJsonl('clicks.jsonl');
+  const waitlist = readJsonl('waitlist.jsonl');
+  const byPartner = {};
+  clicks.forEach(function(click) {
+    const partner = click && click.partner ? String(click.partner) : 'unknown';
+    byPartner[partner] = (byPartner[partner] || 0) + 1;
+  });
+  res.json({ totalClicks: clicks.length, byPartner: byPartner, waitlistCount: waitlist.length });
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Server running on port ' + PORT));
+app.listen(PORT, '0.0.0.0', () => console.log('Server running on port ' + PORT));
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 app.post('/create-checkout-session', async (req, res) => {
   try {
@@ -558,3 +808,6 @@ app.post('/create-checkout-session', async (req, res) => {
 
 module.exports.prepareMessagesForModel = prepareMessagesForModel;
 module.exports.friendlyAnthropicMessage = friendlyAnthropicMessage;
+module.exports.parseBiomarkers = parseBiomarkers;
+module.exports.splitExtractedText = splitExtractedText;
+module.exports.formatActiveStack = formatActiveStack;
