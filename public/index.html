@@ -44,7 +44,8 @@ body.dark {
 --qb-text: #8b949e;
 --accent: #3fb950;
 }
-body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; background: var(--page-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; transition: background 0.3s; }
+html, body { height: 100vh; height: 100dvh; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; background: var(--page-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; min-height: 100dvh; height: 100vh; height: 100dvh; padding: 16px; overflow: hidden; transition: background 0.3s; }
 #intake-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
 #intake-box { background: var(--card-bg); border-radius: 16px; padding: 28px 24px; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
 #intake-box h2 { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
@@ -70,14 +71,18 @@ body.dark #save-conv-submit { background: var(--accent); }
 #memory-banner { background: rgba(26,107,60,0.08); border-bottom: 1px solid var(--border-col); padding: 8px 16px; font-size: 13px; color: var(--accent); display: none; align-items: center; justify-content: space-between; flex-shrink: 0; }
 #memory-banner span { font-weight: 500; }
 #reset-memory { font-size: 11px; color: var(--text-soft); cursor: pointer; text-decoration: underline; }
-#wrap { display: flex; flex-direction: column; height: 100vh; width: 100%; min-width: 0; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: var(--card-bg); transition: background 0.3s; }
+#wrap { display: flex; flex-direction: column; height: calc(100vh - 32px); height: calc(100dvh - 32px); width: 100%; min-width: 0; min-height: 0; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: var(--card-bg); transition: background 0.3s; }
 #hdr { padding: 16px 20px; background: var(--header-bg); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 #logo { width: 40px; height: 40px; border-radius: 50%; background: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
 #ttl { font-size: 15px; font-weight: 600; color: #fff; }
 #sub { font-size: 11px; color: #8ba4bf; margin-top: 2px; }
 #theme-toggle { background: none; border: none; cursor: pointer; font-size: 20px; margin-left: auto; padding: 4px; line-height: 1; color: #fff; }
 #dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; margin-left: 10px; }
-#msgs { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--chat-bg); min-width: 0; }
+#thread { position: relative; flex: 1 1 auto; min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+#msgs { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--chat-bg); min-width: 0; min-height: 0; overflow-anchor: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+#jump-bottom { position: absolute; right: 14px; bottom: 14px; z-index: 5; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-main); box-shadow: 0 2px 10px rgba(0,0,0,0.18); cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 18px; line-height: 1; padding: 0; font-family: inherit; }
+#jump-bottom.visible { display: flex; }
+#jump-bottom:hover { border-color: var(--accent); color: var(--accent); }
 .msg { max-width: 88%; min-width: 0; padding: 12px 16px; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
 .bot { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 4px 16px 16px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .usr { align-self: flex-end; background: var(--header-bg); color: #fff; border-radius: 16px 4px 16px 16px; }
@@ -113,6 +118,12 @@ body.dark .file-chip-pdf { background: var(--accent); color: #0d1117; }
 #cinput { flex: 1; resize: none; font-size: 14px; padding: 10px 14px; border-radius: 24px; font-family: inherit; background: var(--input-bg); color: var(--text-main); min-height: 44px; max-height: 120px; line-height: 1.5; border: 1px solid var(--border-col); outline: none; }
 #cinput::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #cinput:focus { border-color: var(--accent); }
+@media (max-width: 720px) {
+body { padding: 0; }
+#wrap { border-radius: 0; height: 100vh; height: 100dvh; }
+#cinput { font-size: 16px; }
+#jump-bottom { width: 44px; height: 44px; }
+}
 @media (max-width: 520px) {
 #cinput { min-height: 72px; }
 #cinput::placeholder { white-space: normal; overflow: visible; text-overflow: clip; }
@@ -210,6 +221,7 @@ body.dark #sbtn { background: var(--accent); }
 <span id="reset-memory" onclick="resetMemory()" style="cursor: pointer;">Reset profile</span>
 </div>
 
+<div id="thread">
 <div id="msgs">
 <div class="msg bot">
 Welcome to the Peptide Guidance Agent.<br><br>
@@ -219,6 +231,8 @@ To personalize my guidance, tell me:<br>
 - Any existing conditions or medications?<br>
 - Have you used peptides before?
 </div>
+</div>
+<button id="jump-bottom" type="button" onclick="jumpToBottom()" aria-label="Jump to bottom" title="Jump to bottom">↓</button>
 </div>
 
 <div id="typer"><span></span><span></span><span></span></div>
@@ -430,7 +444,58 @@ setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
 msgDiv.appendChild(copyBtn);
 }
 
-function addMsg(cls, html) {
+var shouldAutoScroll = true;
+var scrollLock = false;
+var scrollScheduled = false;
+var STICKY_BOTTOM_PX = 120;
+var JUMP_AWAY_PX = 300;
+
+function distanceFromBottom(box) {
+return box.scrollHeight - box.scrollTop - box.clientHeight;
+}
+
+function updateJumpButton() {
+var box = document.getElementById('msgs');
+var btn = document.getElementById('jump-bottom');
+if (!box || !btn) return;
+if (distanceFromBottom(box) > JUMP_AWAY_PX) btn.classList.add('visible');
+else btn.classList.remove('visible');
+}
+
+function scrollToBottom() {
+var box = document.getElementById('msgs');
+if (!box) return;
+scrollLock = true;
+box.scrollTop = box.scrollHeight;
+scrollLock = false;
+if (scrollScheduled) return;
+scrollScheduled = true;
+requestAnimationFrame(function() {
+scrollScheduled = false;
+var next = document.getElementById('msgs');
+if (!next) return;
+scrollLock = true;
+next.scrollTop = next.scrollHeight;
+scrollLock = false;
+updateJumpButton();
+});
+}
+
+function jumpToBottom() {
+var btn = document.getElementById('jump-bottom');
+shouldAutoScroll = true;
+if (btn) btn.classList.remove('visible');
+scrollToBottom();
+}
+
+function onMsgsScroll() {
+var box = document.getElementById('msgs');
+if (!box || scrollLock) return;
+shouldAutoScroll = distanceFromBottom(box) <= STICKY_BOTTOM_PX;
+updateJumpButton();
+}
+
+function addMsg(cls, html, scroll) {
 var box = document.getElementById('msgs');
 var d = document.createElement('div');
 d.className = 'msg ' + cls;
@@ -438,8 +503,16 @@ d.innerHTML = html;
 if (cls === 'bot') {
 addCopyButton(d);
 }
+scrollLock = true;
 box.appendChild(d);
-box.scrollTop = box.scrollHeight;
+if (scroll === false) {
+scrollLock = false;
+return;
+}
+var follow = shouldAutoScroll || distanceFromBottom(box) <= STICKY_BOTTOM_PX;
+scrollLock = false;
+if (follow) scrollToBottom();
+else updateJumpButton();
 }
 
 function escapeChatText(value) {
@@ -485,8 +558,11 @@ return t;
 }
 
 function showTyping(v) {
+scrollLock = true;
 document.getElementById('typer').style.display = v ? 'flex' : 'none';
-if (v) document.getElementById('msgs').scrollTop = 99999;
+var follow = shouldAutoScroll;
+scrollLock = false;
+if (follow) scrollToBottom();
 }
 
 function showSaveModal() {
@@ -579,7 +655,7 @@ saveChatHistory();
 var bloodworkNote = bloodwork ? ' <em style="font-size:12px;color:var(--text-soft);">Bloodwork on file</em>' : '';
 hist.push({ role: 'assistant', content: 'Welcome back, ' + profile.name + '! You are focused on ' + profile.goal + '.' + bloodworkNote + ' How can I help you today?' });
 saveChatHistory();
-addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?');
+addMsg('bot', 'Welcome back, <strong>' + profile.name + '</strong>! Focused on <strong>' + profile.goal + '</strong>.' + bloodworkNote + ' How can I help you today?', false);
 return { profile: profile, bloodworkNote: bloodworkNote };
 }
 
@@ -588,6 +664,7 @@ var userEmail = localStorage.getItem('peptideUserEmail');
 if (!userEmail) {
 renderMemoryUI(null);
 historyReady = true;
+scrollToBottom();
 return;
 }
 var db = firebase.firestore();
@@ -611,21 +688,23 @@ hist = doc.data().messages;
 knownCloudMsgCount = hist.length;
 maybeWriteSnapshot(userEmail, 'load');
 document.getElementById('msgs').innerHTML = '';
-addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?');
+addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?', false);
 hist.slice(2).forEach(function(msg) {
 if (msg.role === 'user') {
-addMsg('usr', displayUserMsg(msg.content));
+addMsg('usr', displayUserMsg(msg.content), false);
 } else {
-addMsg('bot', fmt(msg.content));
+addMsg('bot', fmt(msg.content), false);
 }
 });
 console.log('Loaded conversation history from cloud');
 }
 historyReady = true;
+scrollToBottom();
 }).catch(function(e) {
 console.log('Could not reach saved conversation, using local data only');
 renderMemoryUI(userEmail);
 historyReady = true;
+scrollToBottom();
 });
 }
 
@@ -691,8 +770,12 @@ sawError = true;
 showStreamError(friendlyStreamError(parsed));
 } else if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
 fullText += parsed.delta.text;
+scrollLock = true;
 msgDiv.innerHTML = fmt(fullText);
-msgs.scrollTop = msgs.scrollHeight;
+var follow = shouldAutoScroll || distanceFromBottom(msgs) <= STICKY_BOTTOM_PX;
+scrollLock = false;
+if (follow) scrollToBottom();
+else updateJumpButton();
 }
 } catch(e) {}
 }
@@ -705,6 +788,7 @@ hist.push({ role: 'assistant', content: fullText });
 saveChatHistory();
 saveConversationAuto();
 addCopyButton(msgDiv);
+if (shouldAutoScroll) scrollToBottom();
 } else if (msgDiv.parentNode) {
 msgDiv.parentNode.removeChild(msgDiv);
 }
@@ -739,12 +823,14 @@ return;
 }
 busy = true;
 document.getElementById('sbtn').disabled = true;
+shouldAutoScroll = true;
 addMsg('usr', displayUserMsg(text));
 hist.push({ role: 'user', content: text });
 saveChatHistory();
 saveConversationAuto();
 userMessageCount++;
 showTyping(true);
+scrollToBottom();
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
@@ -929,6 +1015,8 @@ return;
 }
 busy = true;
 document.getElementById('sbtn').disabled = true;
+shouldAutoScroll = true;
+scrollToBottom();
 showUploadNote('Reading your files...', false);
 var files = pendingFiles.slice();
 var formData = new FormData();
@@ -959,12 +1047,14 @@ var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + 
 uploadPrompt += '\n\nFiles attached: ' + names;
 if (note) uploadPrompt += '\n\nUser message: ' + note;
 uploadPrompt += '\n\nBased on this information and the expert protocols in your knowledge base, please provide comprehensive guidance and recommendations.';
+shouldAutoScroll = true;
 addMsg('usr', displayUserMsg(uploadPrompt));
 hist.push({ role: 'user', content: uploadPrompt });
 saveChatHistory();
 saveConversationAuto();
 showUploadNote('Analyzing your bloodwork...', false);
 showTyping(true);
+scrollToBottom();
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
@@ -1036,7 +1126,19 @@ e.preventDefault();
 sendMsgFromInput();
 }
 });
-document.getElementById('cinput').addEventListener('input', function() { ag(this); });
+document.getElementById('cinput').addEventListener('input', function() {
+ag(this);
+if (shouldAutoScroll) scrollToBottom();
+});
+document.getElementById('msgs').addEventListener('scroll', onMsgsScroll, { passive: true });
+window.addEventListener('resize', function() {
+if (shouldAutoScroll) scrollToBottom();
+});
+if (window.visualViewport) {
+window.visualViewport.addEventListener('resize', function() {
+if (shouldAutoScroll) scrollToBottom();
+});
+}
 document.getElementById('file-upload').addEventListener('change', handleFileUpload);
 loadChatHistory();
 loadMemory();
