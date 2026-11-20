@@ -12,7 +12,16 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const upload = multer({ dest: 'uploads/', limits: { fileSize: 10 * 1024 * 1024 } });
+const uploadDir = path.join(__dirname, 'uploads');
+const MAX_UPLOAD_FILES = 10;
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+const upload = multer({
+  dest: uploadDir,
+  // Busboy rejects a file when its size reaches this value, including an exact match.
+  // Allow one extra byte here so a file of exactly 10 MB still passes, then reject anything larger below.
+  limits: { fileSize: MAX_UPLOAD_BYTES + 1, files: MAX_UPLOAD_FILES }
+});
 
 const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -87,66 +96,158 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.post('/upload', upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const filePath = req.file.path;
-    const mimeType = req.file.mimetype;
-    let extractedText = '';
-    if (mimeType.startsWith('image/')) {
-      const imageData = fs.readFileSync(filePath);
-      const base64Image = imageData.toString('base64');
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 2000,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64Image } },
-              { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results you can see. List each marker with its value and reference range if visible. Be thorough and accurate.' }
-            ]
-          }]
-        })
-      });
-      const data = await response.json();
-      extractedText = data.content[0].text;
-    } else if (mimeType === 'application/pdf') {
-      const pdfData = fs.readFileSync(filePath);
-      const base64PDF = pdfData.toString('base64');
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 2000,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64PDF } },
-              { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results. List each marker with its value and reference range if visible. Be thorough and accurate.' }
-            ]
-          }]
-        })
-      });
-      const data = await response.json();
-      extractedText = data.content[0].text;
+function safeUploadName(name) {
+  const base = path.basename(String(name || 'upload')).replace(/[\r\n\t]+/g, ' ').trim();
+  return base || 'upload';
+}
+
+function uploadKind(file) {
+  const mime = String(file && file.mimetype || '').toLowerCase().split(';')[0].trim();
+  const name = String(file && file.originalname || '').toLowerCase();
+  if (mime === 'application/pdf' || mime === 'application/x-pdf' || name.endsWith('.pdf')) return 'pdf';
+  if (mime.startsWith('image/')) return 'image';
+  if (/\.(png|jpe?g|gif|webp|heic|heif|bmp|tiff?)$/.test(name)) return 'image';
+  return '';
+}
+
+function imageMediaType(file) {
+  const mime = String(file && file.mimetype || '').toLowerCase().split(';')[0].trim();
+  if (mime === 'image/jpg' || mime === 'image/jpeg') return 'image/jpeg';
+  if (mime === 'image/png' || mime === 'image/gif' || mime === 'image/webp') return mime;
+  const name = String(file && file.originalname || '').toLowerCase();
+  if (name.endsWith('.png')) return 'image/png';
+  if (name.endsWith('.gif')) return 'image/gif';
+  if (name.endsWith('.webp')) return 'image/webp';
+  if (name.endsWith('.jpg') || name.endsWith('.jpeg')) return 'image/jpeg';
+  if (mime.startsWith('image/')) return mime;
+  return 'image/jpeg';
+}
+
+function removeUploadedFiles(files) {
+  (files || []).forEach(function(file) {
+    if (!file || !file.path) return;
+    try {
+      fs.unlinkSync(file.path);
+    } catch (err) {
+      if (err.code !== 'ENOENT') console.error('Could not remove upload:', err);
     }
-    fs.unlinkSync(filePath);
-    res.json({ success: true, extractedText });
+  });
+}
+
+function combineExtractedTexts(parts) {
+  if (!parts || parts.length === 0) return '';
+  if (parts.length === 1) return parts[0].text;
+  return parts.map(function(part) {
+    return 'File: ' + part.name + '\n' + part.text;
+  }).join('\n\n');
+}
+
+async function extractLabReport(file) {
+  const kind = uploadKind(file);
+  const name = safeUploadName(file.originalname);
+  let content;
+
+  if (kind === 'image') {
+    const imageData = fs.readFileSync(file.path);
+    content = [
+      { type: 'image', source: { type: 'base64', media_type: imageMediaType(file), data: imageData.toString('base64') } },
+      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results you can see. List each marker with its value and reference range if visible. Be thorough and accurate.' }
+    ];
+  } else if (kind === 'pdf') {
+    const pdfData = fs.readFileSync(file.path);
+    content = [
+      { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfData.toString('base64') } },
+      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results. List each marker with its value and reference range if visible. Be thorough and accurate.' }
+    ];
+  } else {
+    const err = new Error(name + ' is not supported. Only PDF and image files are supported.');
+    err.status = 400;
+    err.publicMessage = err.message;
+    throw err;
+  }
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: content }]
+    })
+  });
+
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (parseErr) {
+    data = {};
+  }
+
+  const textBlock = data && Array.isArray(data.content)
+    ? data.content.find(function(block) { return block && block.type === 'text' && block.text; })
+    : null;
+
+  if (!response.ok || !textBlock) {
+    console.error('Lab extraction failed:', name, response.status, data && data.error ? data.error : '');
+    const err = new Error('Could not read ' + name + '. Try a clearer image or PDF.');
+    err.status = 502;
+    err.publicMessage = err.message;
+    throw err;
+  }
+
+  return textBlock.text;
+}
+
+function bloodworkUpload(req, res, next) {
+  upload.array('file', MAX_UPLOAD_FILES)(req, res, function(err) {
+    if (!err) return next();
+    removeUploadedFiles(req.files);
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'Each file must be 10 MB or smaller.' });
+    }
+    if (err.code === 'LIMIT_FILE_COUNT' || err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({ error: 'You can upload up to 10 files at a time.' });
+    }
+    console.error('Upload error:', err);
+    return res.status(400).json({ error: 'Could not upload those files. Please try a PDF or image under 10 MB.' });
+  });
+}
+
+app.post('/upload', bloodworkUpload, async (req, res) => {
+  const files = req.files || [];
+  try {
+    if (!files.length) return res.status(400).json({ error: 'No file uploaded' });
+    if (files.length > MAX_UPLOAD_FILES) {
+      return res.status(400).json({ error: 'You can upload up to 10 files at a time.' });
+    }
+
+    for (const file of files) {
+      if (file.size > MAX_UPLOAD_BYTES) {
+        return res.status(400).json({ error: 'Each file must be 10 MB or smaller.' });
+      }
+      if (!uploadKind(file)) {
+        return res.status(400).json({ error: safeUploadName(file.originalname) + ' is not supported. Only PDF and image files are supported.' });
+      }
+    }
+
+    const parts = [];
+    for (const file of files) {
+      const text = await extractLabReport(file);
+      parts.push({ name: safeUploadName(file.originalname), text: text });
+    }
+
+    res.json({ success: true, extractedText: combineExtractedTexts(parts) });
   } catch (err) {
     console.error('Upload error:', err);
-    res.status(500).json({ error: err.message });
+    const status = err.status >= 400 && err.status < 600 ? err.status : 500;
+    const message = err.publicMessage || (status === 400 ? err.message : 'Could not read those files. Please try again.');
+    if (!res.headersSent) res.status(status).json({ error: message });
+  } finally {
+    removeUploadedFiles(files);
   }
 });
 
