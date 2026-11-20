@@ -33,6 +33,10 @@ const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const index = pc.index('peptide-agent', process.env.PINECONE_HOST);
 
+const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID || 'peptide-agent-49020';
+const FIREBASE_WEB_API_KEY = process.env.FIREBASE_WEB_API_KEY || 'AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0';
+const FIRESTORE_TIMEOUT_MS = 8000;
+
 const SYSTEM_PROMPT = `You are the Peptide Guidance Agent - an expert AI assistant trained on content from multiple leading peptide physicians and experts including Dr. Trevor Bachmeyer, Jay Campbell (a peptide/supplement protocol expert - NOT a physician, never call him "Dr. Campbell" or "Dr. Jay Campbell"), Dr. William Seeds (SSRP Institute), Dr. Rhonda Patrick, Dr. Kyle Gillett, Dr. Andrew Huberman, Dr. Rand McClain, Dr. Alex Tatem, Dr. Abud Bakri, Dr. Ashley Froese, Dr. Joy Kong, Dr. Sean O'Mara, Dr. Gabrielle Lyon, and Mark Hyman, MD.
 
 ABSOLUTE RULES:
@@ -693,6 +697,107 @@ function appendJsonl(filename, record) {
   fs.appendFileSync(path.join(dataDir, filename), JSON.stringify(record) + '\n', 'utf8');
 }
 
+function firestoreDocumentsUrl() {
+  return 'https://firestore.googleapis.com/v1/projects/' + FIREBASE_PROJECT_ID + '/databases/(default)/documents';
+}
+
+function safeFirestoreError(err) {
+  return String(err && err.message ? err.message : err).replace(/key=[^&\s]+/gi, 'key=redacted');
+}
+
+async function firestoreRequest(url, options) {
+  const response = await fetch(url, Object.assign({ timeout: FIRESTORE_TIMEOUT_MS }, options || {}));
+  const text = await response.text();
+  let body = {};
+  if (text) {
+    try {
+      body = JSON.parse(text);
+    } catch (err) {
+      body = {};
+    }
+  }
+  const apiError = (body && body.error) || (Array.isArray(body) && body[0] && body[0].error) || null;
+  if (!response.ok || apiError) {
+    const status = apiError && apiError.status ? apiError.status : '';
+    const message = apiError && apiError.message ? apiError.message : 'request failed';
+    const error = new Error('Firestore ' + response.status + (status ? ' ' + status : '') + ': ' + message);
+    error.statusCode = response.status;
+    error.firestoreStatus = status;
+    throw error;
+  }
+  return body;
+}
+
+function aggregateCount(body) {
+  const rows = Array.isArray(body) ? body : [];
+  const fields = rows[0] && rows[0].result && rows[0].result.aggregateFields;
+  const raw = fields && fields.count ? (fields.count.integerValue || fields.count.doubleValue || 0) : 0;
+  const count = Number(raw);
+  return Number.isFinite(count) ? count : 0;
+}
+
+async function countCollection(collection) {
+  const url = firestoreDocumentsUrl() + ':runAggregationQuery?key=' + encodeURIComponent(FIREBASE_WEB_API_KEY);
+  const body = await firestoreRequest(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      structuredAggregationQuery: {
+        aggregations: [{ alias: 'count', count: {} }],
+        structuredQuery: { from: [{ collectionId: collection }] }
+      }
+    })
+  });
+  return aggregateCount(body);
+}
+
+async function clicksByPartner() {
+  const byPartner = {};
+  let pageToken = '';
+  let pages = 0;
+  do {
+    const params = new URLSearchParams();
+    params.set('pageSize', '300');
+    params.set('key', FIREBASE_WEB_API_KEY);
+    if (pageToken) params.set('pageToken', pageToken);
+    const body = await firestoreRequest(firestoreDocumentsUrl() + '/scout_clicks?' + params.toString());
+    const documents = body.documents || [];
+    documents.forEach(function(doc) {
+      const partnerField = doc.fields && doc.fields.partner;
+      const partner = partnerField && partnerField.stringValue ? partnerField.stringValue : 'unknown';
+      byPartner[partner] = (byPartner[partner] || 0) + 1;
+    });
+    pageToken = body.nextPageToken || '';
+    pages += 1;
+  } while (pageToken && pages < 100);
+  if (pageToken) {
+    const error = new Error('Firestore click list exceeded 30000 documents');
+    error.firestoreStatus = 'FAILED_PRECONDITION';
+    throw error;
+  }
+  return byPartner;
+}
+
+async function readFirestoreStats() {
+  const counts = await Promise.all([
+    countCollection('scout_clicks'),
+    countCollection('scout_waitlist'),
+    clicksByPartner()
+  ]);
+  return { totalClicks: counts[0], byPartner: counts[2], waitlistCount: counts[1] };
+}
+
+function localStats() {
+  const clicks = readJsonl('clicks.jsonl');
+  const waitlist = readJsonl('waitlist.jsonl');
+  const byPartner = {};
+  clicks.forEach(function(click) {
+    const partner = click && click.partner ? String(click.partner) : 'unknown';
+    byPartner[partner] = (byPartner[partner] || 0) + 1;
+  });
+  return { totalClicks: clicks.length, byPartner: byPartner, waitlistCount: waitlist.length };
+}
+
 function readJsonl(filename) {
   try {
     const text = fs.readFileSync(path.join(dataDir, filename), 'utf8');
@@ -764,15 +869,15 @@ app.post('/api/waitlist', function(req, res) {
   res.json({ ok: true });
 });
 
-app.get('/api/stats', function(req, res) {
-  const clicks = readJsonl('clicks.jsonl');
-  const waitlist = readJsonl('waitlist.jsonl');
-  const byPartner = {};
-  clicks.forEach(function(click) {
-    const partner = click && click.partner ? String(click.partner) : 'unknown';
-    byPartner[partner] = (byPartner[partner] || 0) + 1;
-  });
-  res.json({ totalClicks: clicks.length, byPartner: byPartner, waitlistCount: waitlist.length });
+app.get('/api/stats', async function(req, res) {
+  try {
+    const stats = await readFirestoreStats();
+    res.json({ totalClicks: stats.totalClicks, byPartner: stats.byPartner, waitlistCount: stats.waitlistCount, source: 'firestore' });
+  } catch (err) {
+    console.error('Firestore stats failed:', safeFirestoreError(err));
+    const stats = localStats();
+    res.json({ totalClicks: stats.totalClicks, byPartner: stats.byPartner, waitlistCount: stats.waitlistCount, source: 'local' });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
