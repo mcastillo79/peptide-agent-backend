@@ -1759,6 +1759,7 @@ renderProState();
 return;
 }
 var email = localStorage.getItem('peptideUserEmail') || '';
+writeScoutWaitlist(email);
 fetch('/api/waitlist', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
@@ -1801,8 +1802,73 @@ patch.lastUpdated = firebase.firestore.FieldValue.serverTimestamp();
 firebase.firestore().collection('users').doc(email).set(patch, { merge: true }).catch(function() {});
 }
 
+function sha256Hex(text) {
+if (!window.crypto || !crypto.subtle || !window.TextEncoder) return Promise.resolve('');
+return crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(text))).then(function(buf) {
+var hex = '';
+var bytes = new Uint8Array(buf);
+for (var i = 0; i < bytes.length; i++) hex += ('0' + bytes[i].toString(16)).slice(-2);
+return hex;
+}).catch(function() { return ''; });
+}
+
+function scoutFirestore() {
+try {
+if (!window.firebase || !firebase.apps || !firebase.apps.length || !firebase.firestore) return null;
+return firebase.firestore();
+} catch (e) {
+return null;
+}
+}
+
+// Rules reject unauthenticated server writes, so the browser writes these directly.
+function writeScoutClick(partner, destination, state, page) {
+var db = scoutFirestore();
+if (!db) return;
+var doc = {
+ts: new Date().toISOString(),
+partner: String(partner || '').slice(0, 80),
+destination: String(destination || '').slice(0, 500),
+state: String(state || '').slice(0, 80),
+page: String(page || 'sources').slice(0, 120)
+};
+var email = '';
+try { email = (localStorage.getItem('peptideUserEmail') || '').trim().toLowerCase(); } catch (e) {}
+var save = function(hash) {
+if (hash) doc.emailHash = String(hash).slice(0, 16);
+db.collection('scout_clicks').add(doc).catch(function() {});
+};
+if (!email) {
+save('');
+return;
+}
+sha256Hex(email).then(save);
+}
+
+function writeScoutWaitlist(email) {
+var db = scoutFirestore();
+if (!db) return;
+var clean = String(email || '').trim().toLowerCase().slice(0, 200);
+var doc = {
+ts: new Date().toISOString(),
+source: 'scout-pro',
+plan: '9'
+};
+if (clean.indexOf('@') !== -1) doc.email = clean;
+var save = function(hash) {
+if (hash) doc.emailHash = hash;
+db.collection('scout_waitlist').add(doc).catch(function() {});
+};
+if (!clean) {
+save('');
+return;
+}
+sha256Hex(clean).then(save);
+}
+
 function trackClick(partner, destination, state, page) {
 try {
+writeScoutClick(partner, destination, state, page);
 var payload = JSON.stringify({
 partner: partner,
 destination: destination,
