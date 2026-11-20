@@ -298,33 +298,69 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Server running on port ' + PORT));
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const MIN_DONATION_CENTS = 50;
+const MAX_DONATION_CENTS = 1000 * 100;
+const APP_URL = 'https://peptide-agent-backend.onrender.com';
+
 app.post('/create-checkout-session', async (req, res) => {
   try {
-    const { amount, type } = req.body;
+    const { amount, type } = req.body || {};
+    const successUrl = APP_URL + '/?success=true';
+    const cancelUrl = APP_URL + '/?canceled=true';
+    const cents = type === 'subscription' ? null : Number(amount);
+
+    if (type !== 'subscription') {
+      if (!Number.isInteger(cents) || cents < MIN_DONATION_CENTS || cents > MAX_DONATION_CENTS) {
+        return res.status(400).json({ error: 'Please enter an amount between $0.50 and $1,000.00.' });
+      }
+    }
+
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return res.status(500).json({ error: 'Payments are temporarily unavailable. Please try again later.' });
+    }
+
     let session;
+
     if (type === 'subscription') {
       session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'subscription',
-        line_items: [{ price_data: { currency: 'usd', product_data: { name: 'Peptide Guidance Agent Monthly Support' }, recurring: { interval: 'month' }, unit_amount: 499 }, quantity: 1 }],
-        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
-        cancel_url: 'https://peptide-agent-backend.onrender.com/'
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: { name: 'Peptide Guidance Agent Monthly Support' },
+            recurring: { interval: 'month' },
+            unit_amount: 499
+          },
+          quantity: 1
+        }],
+        success_url: successUrl,
+        cancel_url: cancelUrl
       });
     } else {
       session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'payment',
-        line_items: [{ price_data: { currency: 'usd', product_data: { name: 'Support Peptide Guidance Agent' }, unit_amount: amount }, quantity: 1 }],
-        success_url: 'https://peptide-agent-backend.onrender.com/?success=true',
-        cancel_url: 'https://peptide-agent-backend.onrender.com/'
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: { name: 'Support Peptide Guidance Agent' },
+            unit_amount: cents
+          },
+          quantity: 1
+        }],
+        success_url: successUrl,
+        cancel_url: cancelUrl
       });
     }
-    res.json({ sessionId: session.id });
+
+    res.json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error('Stripe error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message || 'Unable to start checkout. Please try again.' });
   }
 });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Server running on port ' + PORT));
