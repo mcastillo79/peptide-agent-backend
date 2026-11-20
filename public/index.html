@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Peptide Guidance Agent | Dr. Bachmeyer, Jay Campbell and More</title>
-<meta property="og:title" content="Free Peptide Guidance - Get Personalized Protocol Advice">
+<title>Scout | Peptide & Longevity Guidance</title>
+<meta property="og:title" content="Scout | Peptide & Longevity Guidance">
 <meta property="og:description" content="Ask our AI peptide agent anything - protocols, dosing, stacking, and bloodwork analysis. Backed by leading physicians. Free to use, no login required.">
 <meta property="og:url" content="https://peptide-agent-backend.onrender.com">
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEVElEQVR4nO3dTW7bMBCG4VGQnX3HAm1+CjTHyaJNm1vqAF0YCALYn2OJHA45fB9418JkyNeUgwj2cvj2y4BL7qIngH4RByTigEQckIgDEnFAIg5IxAHp3pboKaBXnByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQuBMMEicHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJO4Eg8TJAYk4IBEHJOKARByQiAPSffQEbrW+v6p/Ov54aTmTGw034XPL4XvXXwB4ZYnP9bDow034in7j2LTKn0Wt+HAT/lKPcexe5c9arvhwE75Rd29Iqyx0xedpNlCzCd+urzjqLlCD5R5uwpt0FIfH0rgu93AT3qqXOPwWxemZh5vwDl3E4b0c1Z9/uAnvEx9Hm4WoOMpwE94tPg50684WC3y0fH2s768TTrjkwckBKTKO9V/ry2rhiMNNuBAnByTigBQWR9SBuXvc4SZcjpMD0jB3glUU+y5vIJwckIgDEnFAIg5IxAFpxt9Wjg97buWd8HecsJNj3w4FjjvchMtxWYFEHJAi42h/YBaOONyEC032mWDD/bChEw6+rBwf270yqow23IRL8J4DUnwcbV4fFUcZbsK7xcdh/gtR/fmHm/A+XcRhnsvh9MzDTXiHXuIwn0VxXejhJrxVR3FY7aVpsNDDTXiTvuKw/haomQ5/8OXw0N3HPp2sf2t8lpLzig8xyd36jeOkfPVdl75wet1mcdL7/Rwfy3dlG275Px4uDrdpwp3r/eTY6vqGjTtWiO7ekI4ifRmWL46L29P4cpNGtjjamOHYsJRxcHjUkjAOpVYfkxwbFv6ZYE6P45PYquJnvlzG00v4j+zxSHtyXOxjfePiskHaODxcbEueUuPLHAeHR6HMcdQ127Fh/f9tpdDx6eV8U9e318+beuUsyb33X1oOj6n+tnLO7zqSPp38l5X0W+gnfxzm08cMzU0RR3UzlGHEsc8kvw9PEYfHXs7QR/44/HYxfR/J4/Dev9x9ZI6jzc4l7iNzHCiUNo6WL+ish0faOFAu551g7V/K61vwNzl6PDg5IBEHpIRxrH+CvowtaFw/CeNALcQBiTggEQck4oBEHJCIAxJxQEoYx/E56MvYgsb1kzAO1EIckHLG0f6Ez3dNsaxxoIq0cbR8Kac8Nmy6b4d0knQN054cZnb82eTL2JqMEiJzHOa/c4nLsPRxmOf+5S7DZojDfHYxfRk2SRxWey9nKMPmicPq7egkZZjZcnhO/oFx59bfO28TnyeLkxnjONmUyGxZnMwbx4crlczZxAfigDTRG1JsRRyQiAMScUAiDkjEAYk4IHEnGCRODkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjcCQaJkwMScUAiDkjEAYk4IBEHJOKARByQ/gOXdhw1O0rikwAAAABJRU5ErkJggg==">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEVElEQVR4nO3dTW7bMBCG4VGQnX3HAm1+CjTHyaJNm1vqAF0YCALYn2OJHA45fB9418JkyNeUgwj2cvj2y4BL7qIngH4RByTigEQckIgDEnFAIg5IxAHp3pboKaBXnByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQuBMMEicHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJO4Eg8TJAYk4IBEHJOKARByQiAPSffQEbrW+v6p/Ov54aTmTGw034XPL4XvXXwB4ZYnP9bDow034in7j2LTKn0Wt+HAT/lKPcexe5c9arvhwE75Rd29Iqyx0xedpNlCzCd+urzjqLlCD5R5uwpt0FIfH0rgu93AT3qqXOPwWxemZh5vwDl3E4b0c1Z9/uAnvEx9Hm4WoOMpwE94tPg50684WC3y0fH2s768TTrjkwckBKTKO9V/ry2rhiMNNuBAnByTigBQWR9SBuXvc4SZcjpMD0jB3glUU+y5vIJwckIgDEnFAIg5IxAFpxt9Wjg97buWd8HecsJNj3w4FjjvchMtxWYFEHJAi42h/YBaOONyEC032mWDD/bChEw6+rBwf270yqow23IRL8J4DUnwcbV4fFUcZbsK7xcdh/gtR/fmHm/A+XcRhnsvh9MzDTXiHXuIwn0VxXejhJrxVR3FY7aVpsNDDTXiTvuKw/haomQ5/8OXw0N3HPp2sf2t8lpLzig8xyd36jeOkfPVdl75wet1mcdL7/Rwfy3dlG275Px4uDrdpwp3r/eTY6vqGjTtWiO7ekI4ifRmWL46L29P4cpNGtjjamOHYsJRxcHjUkjAOpVYfkxwbFv6ZYE6P45PYquJnvlzG00v4j+zxSHtyXOxjfePiskHaODxcbEueUuPLHAeHR6HMcdQ127Fh/f9tpdDx6eV8U9e318+beuUsyb33X1oOj6n+tnLO7zqSPp38l5X0W+gnfxzm08cMzU0RR3UzlGHEsc8kvw9PEYfHXs7QR/44/HYxfR/J4/Dev9x9ZI6jzc4l7iNzHCiUNo6WL+ish0faOFAu551g7V/K61vwNzl6PDg5IBEHpIRxrH+CvowtaFw/CeNALcQBiTggEQck4oBEHJCIAxJxQEoYx/E56MvYgsb1kzAO1EIckHLG0f6Ez3dNsaxxoIq0cbR8Kac8Nmy6b4d0knQN054cZnb82eTL2JqMEiJzHOa/c4nLsPRxmOf+5S7DZojDfHYxfRk2SRxWey9nKMPmicPq7egkZZjZcnhO/oFx59bfO28TnyeLkxnjONmUyGxZnMwbx4crlczZxAfigDTRG1JsRRyQiAMScUAiDkjEAYk4IHEnGCRODkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjcCQaJkwMScUAiDkjEAYk4IBEHJOKARByQ/gOXdhw1O0rikwAAAABJRU5ErkJggg==">
-<meta name="apple-mobile-web-app-title" content="Peptide Agent">
+<meta name="apple-mobile-web-app-title" content="Scout">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -29,6 +29,14 @@
 --qb-bg: #f8fafc;
 --qb-text: #64748b;
 --accent: #1a6b3c;
+--high: #9b1c1c;
+--high-bg: #fef3f2;
+--low: #9a3412;
+--low-bg: #fff7ed;
+--ok: #067647;
+--ok-bg: #ecfdf3;
+--info: #1d4ed8;
+--info-bg: #eff6ff;
 }
 body.dark {
 --page-bg: #0d1117;
@@ -43,6 +51,14 @@ body.dark {
 --qb-bg: #21262d;
 --qb-text: #8b949e;
 --accent: #3fb950;
+--high: #ffb4b4;
+--high-bg: rgba(197,48,48,0.18);
+--low: #fdba74;
+--low-bg: rgba(180,83,9,0.2);
+--ok: #86efac;
+--ok-bg: rgba(22,163,74,0.16);
+--info: #93c5fd;
+--info-bg: rgba(37,99,235,0.18);
 }
 html, body { height: 100vh; height: 100dvh; overflow: hidden; }
 body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; background: var(--page-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; min-height: 100dvh; height: 100vh; height: 100dvh; padding: 16px; overflow: hidden; transition: background 0.3s; }
@@ -135,61 +151,193 @@ body { padding: 0; }
 body.dark #sbtn { background: var(--accent); }
 #sbtn:disabled { opacity: 0.4; cursor: not-allowed; }
 #ftr { text-align: center; font-size: 11px; color: var(--text-soft); padding: 8px 16px 10px; background: var(--card-bg); flex-shrink: 0; }
+html.skip-intake #intake-overlay { display: none; }
+#hdr-copy { min-width: 0; flex: 1; }
+#logo { font-size: 18px; font-weight: 700; }
+#sub { line-height: 1.35; }
+#intake-overlay { overflow: hidden; }
+#intake-box { max-height: calc(100dvh - 24px); overflow-y: auto; }
+#tabs { display: flex; gap: 4px; padding: 0 10px 8px; background: var(--header-bg); flex-shrink: 0; }
+.tab { flex: 1; appearance: none; border: none; background: transparent; color: #9fb4c8; border-radius: 8px; padding: 7px 4px; font-size: 12px; font-weight: 650; font-family: inherit; line-height: 1.2; cursor: pointer; }
+.tab.active { background: rgba(255,255,255,0.14); color: #fff; }
+.tab:hover { color: #fff; }
+.panel { display: none; flex: 1 1 auto; min-height: 0; min-width: 0; flex-direction: column; }
+.panel.active { display: flex; }
+.panel-scroll { flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; padding: 14px 14px 18px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.panel-scroll h2, .source-card h2 { font-size: 16px; line-height: 1.35; color: var(--text-main); margin-bottom: 6px; }
+.panel-lead, .source-card p, .source-foot { font-size: 13px; color: var(--text-soft); line-height: 1.45; }
+.panel-lead { margin-bottom: 10px; }
+.panel-scroll .intake-field { margin-bottom: 8px; }
+.panel-scroll .intake-field textarea { height: 52px; }
+.panel-scroll .quiz-next { margin-top: 4px; }
+.file-input-clip { position: fixed; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+.quiz-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; color: var(--text-main); font-size: 13px; }
+.quiz-track { height: 4px; background: var(--border-col); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
+#quiz-bar { height: 100%; width: 33%; background: var(--accent); transition: width 0.2s ease; }
+#quiz-error { min-height: 16px; margin: 0 0 8px; color: #c53030; font-size: 12px; }
+.quiz-step { display: none; }
+.quiz-step.on { display: block; animation: quiz-in 0.18s ease; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.quiz-sub { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-soft); margin: 14px 0 8px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); border-radius: 999px; padding: 8px 12px; font-size: 13px; font-family: inherit; cursor: pointer; text-align: left; }
+.pill.selected { background: var(--header-bg); color: #fff; border-color: var(--header-bg); }
+body.dark .pill.selected { background: var(--accent); color: #04140a; border-color: var(--accent); }
+.quiz-next { width: 100%; margin-top: 14px; padding: 12px; background: var(--header-bg); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+body.dark .quiz-next { background: var(--accent); color: #04140a; }
+.quiz-nav { display: flex; gap: 8px; margin-top: 6px; }
+.quiz-nav .quiz-next { flex: 1; width: auto; margin-top: 8px; }
+.quiz-back { margin-top: 8px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); font-family: inherit; font-weight: 600; cursor: pointer; }
+.quiz-back-block { width: 100%; }
+#intake-restore { cursor: pointer; text-align: center; margin-top: 12px; font-size: 13px; color: var(--accent); text-decoration: underline; }
+.source-card { border: 1px solid var(--border-col); border-radius: 14px; padding: 14px; background: var(--card-bg); margin-bottom: 12px; }
+.source-card.pharmacy { box-shadow: inset 0 3px 0 var(--accent); }
+.source-card.altura { box-shadow: inset 0 3px 0 #1f6feb; }
+.source-note { margin-top: 8px; }
+.state-row, .source-actions, .labs-actions, .stack-actions { display: flex; gap: 8px; }
+.state-row, .source-actions { margin-top: 12px; }
+.source-actions, .stack-form { flex-direction: column; }
+.stack-form { display: grid; gap: 8px; }
+.stack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.state-btn, .source-go, .copy-code, .pro-join, .labs-btn { font-family: inherit; cursor: pointer; border-radius: 10px; font-weight: 650; font-size: 13px; }
+.state-btn, .source-go, .pro-join, .labs-btn.primary { background: var(--header-bg); color: #fff; border: none; padding: 10px 8px; }
+body.dark .state-btn, body.dark .source-go, body.dark .pro-join, body.dark .labs-btn.primary { background: var(--accent); color: #04140a; }
+.state-btn { flex: 1; min-width: 0; }
+.copy-code, .labs-btn { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-col); padding: 10px 8px; }
+.copy-code { border-style: dashed; border-color: var(--accent); }
+.labs-actions { margin-bottom: 12px; }
+.labs-actions .labs-btn { flex: 1; }
+.stack-item { border: 1px solid var(--border-col); border-radius: 12px; padding: 10px 12px; margin-top: 8px; background: var(--card-bg); }
+.stack-item.paused { opacity: 0.72; }
+.stack-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.stack-name { font-weight: 700; color: var(--text-main); font-size: 14px; }
+.stack-meta, .empty-note, .lab-summary, .lab-files { color: var(--text-soft); font-size: 12px; line-height: 1.45; }
+.stack-meta { margin-top: 4px; }
+.mini-btn { border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.mini-btn.danger { color: #c53030; }
+.lab-card { border-left: 2px solid var(--accent); margin: 0 0 4px 6px; padding: 0 0 14px 12px; }
+.lab-date { font-size: 12px; font-weight: 700; color: var(--text-main); }
+.lab-files { margin: 2px 0 8px; }
+.bio-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.bio-pill { display: inline-flex; gap: 6px; align-items: center; border-radius: 999px; padding: 4px 8px; font-size: 12px; background: var(--info-bg); color: var(--info); }
+.bio-pill.flag-high { background: var(--high-bg); color: var(--high); }
+.bio-pill.flag-low { background: var(--low-bg); color: var(--low); }
+.bio-pill.flag-normal { background: var(--ok-bg); color: var(--ok); }
+.bio-flag { font-weight: 700; font-size: 10px; letter-spacing: 0.03em; text-transform: uppercase; }
+.pro-card { margin-top: 16px; border: 1px solid var(--border-col); border-radius: 14px; padding: 14px; background: linear-gradient(180deg, rgba(26,107,60,0.1), transparent); }
+.pro-card h2 { font-size: 14px; margin-bottom: 4px; }
+.pro-card p { font-size: 12px; color: var(--text-soft); line-height: 1.45; margin-bottom: 10px; }
+.pro-join { width: 100%; }
+.pro-done { display: none; font-size: 13px; font-weight: 650; color: var(--accent); }
+.pro-error { min-height: 16px; color: #c53030; font-size: 12px; margin-top: 6px; }
+.section-label { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-soft); margin: 16px 0 8px; }
+#print-report { display: none; }
+@media (max-width: 720px) {
+#hdr { padding: 10px 12px; }
+#logo { width: 34px; height: 34px; }
+#tabs { padding: 0 8px 8px; }
+#ftr { padding: 6px 10px 8px; }
+.panel input, .panel textarea, .intake-field input, .intake-field textarea { font-size: 16px; }
+}
+@media (max-width: 420px) {
+.stack-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+.quiz-step.on, #quiz-bar { animation: none; transition: none; }
+}
+@media print {
+html, body { height: auto !important; min-height: 0 !important; overflow: visible !important; display: block !important; background: #fff !important; padding: 0 !important; }
+#wrap, #intake-overlay, #save-conv-overlay { display: none !important; }
+#print-report { display: block !important; color: #111; background: #fff; padding: 24px; font-family: Georgia, serif; }
+#print-report h1 { font-size: 22px; margin-bottom: 6px; }
+#print-report h2 { font-size: 16px; margin: 18px 0 6px; }
+#print-report p, #print-report li { font-size: 12px; line-height: 1.45; }
+#print-report table { width: 100%; border-collapse: collapse; }
+#print-report th, #print-report td { text-align: left; vertical-align: top; padding: 4px 8px 4px 0; border-bottom: 1px solid #ddd; font-size: 12px; }
+#print-report th { width: 34%; }
+.print-kicker, .print-foot { color: #444; }
+}
 </style>
+<script>
+try {
+if (localStorage.getItem('peptideUserProfile') || localStorage.getItem('peptideUserEmail')) {
+document.documentElement.classList.add('skip-intake');
+}
+} catch (e) {}
+</script>
 </head>
 <body>
 
 <div id="intake-overlay">
 <div id="intake-box">
-<h2>Welcome to the Peptide Guidance Agent</h2>
-<p>Tell us a little about yourself so we can personalize your guidance. This is saved locally on your device.</p>
+<div class="quiz-top"><strong>Scout</strong><span id="quiz-step-label">Step 1 of 3</span></div>
+<div class="quiz-track" aria-hidden="true"><div id="quiz-bar"></div></div>
+<div id="quiz-error" role="alert"></div>
+<div class="quiz-step on" id="quiz-step-1">
+<h2>Primary goal</h2>
+<p>Choose what you want Scout to focus on, and how familiar you already are with peptides.</p>
+<div class="pill-row" id="goal-pills">
+<button type="button" class="pill" onclick="selectPill('intake-goal','Fat loss and metabolic health',this)">Fat loss and metabolic health</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','Muscle building and recovery',this)">Muscle building and recovery</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','Longevity and anti-aging',this)">Longevity and anti-aging</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','Injury healing and tissue repair',this)">Injury healing and tissue repair</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','Cognitive function and brain health',this)">Cognitive function and brain health</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','Hormone optimization',this)">Hormone optimization</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','Gut health and inflammation',this)">Gut health and inflammation</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','Sleep and recovery',this)">Sleep and recovery</button>
+<button type="button" class="pill" onclick="selectPill('intake-goal','General wellness and optimization',this)">General wellness and optimization</button>
+</div>
+<h3 class="quiz-sub">Peptide experience</h3>
+<div class="pill-row">
+<button type="button" class="pill selected" onclick="selectPill('intake-experience','No prior peptide experience',this)">New to peptides</button>
+<button type="button" class="pill" onclick="selectPill('intake-experience','Some peptide experience',this)">Some experience</button>
+<button type="button" class="pill" onclick="selectPill('intake-experience','Experienced peptide user',this)">Currently using</button>
+</div>
+<input type="hidden" id="intake-goal" value="">
+<input type="hidden" id="intake-experience" value="No prior peptide experience">
+<button type="button" class="quiz-next" onclick="quizNext(2)">Continue</button>
+</div>
+<div class="quiz-step" id="quiz-step-2">
+<h2>About you</h2>
+<p>This stays on your device until you choose to save an email.</p>
 <div class="intake-field">
-<label>Your First Name</label>
-<input type="text" id="intake-name" placeholder="e.g. Michael">
+<label>First name</label>
+<input type="text" id="intake-name" placeholder="e.g. Michael" autocomplete="given-name">
 </div>
 <div class="intake-field">
-<label>Age and Biological Sex</label>
-<input type="text" id="intake-age" placeholder="e.g. 45, Male">
+<label>Age / sex</label>
+<input type="text" id="intake-age" placeholder="e.g. 45, Male" autocomplete="off">
 </div>
 <div class="intake-field">
-<label>Main Health Goal</label>
-<select id="intake-goal">
-<option value="">Select your primary goal...</option>
-<option value="Fat loss and metabolic health">Fat loss and metabolic health</option>
-<option value="Muscle building and recovery">Muscle building and recovery</option>
-<option value="Longevity and anti-aging">Longevity and anti-aging</option>
-<option value="Injury healing and tissue repair">Injury healing and tissue repair</option>
-<option value="Cognitive function and brain health">Cognitive function and brain health</option>
-<option value="Hormone optimization">Hormone optimization</option>
-<option value="Gut health and inflammation">Gut health and inflammation</option>
-<option value="Sleep and recovery">Sleep and recovery</option>
-<option value="General wellness and optimization">General wellness and optimization</option>
-</select>
+<label>State</label>
+<input type="hidden" id="intake-state" value="">
+<div class="pill-row">
+<button type="button" class="pill" onclick="selectPill('intake-state','Florida',this)">Florida</button>
+<button type="button" class="pill" onclick="selectPill('intake-state','New York',this)">New York</button>
+<button type="button" class="pill" onclick="selectPill('intake-state','Other',this)">Other</button>
+</div>
 </div>
 <div class="intake-field">
-<label>Any existing conditions or medications? (optional)</label>
+<label>Optional conditions</label>
 <textarea id="intake-conditions" placeholder="e.g. Type 2 diabetes, on metformin. Or leave blank if none."></textarea>
 </div>
-<div class="intake-field">
-<label>Your State</label>
-<select id="intake-state">
-<option value="">Select your state...</option>
-<option value="Florida">Florida</option>
-<option value="New York">New York</option>
-<option value="Other">Other state</option>
-</select>
+<div class="quiz-nav">
+<button type="button" class="quiz-back" onclick="quizBack(1)">Back</button>
+<button type="button" class="quiz-next" onclick="quizNext(3)">Continue</button>
 </div>
-<div class="intake-field">
-<label>Prior peptide experience?</label>
-<select id="intake-experience">
-<option value="No prior peptide experience">No - completely new to peptides</option>
-<option value="Some peptide experience">Some experience - tried a few</option>
-<option value="Experienced peptide user">Experienced - currently using peptides</option>
-</select>
 </div>
-<button id="intake-submit" onclick="saveIntake()">Start My Personalized Session</button>
-<div id="intake-skip" onclick="skipIntake()" style="cursor: pointer;">Skip for now</div>
-<div id="intake-restore" onclick="restoreAccount()" style="cursor: pointer; text-align: center; margin-top: 12px; font-size: 13px; color: var(--accent); text-decoration: underline;">Already have an account? Restore by email</div>
+<div class="quiz-step" id="quiz-step-3">
+<h2>Save across devices</h2>
+<p>Add your email to keep your profile, stack, and lab timeline in sync.</p>
+<div class="intake-field">
+<label>Email</label>
+<input type="email" id="intake-email" placeholder="you@email.com" autocomplete="email">
+</div>
+<button type="button" id="intake-submit" onclick="saveIntake()">Save and start</button>
+<div id="intake-skip" onclick="skipIntake()">Skip for now</div>
+<div id="intake-restore" onclick="restoreAccount()">Already have an account? Restore by email</div>
+<button type="button" class="quiz-back quiz-back-block" onclick="quizBack(2)">Back</button>
+</div>
 </div>
 </div>
 
@@ -205,17 +353,24 @@ body.dark #sbtn { background: var(--accent); }
 </div>
 </div>
 
+<input type="file" id="file-upload" class="file-input-clip" accept=".pdf,image/*" multiple>
 <div id="wrap">
 <div id="hdr">
-<div id="logo">GRx</div>
-<div>
-<div id="ttl">Peptide Guidance Agent</div>
-<div id="sub">Expert protocols from Dr. Bachmeyer, Jay Campbell, Dr. Seeds and leading physicians</div>
+<div id="logo">S</div>
+<div id="hdr-copy">
+<div id="ttl">Scout</div>
+<div id="sub">Peptide & Longevity Guidance · Educational AI</div>
 </div>
 <button id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
 <div id="dot"></div>
 </div>
-
+<nav id="tabs" role="tablist" aria-label="Scout sections">
+<button type="button" class="tab active" role="tab" data-tab="chat" aria-selected="true" aria-controls="panel-chat" onclick="switchTab('chat')">Chat</button>
+<button type="button" class="tab" role="tab" data-tab="stack" aria-selected="false" aria-controls="panel-stack" onclick="switchTab('stack')">My Stack</button>
+<button type="button" class="tab" role="tab" data-tab="labs" aria-selected="false" aria-controls="panel-labs" onclick="switchTab('labs')">Labs</button>
+<button type="button" class="tab" role="tab" data-tab="sources" aria-selected="false" aria-controls="panel-sources" onclick="switchTab('sources')">Sources</button>
+</nav>
+<section id="panel-chat" class="panel active" role="tabpanel">
 <div id="memory-banner">
 <span id="memory-greeting"></span>
 <span id="reset-memory" onclick="resetMemory()" style="cursor: pointer;">Reset profile</span>
@@ -224,7 +379,7 @@ body.dark #sbtn { background: var(--accent); }
 <div id="thread">
 <div id="msgs">
 <div class="msg bot">
-Welcome to the Peptide Guidance Agent.<br><br>
+Welcome to Scout.<br><br>
 Trained on expert content from Dr. Trevor Bachmeyer, Jay Campbell, Dr. William Seeds, Dr. Rhonda Patrick, and leading peptide physicians.<br><br>
 To personalize my guidance, tell me:<br>
 - What is your main health goal?<br>
@@ -254,13 +409,97 @@ To personalize my guidance, tell me:<br>
 
 <div id="inp-area">
 <label for="file-upload" id="upload-btn" title="Add bloodwork files" aria-label="Add bloodwork files">📎</label>
-<input type="file" id="file-upload" accept=".pdf,image/*" multiple style="display:none">
 <textarea id="cinput" placeholder="Ask about peptides or attach labs..." rows="1"></textarea>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
 </div>
+</section>
+<section id="panel-stack" class="panel" role="tabpanel">
+<div class="panel-scroll">
+<h2>My Stack</h2>
+<p class="panel-lead">Peptides and supplements you are using. Active items are sent with each chat so Scout can keep them in mind.</p>
+<div class="stack-form">
+<div class="intake-field">
+<label for="stack-name">Name</label>
+<input type="text" id="stack-name" placeholder="e.g. BPC-157" autocomplete="off">
+</div>
+<div class="stack-grid">
+<div class="intake-field">
+<label for="stack-dose">Dose</label>
+<input type="text" id="stack-dose" placeholder="e.g. 250 mcg" autocomplete="off">
+</div>
+<div class="intake-field">
+<label for="stack-schedule">Schedule</label>
+<input type="text" id="stack-schedule" placeholder="e.g. daily" autocomplete="off">
+</div>
+</div>
+<div class="intake-field">
+<label for="stack-start">Start date</label>
+<input type="date" id="stack-start">
+</div>
+<div class="intake-field">
+<label for="stack-notes">Notes</label>
+<textarea id="stack-notes" placeholder="Optional"></textarea>
+</div>
+<div id="stack-error" class="pro-error"></div>
+<button type="button" class="quiz-next" onclick="addStackFromForm()">Add to stack</button>
+</div>
+<div id="stack-list" aria-live="polite"></div>
+<div class="pro-card">
+<h2>Scout Pro — Coming Soon</h2>
+<p>Lab trend charts, custom dose reminders, and priority AI.</p>
+<button type="button" class="pro-join" onclick="joinWaitlist()">Join Pro Waitlist ($9/mo early access)</button>
+<div class="pro-done">You're on the Scout Pro waitlist.</div>
+<div class="pro-error"></div>
+</div>
+</div>
+</section>
+<section id="panel-labs" class="panel" role="tabpanel">
+<div class="panel-scroll">
+<h2>Labs</h2>
+<p class="panel-lead">A timeline of biomarkers saved from your uploads. Newest first.</p>
+<div class="labs-actions">
+<button type="button" class="labs-btn primary" onclick="openLabPicker()">Upload new labs</button>
+<button type="button" class="labs-btn" onclick="printDoctorReport()">Print / Save Doctor PDF</button>
+</div>
+<div id="labs-list" aria-live="polite"></div>
+<div class="pro-card">
+<h2>Scout Pro — Coming Soon</h2>
+<p>Lab trend charts, custom dose reminders, and priority AI.</p>
+<button type="button" class="pro-join" onclick="joinWaitlist()">Join Pro Waitlist ($9/mo early access)</button>
+<div class="pro-done">You're on the Scout Pro waitlist.</div>
+<div class="pro-error"></div>
+</div>
+</div>
+</section>
+<section id="panel-sources" class="panel" role="tabpanel">
+<div class="panel-scroll">
+<h2>Sources</h2>
+<p class="panel-lead">Two ways to keep exploring. Partner pages open in a new tab. Scout does not sell products.</p>
+<article class="source-card pharmacy">
+<h2>Option 1: Licensed Compounding Pharmacy Partner</h2>
+<p>Pharmaceutical-grade, physician-guided peptides.</p>
+<p class="source-note">Prepared under pharmacy oversight. Choose your state to continue.</p>
+<div class="state-row">
+<button type="button" class="state-btn" onclick="openSource('pharmacy','Florida','https://bit.ly/RXpeptides')">Florida</button>
+<button type="button" class="state-btn" onclick="openSource('pharmacy','New York','http://bit.ly/sterile503aPpharmacyNY')">New York</button>
+<button type="button" class="state-btn" onclick="openSource('pharmacy','Other','https://clinicsourcedirect.pages.dev/')">Other States</button>
+</div>
+</article>
+<article class="source-card altura">
+<h2>Option 2: Altura USA Sups</h2>
+<p>Third-party USA lab-tested lyophilized peptides &amp; supplements.</p>
+<p class="source-note">Include bacteriostatic water for reconstitution.</p>
+<div class="source-actions">
+<button type="button" class="source-go" onclick="openSource('altura','','https://bit.ly/AlturaUSASups')">Visit Altura USA Sups</button>
+<button type="button" class="copy-code" onclick="copyDiscount(this)">Copy code FGP15 (10% off)</button>
+</div>
+</article>
+</div>
+</section>
 
 <div id="ftr">Independent educational AI tool - No products sold - Always consult a physician</div>
 </div>
+<div id="print-report"></div>
 
 <script>
 var firebaseConfig = {
@@ -272,7 +511,11 @@ messagingSenderId: "51195071651O",
 appId: "1:51195071651O:web:ed6f4d1608ed2ff3267ecf"
 };
 
-firebase.initializeApp(firebaseConfig);
+try {
+if (window.firebase) firebase.initializeApp(firebaseConfig);
+} catch (e) {
+console.log('Firebase init skipped');
+}
 
 var BACKEND = '/chat';
 var hist = [];
@@ -307,14 +550,20 @@ if (knownCloudMsgCount > 0 && hist.length < knownCloudMsgCount) {
 console.log('Auto-save skipped: history shorter than known cloud history');
 return;
 }
+if (!window.firebase || !firebase.apps || !firebase.apps.length) return;
 var db = firebase.firestore();
 var profileStr = localStorage.getItem('peptideUserProfile');
 var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+var profile = null;
+try { profile = profileStr ? JSON.parse(profileStr) : null; } catch (e) { profile = null; }
 db.collection('users').doc(userEmail).set({
 email: userEmail,
 messages: hist,
-profile: profileStr ? JSON.parse(profileStr) : null,
+profile: profile,
 bloodwork: bloodwork,
+stack: loadStack(),
+labHistory: loadLabHistory(),
+proWaitlist: localStorage.getItem('proWaitlist') === 'true',
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).then(function() {
 knownCloudMsgCount = hist.length;
@@ -447,6 +696,8 @@ msgDiv.appendChild(copyBtn);
 var shouldAutoScroll = true;
 var scrollLock = false;
 var scrollScheduled = false;
+var currentTab = 'chat';
+var savedChatScroll = 0;
 var STICKY_BOTTOM_PX = 120;
 var JUMP_AWAY_PX = 300;
 
@@ -490,7 +741,7 @@ scrollToBottom();
 
 function onMsgsScroll() {
 var box = document.getElementById('msgs');
-if (!box || scrollLock) return;
+if (!box || scrollLock || currentTab !== 'chat') return;
 shouldAutoScroll = distanceFromBottom(box) <= STICKY_BOTTOM_PX;
 updateJumpButton();
 }
@@ -576,18 +827,20 @@ function hideSaveModal() {
 document.getElementById('save-conv-overlay').style.display = 'none';
 }
 
-function saveIntake() {
+function finishIntake(email) {
 var name = document.getElementById('intake-name').value.trim() || 'Friend';
 var age = document.getElementById('intake-age').value.trim() || 'Not specified';
 var state = document.getElementById('intake-state').value || 'Not specified';
 var goal = document.getElementById('intake-goal').value || 'General wellness and optimization';
 var conditions = document.getElementById('intake-conditions').value.trim() || 'None noted';
-var experience = document.getElementById('intake-experience').value;
+var experience = document.getElementById('intake-experience').value || 'No prior peptide experience';
 var profile = { name: name, age: age, state: state, goal: goal, conditions: conditions, experience: experience };
 localStorage.setItem('peptideUserProfile', JSON.stringify(profile));
+if (email) localStorage.setItem('peptideUserEmail', email);
 document.getElementById('intake-overlay').style.display = 'none';
+switchTab('chat');
 var banner = document.getElementById('memory-banner');
-document.getElementById('memory-greeting').textContent = 'Profile saved - ' + name;
+document.getElementById('memory-greeting').textContent = email ? 'Conversation saved - ' + email : 'Profile saved - ' + name;
 banner.style.display = 'flex';
 var contextMsg = 'My profile: Name: ' + name + '. Age/Sex: ' + age + '. State: ' + state + '. Primary goal: ' + goal + '. Conditions/medications: ' + conditions + '. Peptide experience: ' + experience + '. Please keep this context in mind throughout our conversation.';
 hist.push({ role: 'user', content: contextMsg });
@@ -596,11 +849,28 @@ saveConversationAuto();
 hist.push({ role: 'assistant', content: 'Thanks ' + name + '! Your profile is saved. You are focused on ' + goal + '. How can I help you today?' });
 saveChatHistory();
 saveConversationAuto();
-addMsg('bot', 'Thanks <strong>' + name + '</strong>! Your profile is saved. Next time you visit I will remember you. You are focused on <strong>' + goal + '</strong>. What would you like to know?');
+addMsg('bot', 'Thanks <strong>' + escapeHtml(name) + '</strong>! Your profile is saved. Next time you visit I will remember you. You are focused on <strong>' + escapeHtml(goal) + '</strong>. What would you like to know?');
+}
+
+function saveIntake() {
+var email = document.getElementById('intake-email').value.trim();
+var err = document.getElementById('quiz-error');
+if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+if (err) err.textContent = 'Enter a valid email, or skip for now.';
+return;
+}
+if (!email) {
+if (err) err.textContent = 'Enter an email to sync devices, or skip for now.';
+return;
+}
+if (err) err.textContent = '';
+finishIntake(email);
 }
 
 function skipIntake() {
-document.getElementById('intake-overlay').style.display = 'none';
+var err = document.getElementById('quiz-error');
+if (err) err.textContent = '';
+finishIntake('');
 }
 
 function resetMemory() {
@@ -620,9 +890,12 @@ var db = firebase.firestore();
 db.collection('users').doc(email).get().then(function(doc) {
 if (doc.exists) {
 localStorage.setItem('peptideUserEmail', email);
-var data = doc.data();
+var data = doc.data() || {};
 if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
 if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
+if (Array.isArray(data.stack)) localStorage.setItem('peptideUserStack', JSON.stringify(data.stack));
+if (Array.isArray(data.labHistory)) localStorage.setItem('peptideLabHistory', JSON.stringify(data.labHistory));
+if (data.proWaitlist) localStorage.setItem('proWaitlist', 'true');
 location.reload();
 } else {
 alert('No saved account found for that email. Double check you typed it exactly as before.');
@@ -634,9 +907,17 @@ alert('Something went wrong trying to restore your account. Please try again in 
 
 function renderMemoryUI(userEmail) {
 var profileStr = localStorage.getItem('peptideUserProfile');
-if (!profileStr) {
+if (!profileStr && !userEmail) {
 document.getElementById('intake-overlay').style.display = 'flex';
+showQuizStep(1);
 return null;
+}
+if (!profileStr) {
+document.getElementById('intake-overlay').style.display = 'none';
+var savedBanner = document.getElementById('memory-banner');
+savedBanner.style.display = 'flex';
+document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + userEmail;
+return { profile: { name: 'there', goal: 'your goals' }, bloodworkNote: '', emailOnly: true };
 }
 var profile = JSON.parse(profileStr);
 document.getElementById('intake-overlay').style.display = 'none';
@@ -665,12 +946,27 @@ if (!userEmail) {
 renderMemoryUI(null);
 historyReady = true;
 scrollToBottom();
+renderStack();
+renderLabs();
+renderProState();
+return;
+}
+if (!window.firebase || !firebase.apps || !firebase.apps.length) {
+renderMemoryUI(userEmail);
+historyReady = true;
+scrollToBottom();
+renderStack();
+renderLabs();
+renderProState();
 return;
 }
 var db = firebase.firestore();
 db.collection('users').doc(userEmail).get().then(function(doc) {
-if (doc.exists) {
-var data = doc.data();
+var data = doc.exists ? (doc.data() || {}) : null;
+if (data) {
+if (Array.isArray(data.stack)) localStorage.setItem('peptideUserStack', JSON.stringify(data.stack));
+if (Array.isArray(data.labHistory)) localStorage.setItem('peptideLabHistory', JSON.stringify(data.labHistory));
+if (data.proWaitlist) localStorage.setItem('proWaitlist', 'true');
 if (data.profile) {
 localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
 } else if (!localStorage.getItem('peptideUserProfile')) {
@@ -681,8 +977,15 @@ conditions: 'None noted', experience: 'Not specified', state: 'Not specified'
 }
 if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
 }
+renderStack();
+renderLabs();
+renderProState();
+pushMissingCloud(userEmail, data);
 var rendered = renderMemoryUI(userEmail);
-if (!rendered) return;
+if (!rendered) {
+historyReady = true;
+return;
+}
 if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
 hist = doc.data().messages;
 knownCloudMsgCount = hist.length;
@@ -834,7 +1137,7 @@ scrollToBottom();
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 5000, messages: hist })
+body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 5000, messages: hist, activeStack: activeStackPayload() })
 }).then(function(response) {
 streamResponse(response);
 }).catch(function(e) {
@@ -868,14 +1171,20 @@ alert('Please enter your email');
 return;
 }
 localStorage.setItem('peptideUserEmail', email);
+if (window.firebase && firebase.apps && firebase.apps.length) {
 var db = firebase.firestore();
 var profileStr = localStorage.getItem('peptideUserProfile');
 var bloodwork = localStorage.getItem('peptideBloodwork') || '';
+var profile = null;
+try { profile = profileStr ? JSON.parse(profileStr) : null; } catch (e) { profile = null; }
 db.collection('users').doc(email).set({
 email: email,
 messages: hist,
-profile: profileStr ? JSON.parse(profileStr) : null,
+profile: profile,
 bloodwork: bloodwork,
+stack: loadStack(),
+labHistory: loadLabHistory(),
+proWaitlist: localStorage.getItem('proWaitlist') === 'true',
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).then(function() {
 console.log('Conversation saved to cloud');
@@ -883,12 +1192,14 @@ maybeWriteSnapshot(email, 'email-save');
 }).catch(function(e) {
 console.error('Firebase error:', e);
 });
+}
 hideSaveModal();
 document.getElementById('memory-greeting').textContent = 'Conversation saved - ' + email;
 document.getElementById('memory-banner').style.display = 'flex';
 }
 
 var pendingFiles = [];
+var labPickerArmed = false;
 var pendingFileSeq = 0;
 var MAX_PENDING_FILES = 10;
 var MAX_PENDING_BYTES = 10 * 1024 * 1024;
@@ -1041,6 +1352,7 @@ document.getElementById('sbtn').disabled = false;
 return;
 }
 localStorage.setItem('peptideBloodwork', data.extractedText);
+recordLabResult(files.map(function(item) { return item.file.name; }), data.extractedText, data.biomarkers);
 clearPendingFiles();
 var names = files.map(function(item) { return item.file.name; }).join(', ');
 var uploadPrompt = 'I have uploaded my file. Here is the extracted data:\n\n' + data.extractedText;
@@ -1058,7 +1370,7 @@ scrollToBottom();
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8000, messages: hist })
+body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8000, messages: hist, activeStack: activeStackPayload() })
 }).then(function(response) {
 streamResponse(response, {
 skipSaveModal: true,
@@ -1116,6 +1428,440 @@ showUploadNote(unique.join(' '), true);
 readyUploadNote();
 }
 event.target.value = '';
+if (labPickerArmed) {
+labPickerArmed = false;
+switchTab('chat');
+}
+}
+
+function switchTab(name) {
+var box = document.getElementById('msgs');
+if (currentTab === 'chat' && box) savedChatScroll = box.scrollTop;
+currentTab = name;
+var tabs = document.querySelectorAll('#tabs .tab');
+for (var i = 0; i < tabs.length; i++) {
+var on = tabs[i].getAttribute('data-tab') === name;
+tabs[i].classList.toggle('active', on);
+tabs[i].setAttribute('aria-selected', on ? 'true' : 'false');
+}
+var panels = document.querySelectorAll('#wrap .panel');
+for (var j = 0; j < panels.length; j++) {
+panels[j].classList.toggle('active', panels[j].id === 'panel-' + name);
+}
+if (name === 'chat') {
+requestAnimationFrame(function() {
+var next = document.getElementById('msgs');
+if (!next) return;
+scrollLock = true;
+next.scrollTop = savedChatScroll;
+scrollLock = false;
+updateJumpButton();
+});
+}
+}
+
+function showQuizStep(step) {
+var n = step || 1;
+for (var i = 1; i <= 3; i++) {
+var el = document.getElementById('quiz-step-' + i);
+if (el) el.classList.toggle('on', i === n);
+}
+var bar = document.getElementById('quiz-bar');
+if (bar) bar.style.width = (n * 33.34) + '%';
+var label = document.getElementById('quiz-step-label');
+if (label) label.textContent = 'Step ' + n + ' of 3';
+}
+
+function quizBack(step) {
+var err = document.getElementById('quiz-error');
+if (err) err.textContent = '';
+showQuizStep(step);
+}
+
+function quizNext(step) {
+var err = document.getElementById('quiz-error');
+if (step === 2 && !document.getElementById('intake-goal').value) {
+if (err) err.textContent = 'Choose a primary goal to continue.';
+return;
+}
+if (err) err.textContent = '';
+showQuizStep(step);
+}
+
+function selectPill(inputId, value, btn) {
+var group = btn.parentNode;
+var pills = group.querySelectorAll('.pill');
+for (var i = 0; i < pills.length; i++) pills[i].classList.remove('selected');
+btn.classList.add('selected');
+var input = document.getElementById(inputId);
+if (input) input.value = value;
+var err = document.getElementById('quiz-error');
+if (err) err.textContent = '';
+}
+
+function loadStack() {
+try {
+var raw = JSON.parse(localStorage.getItem('peptideUserStack') || '[]');
+if (!Array.isArray(raw)) return [];
+return raw.filter(function(item) { return item && typeof item === 'object' && item.name; });
+} catch (e) { return []; }
+}
+
+function saveStack(items) {
+try { localStorage.setItem('peptideUserStack', JSON.stringify(items)); } catch (e) {}
+var email = localStorage.getItem('peptideUserEmail');
+if (email && window.firebase && firebase.apps && firebase.apps.length) {
+firebase.firestore().collection('users').doc(email).set({
+stack: items,
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).catch(function() {});
+}
+renderStack();
+}
+
+function activeStackPayload() {
+return loadStack().filter(function(item) { return item.active !== false; }).map(function(item) {
+return {
+name: item.name,
+dose: item.dose || '',
+schedule: item.schedule || '',
+startDate: item.startDate || '',
+notes: item.notes || '',
+active: true
+};
+});
+}
+
+function stackDetail(item) {
+var bits = [];
+if (item.dose) bits.push(item.dose);
+if (item.schedule) bits.push(item.schedule);
+if (item.startDate) bits.push('started ' + item.startDate);
+var line = bits.join(' · ');
+if (item.notes) line = line ? line + '. ' + item.notes : item.notes;
+return line;
+}
+
+function renderStack() {
+var list = document.getElementById('stack-list');
+if (!list) return;
+var items = loadStack();
+if (!items.length) {
+list.innerHTML = '<p class="empty-note">Nothing in your stack yet. Add a peptide or supplement you are using.</p>';
+return;
+}
+list.innerHTML = items.map(function(item) {
+var paused = item.active === false;
+return '<article class="stack-item' + (paused ? ' paused' : '') + '">' +
+'<div class="stack-top"><div class="stack-name">' + escapeHtml(item.name) + '</div><div class="stack-actions">' +
+'<button type="button" class="mini-btn" data-action="toggle" data-id="' + escapeHtml(item.id) + '">' + (paused ? 'Paused' : 'Active') + '</button>' +
+'<button type="button" class="mini-btn danger" data-action="remove" data-id="' + escapeHtml(item.id) + '">Remove</button>' +
+'</div></div>' +
+(stackDetail(item) ? '<div class="stack-meta">' + escapeHtml(stackDetail(item)) + '</div>' : '') +
+'</article>';
+}).join('');
+}
+
+function addStackFromForm() {
+var err = document.getElementById('stack-error');
+var name = document.getElementById('stack-name').value.trim();
+if (!name) {
+if (err) err.textContent = 'Enter a peptide or supplement name.';
+return;
+}
+var items = loadStack();
+if (items.length >= 40) {
+if (err) err.textContent = 'Your stack is full. Remove one to add another.';
+return;
+}
+items.push({
+id: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+name: name,
+dose: document.getElementById('stack-dose').value.trim(),
+schedule: document.getElementById('stack-schedule').value.trim(),
+startDate: document.getElementById('stack-start').value,
+notes: document.getElementById('stack-notes').value.trim(),
+active: true
+});
+document.getElementById('stack-name').value = '';
+document.getElementById('stack-dose').value = '';
+document.getElementById('stack-schedule').value = '';
+document.getElementById('stack-start').value = '';
+document.getElementById('stack-notes').value = '';
+if (err) err.textContent = '';
+saveStack(items);
+}
+
+function toggleStackItem(id) {
+var items = loadStack();
+items.forEach(function(item) {
+if (item.id === id) item.active = item.active === false;
+});
+saveStack(items);
+}
+
+function removeStackItem(id) {
+saveStack(loadStack().filter(function(item) { return item.id !== id; }));
+}
+
+function loadLabHistory() {
+try {
+var raw = JSON.parse(localStorage.getItem('peptideLabHistory') || '[]');
+if (!Array.isArray(raw)) return [];
+return raw.filter(function(item) { return item && typeof item === 'object'; });
+} catch (e) { return []; }
+}
+
+function cleanBiomarkers(list) {
+if (!Array.isArray(list)) return [];
+return list.map(function(item) {
+if (!item || !item.name) return null;
+var flag = String(item.flag || 'info').toLowerCase();
+if (['normal', 'high', 'low', 'info'].indexOf(flag) === -1) flag = 'info';
+return { name: String(item.name), value: String(item.value == null ? '' : item.value), unit: String(item.unit || ''), flag: flag };
+}).filter(Boolean);
+}
+
+function syncLabHistory(history) {
+var email = localStorage.getItem('peptideUserEmail');
+if (!email || !window.firebase || !firebase.apps || !firebase.apps.length) return;
+firebase.firestore().collection('users').doc(email).set({
+labHistory: history,
+bloodwork: localStorage.getItem('peptideBloodwork') || '',
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).catch(function() {});
+}
+
+function recordLabResult(filenames, extractedText, biomarkers) {
+var history = loadLabHistory();
+var summary = String(extractedText || '').replace(/\s+/g, ' ').trim().slice(0, 1200);
+history.push({
+id: 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+date: new Date().toISOString(),
+filenames: filenames || [],
+biomarkers: cleanBiomarkers(biomarkers),
+summary: summary
+});
+if (history.length > 50) history = history.slice(history.length - 50);
+try { localStorage.setItem('peptideLabHistory', JSON.stringify(history)); } catch (e) {}
+syncLabHistory(history);
+renderLabs();
+}
+
+function formatWhen(iso) {
+var d = new Date(iso);
+if (isNaN(d.getTime())) return 'Undated';
+try { return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+catch (e) { return d.toDateString(); }
+}
+
+function flagLabel(flag) {
+if (flag === 'high') return 'High';
+if (flag === 'low') return 'Low';
+if (flag === 'normal') return 'Normal';
+return 'Info';
+}
+
+function renderLabs() {
+var list = document.getElementById('labs-list');
+if (!list) return;
+var labs = loadLabHistory().slice().sort(function(a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
+if (!labs.length) {
+list.innerHTML = '<p class="empty-note">No labs saved yet. Upload a PDF or photo of your bloodwork to start a timeline.</p>';
+return;
+}
+list.innerHTML = labs.map(function(lab) {
+var pills = (lab.biomarkers || []).map(function(item) {
+var unit = item.unit ? ' ' + escapeHtml(item.unit) : '';
+return '<span class="bio-pill flag-' + escapeHtml(item.flag) + '"><span class="bio-name">' + escapeHtml(item.name) + '</span><span class="bio-val">' + escapeHtml(item.value) + unit + '</span><span class="bio-flag">' + escapeHtml(flagLabel(item.flag)) + '</span></span>';
+}).join('');
+var summary = '';
+if (!pills && lab.summary) summary = '<p class="lab-summary">' + escapeHtml(String(lab.summary).slice(0, 320)) + '</p>';
+else if (lab.summary) summary = '<p class="lab-summary">' + escapeHtml(String(lab.summary).slice(0, 180)) + '</p>';
+var files = (lab.filenames || []).join(', ');
+return '<article class="lab-card"><div class="lab-date">' + escapeHtml(formatWhen(lab.date)) + '</div>' +
+(files ? '<div class="lab-files">' + escapeHtml(files) + '</div>' : '') +
+(pills ? '<div class="bio-pills">' + pills + '</div>' : '') + summary + '</article>';
+}).join('');
+}
+
+function openLabPicker() {
+labPickerArmed = true;
+document.getElementById('file-upload').click();
+}
+
+function printDoctorReport() {
+var profile = {};
+try { profile = JSON.parse(localStorage.getItem('peptideUserProfile') || '{}') || {}; } catch (e) { profile = {}; }
+var email = localStorage.getItem('peptideUserEmail') || '';
+var stack = loadStack();
+var active = stack.filter(function(item) { return item.active !== false; });
+var paused = stack.filter(function(item) { return item.active === false; });
+var labs = loadLabHistory().slice().sort(function(a, b) { return String(a.date || '').localeCompare(String(b.date || '')); });
+var html = [];
+function row(label, value) {
+html.push('<tr><th>' + escapeHtml(label) + '</th><td>' + escapeHtml(value || 'Not provided') + '</td></tr>');
+}
+html.push('<h1>Scout physician visit summary</h1>');
+html.push('<p class="print-kicker">Educational summary for a conversation with your physician. Not a diagnosis or a prescription.</p>');
+html.push('<h2>Profile</h2><table>');
+row('Name', profile.name);
+row('Age / sex', profile.age);
+row('State', profile.state);
+row('Primary goal', profile.goal);
+row('Conditions / medications', profile.conditions);
+row('Peptide experience', profile.experience);
+if (email) row('Email', email);
+html.push('</table><h2>Active stack</h2>');
+if (!active.length) html.push('<p>No active peptides or supplements saved.</p>');
+else {
+html.push('<ul>');
+active.forEach(function(item) {
+html.push('<li><strong>' + escapeHtml(item.name) + '</strong> ' + escapeHtml(stackDetail(item)) + '</li>');
+});
+html.push('</ul>');
+}
+if (paused.length) html.push('<p>Paused: ' + escapeHtml(paused.map(function(item) { return item.name; }).join(', ')) + '</p>');
+html.push('<h2>Saved lab biomarkers</h2>');
+if (!labs.length) html.push('<p>No lab uploads saved on this device.</p>');
+labs.forEach(function(lab) {
+html.push('<h3>' + escapeHtml(formatWhen(lab.date)) + '</h3>');
+if (lab.filenames && lab.filenames.length) html.push('<p>' + escapeHtml(lab.filenames.join(', ')) + '</p>');
+if (lab.biomarkers && lab.biomarkers.length) {
+html.push('<ul>');
+lab.biomarkers.forEach(function(item) {
+html.push('<li>' + escapeHtml(item.name) + ': ' + escapeHtml(item.value) + (item.unit ? ' ' + escapeHtml(item.unit) : '') + ' (' + escapeHtml(flagLabel(item.flag)) + ')</li>');
+});
+html.push('</ul>');
+} else if (lab.summary) {
+html.push('<p>' + escapeHtml(String(lab.summary).slice(0, 700)) + '</p>');
+}
+});
+html.push('<p class="print-foot">Independent educational AI tool. No products sold. Always consult a physician. Generated ' + escapeHtml(new Date().toLocaleString()) + '.</p>');
+document.getElementById('print-report').innerHTML = html.join('');
+window.print();
+}
+
+function renderProState() {
+var joined = localStorage.getItem('proWaitlist') === 'true';
+var cards = document.querySelectorAll('.pro-card');
+for (var i = 0; i < cards.length; i++) {
+var join = cards[i].querySelector('.pro-join');
+var done = cards[i].querySelector('.pro-done');
+if (join) join.style.display = joined ? 'none' : 'block';
+if (done) done.style.display = joined ? 'block' : 'none';
+}
+}
+
+function joinWaitlist() {
+if (localStorage.getItem('proWaitlist') === 'true') {
+renderProState();
+return;
+}
+var email = localStorage.getItem('peptideUserEmail') || '';
+fetch('/api/waitlist', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ email: email, source: 'scout-pro' })
+}).then(function(res) {
+if (!res.ok) throw new Error('waitlist');
+localStorage.setItem('proWaitlist', 'true');
+var saved = localStorage.getItem('peptideUserEmail');
+if (saved && window.firebase && firebase.apps && firebase.apps.length) {
+firebase.firestore().collection('users').doc(saved).set({
+proWaitlist: true,
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).catch(function() {});
+}
+renderProState();
+}).catch(function() {
+var notes = document.querySelectorAll('.pro-error');
+for (var i = 0; i < notes.length; i++) notes[i].textContent = 'Could not join just now. Please try again.';
+});
+}
+
+function pushMissingCloud(email, data) {
+if (!email || !window.firebase || !firebase.apps || !firebase.apps.length) return;
+var patch = {};
+var need = false;
+if (!data || !Array.isArray(data.stack)) {
+var stack = loadStack();
+if (stack.length) { patch.stack = stack; need = true; }
+}
+if (!data || !Array.isArray(data.labHistory)) {
+var labs = loadLabHistory();
+if (labs.length) { patch.labHistory = labs; need = true; }
+}
+if (localStorage.getItem('proWaitlist') === 'true' && !(data && data.proWaitlist)) {
+patch.proWaitlist = true;
+need = true;
+}
+if (!need) return;
+patch.lastUpdated = firebase.firestore.FieldValue.serverTimestamp();
+firebase.firestore().collection('users').doc(email).set(patch, { merge: true }).catch(function() {});
+}
+
+function trackClick(partner, destination, state, page) {
+try {
+var payload = JSON.stringify({
+partner: partner,
+destination: destination,
+state: state || '',
+page: page || 'sources'
+});
+if (navigator.sendBeacon) {
+var blob = new Blob([payload], { type: 'application/json' });
+if (navigator.sendBeacon('/api/track-click', blob)) return;
+}
+fetch('/api/track-click', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: payload,
+keepalive: true
+}).catch(function() {});
+} catch (e) {}
+}
+
+function sourceMeta(href) {
+var h = String(href || '');
+if (h.indexOf('bit.ly/RXpeptides') !== -1) return { partner: 'pharmacy', state: 'Florida' };
+if (h.indexOf('bit.ly/sterile503aPpharmacyNY') !== -1) return { partner: 'pharmacy', state: 'New York' };
+if (h.indexOf('clinicsourcedirect.pages.dev') !== -1) return { partner: 'pharmacy', state: 'Other' };
+if (h.indexOf('bit.ly/AlturaUSASups') !== -1) return { partner: 'altura', state: '' };
+return null;
+}
+
+function openSource(partner, state, destination) {
+trackClick(partner, destination, state, 'sources');
+window.open(destination, '_blank', 'noopener,noreferrer');
+}
+
+function fallbackCopy(text) {
+var ta = document.createElement('textarea');
+ta.value = text;
+ta.setAttribute('readonly', '');
+ta.style.position = 'fixed';
+ta.style.left = '-9999px';
+document.body.appendChild(ta);
+ta.select();
+try { document.execCommand('copy'); } catch (e) {}
+document.body.removeChild(ta);
+}
+
+function copyDiscount(btn) {
+var done = function() {
+btn.textContent = 'Copied FGP15';
+setTimeout(function() { btn.textContent = 'Copy code FGP15 (10% off)'; }, 1800);
+};
+if (navigator.clipboard && navigator.clipboard.writeText) {
+navigator.clipboard.writeText('FGP15').then(done).catch(function() {
+fallbackCopy('FGP15');
+done();
+});
+return;
+}
+fallbackCopy('FGP15');
+done();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1140,6 +1886,32 @@ if (shouldAutoScroll) scrollToBottom();
 });
 }
 document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+document.getElementById('msgs').addEventListener('click', function(e) {
+var node = e.target;
+while (node && node !== this && node.tagName !== 'A') node = node.parentNode;
+if (!node || node.tagName !== 'A') return;
+var meta = sourceMeta(node.getAttribute('href') || '');
+if (!meta) return;
+trackClick(meta.partner, node.href || node.getAttribute('href'), meta.state, 'chat');
+});
+document.getElementById('stack-name').addEventListener('keydown', function(e) {
+if (e.key === 'Enter') {
+e.preventDefault();
+addStackFromForm();
+}
+});
+document.getElementById('stack-list').addEventListener('click', function(e) {
+var btn = e.target;
+while (btn && btn !== this && !btn.getAttribute('data-action')) btn = btn.parentNode;
+if (!btn || btn === this) return;
+var id = btn.getAttribute('data-id');
+if (btn.getAttribute('data-action') === 'toggle') toggleStackItem(id);
+if (btn.getAttribute('data-action') === 'remove') removeStackItem(id);
+});
+showQuizStep(1);
+renderStack();
+renderLabs();
+renderProState();
 loadChatHistory();
 loadMemory();
 });
