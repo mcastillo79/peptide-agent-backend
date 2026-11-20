@@ -251,18 +251,219 @@ app.post('/upload', bloodworkUpload, async (req, res) => {
   }
 });
 
+// Messages sent to the model only. Saved history in the browser and Firebase stays intact.
+const HISTORY_CHAR_BUDGET = 60000;
+const CONTEXT_PAIR_CHAR_CAP = 20000;
+
+function plainText(content) {
+  if (typeof content === 'string') return content;
+  if (!Array.isArray(content)) return '';
+  return content.map(part => {
+    if (typeof part === 'string') return part;
+    if (part && typeof part.text === 'string') return part.text;
+    return '';
+  }).join(' ');
+}
+
+function messageChars(message) {
+  if (!message) return 0;
+  if (typeof message.content === 'string') return message.content.length;
+  try {
+    return JSON.stringify(message.content).length;
+  } catch (err) {
+    return 0;
+  }
+}
+
+function hasMessageContent(content) {
+  if (typeof content === 'string') return content.trim().length > 0;
+  if (!Array.isArray(content) || content.length === 0) return false;
+  return content.some(part => {
+    if (typeof part === 'string') return part.trim().length > 0;
+    if (!part || typeof part !== 'object') return false;
+    if (part.type && part.type !== 'text') return true;
+    return typeof part.text === 'string' && part.text.trim().length > 0;
+  });
+}
+
+function mergeConsecutive(messages) {
+  const merged = [];
+  messages.forEach(message => {
+    const prev = merged[merged.length - 1];
+    if (prev && prev.role === message.role) {
+      const prevText = typeof prev.content === 'string' ? prev.content : plainText(prev.content);
+      const nextText = typeof message.content === 'string' ? message.content : plainText(message.content);
+      prev.content = prevText + '\n\n' + nextText;
+    } else {
+      merged.push({ role: message.role, content: message.content });
+    }
+  });
+  return merged;
+}
+
+function capMessage(message, maxChars, keep) {
+  const copy = { role: message.role, content: message.content };
+  if (maxChars < 1) maxChars = 1;
+  if (messageChars(copy) <= maxChars) return copy;
+  if (typeof copy.content !== 'string') {
+    copy.content = copy.role === 'assistant' ? '[truncated]' : '[Earlier message truncated for length.]';
+    return copy;
+  }
+  const marker = keep === 'end' ? '[…]\n' : '\n[…]';
+  if (maxChars <= marker.length + 1) {
+    copy.content = keep === 'end' ? copy.content.slice(-maxChars) : copy.content.slice(0, maxChars);
+    return copy;
+  }
+  const room = maxChars - marker.length;
+  copy.content = keep === 'end'
+    ? marker + copy.content.slice(copy.content.length - room)
+    : copy.content.slice(0, room) + marker;
+  return copy;
+}
+
+function capContextPair(first, second, cap) {
+  const limit = cap || CONTEXT_PAIR_CHAR_CAP;
+  let a = { role: first.role, content: first.content };
+  let b = { role: second.role, content: second.content };
+  if (messageChars(a) + messageChars(b) <= limit) return [a, b];
+  const replyBudget = Math.min(messageChars(b), 4000);
+  const userBudget = Math.max(500, limit - replyBudget);
+  if (messageChars(a) > userBudget) a = capMessage(a, Math.min(userBudget, limit - 200), 'start');
+  const left = limit - messageChars(a);
+  if (messageChars(b) > left) b = capMessage(b, Math.max(200, left), 'start');
+  return [a, b];
+}
+
+function totalChars(messages) {
+  return messages.reduce((sum, message) => sum + messageChars(message), 0);
+}
+
+function takeFittingSuffix(messages, budget) {
+  const picked = [];
+  let used = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const len = messageChars(messages[i]);
+    if (!picked.length) {
+      const message = len > budget ? capMessage(messages[i], budget, 'end') : messages[i];
+      picked.unshift(message);
+      used += messageChars(message);
+      continue;
+    }
+    if (used + len > budget) break;
+    picked.unshift(messages[i]);
+    used += len;
+  }
+  return picked;
+}
+
+function selectRecent(rest, budget) {
+  if (!rest.length) return [];
+  const room = budget < 1 ? 1 : budget;
+  let lastUserIndex = -1;
+  for (let i = rest.length - 1; i >= 0; i--) {
+    if (rest[i].role === 'user') {
+      lastUserIndex = i;
+      break;
+    }
+  }
+  if (lastUserIndex === -1) return takeFittingSuffix(rest, room);
+
+  const original = rest[lastUserIndex];
+  const latest = messageChars(original) > room ? capMessage(original, room, 'end') : original;
+  let remaining = room - messageChars(latest);
+  const keptAfter = [];
+  for (let i = lastUserIndex + 1; i < rest.length; i++) {
+    const len = messageChars(rest[i]);
+    if (len > remaining) break;
+    keptAfter.push(rest[i]);
+    remaining -= len;
+  }
+  const keptBefore = [];
+  for (let i = lastUserIndex - 1; i >= 0; i--) {
+    const len = messageChars(rest[i]);
+    if (len > remaining) break;
+    keptBefore.unshift(rest[i]);
+    remaining -= len;
+  }
+  return keptBefore.concat([latest], keptAfter);
+}
+
+function joinHeadAndTail(head, tail) {
+  let next = tail.slice();
+  if (head.length && next.length && head[head.length - 1].role === next[0].role && next.length > 1) {
+    next = next.slice(1);
+  }
+  const combined = mergeConsecutive(head.concat(next));
+  if (totalChars(combined) <= HISTORY_CHAR_BUDGET || !combined.length) return combined;
+  const last = combined[combined.length - 1];
+  const others = totalChars(combined) - messageChars(last);
+  if (others < HISTORY_CHAR_BUDGET) {
+    combined[combined.length - 1] = capMessage(last, HISTORY_CHAR_BUDGET - others, 'end');
+  }
+  return combined;
+}
+
+function prepareMessagesForModel(raw) {
+  if (!Array.isArray(raw)) return [];
+  const cleaned = [];
+  raw.forEach(message => {
+    if (!message || typeof message !== 'object') return;
+    if (message.role !== 'user' && message.role !== 'assistant') return;
+    if (!hasMessageContent(message.content)) return;
+    cleaned.push({ role: message.role, content: message.content });
+  });
+
+  let messages = mergeConsecutive(cleaned);
+  while (messages.length && messages[0].role !== 'user') messages.shift();
+  if (!messages.length) return [];
+
+  let head = [];
+  let rest = messages;
+  if (messages.length >= 2) {
+    head = capContextPair(messages[0], messages[1]);
+    rest = messages.slice(2);
+  }
+
+  const budget = Math.max(1, HISTORY_CHAR_BUDGET - totalChars(head));
+  let combined = joinHeadAndTail(head, selectRecent(rest, budget));
+  while (combined.length && combined[0].role !== 'user') combined.shift();
+  return combined.filter(message => hasMessageContent(message.content));
+}
+
+function friendlyAnthropicMessage(status, bodyText) {
+  let apiType = '';
+  try {
+    const parsed = JSON.parse(bodyText || '');
+    apiType = parsed && parsed.error && parsed.error.type ? parsed.error.type : '';
+  } catch (err) {
+    apiType = '';
+  }
+  if (status === 429 || apiType === 'rate_limit_error') {
+    return 'The agent is getting too many requests right now. Wait a moment and try again.';
+  }
+  if (status === 529 || status === 503 || apiType === 'overloaded_error') {
+    return 'The agent is temporarily overloaded. Please try again in a moment.';
+  }
+  return 'The agent could not answer just now. Please try again.';
+}
+
 app.post('/chat', async (req, res) => {
   try {
-    const { messages, model, max_tokens } = req.body;
-    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
-    const question = lastUserMessage ? (typeof lastUserMessage.content === 'string' ? lastUserMessage.content : lastUserMessage.content.map(c => c.text || '').join(' ')) : '';
+    const body = req.body || {};
+    const { model, max_tokens } = body;
+    const incoming = body.messages;
+    const prepared = prepareMessagesForModel(incoming);
+    console.log('[chat] prepared in=' + (Array.isArray(incoming) ? incoming.length : 0) + ' out=' + prepared.length + ' chars=' + totalChars(prepared));
+
+    if (!prepared.length) {
+      return res.status(400).json({ error: { message: 'Please enter a message and try again.' } });
+    }
+
+    const lastUserMessage = prepared.filter(message => message.role === 'user').pop();
+    let question = lastUserMessage ? plainText(lastUserMessage.content) : '';
+    if (question.length > 4000) question = question.slice(-4000);
     const context = await getRelevantContext(question);
     const systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
-
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -276,9 +477,30 @@ app.post('/chat', async (req, res) => {
         max_tokens: max_tokens || 1000,
         stream: true,
         system: systemWithContext,
-        messages: messages
+        messages: prepared
       })
     });
+
+    if (!response.ok) {
+      let errText = '';
+      try {
+        errText = await response.text();
+      } catch (readErr) {
+        errText = '';
+      }
+      console.error('Anthropic chat error:', response.status, errText);
+      return res.status(response.status).json({ error: { message: friendlyAnthropicMessage(response.status, errText) } });
+    }
+
+    if (!response.body) {
+      console.error('Anthropic chat error: empty response body');
+      return res.status(502).json({ error: { message: 'The agent could not answer just now. Please try again.' } });
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     response.body.on('data', chunk => {
       res.write(chunk);
@@ -294,7 +516,12 @@ app.post('/chat', async (req, res) => {
     });
 
   } catch (err) {
-    res.status(500).json({ error: { message: err.message } });
+    console.error('Chat error:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: { message: 'The agent could not answer just now. Please try again.' } });
+    } else {
+      res.end();
+    }
   }
 });
 
@@ -328,3 +555,6 @@ app.post('/create-checkout-session', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+module.exports.prepareMessagesForModel = prepareMessagesForModel;
+module.exports.friendlyAnthropicMessage = friendlyAnthropicMessage;
