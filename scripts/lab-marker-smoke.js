@@ -120,9 +120,9 @@ function startServer() {
   const publicDir = path.join(ROOT, 'public');
   const server = http.createServer(function(req, res) {
     const urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
-    if (urlPath === '/lab-markers.js') {
+    if (urlPath === '/lab-markers.js' || urlPath === '/lab-compare.js') {
       res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
-      res.end(fs.readFileSync(path.join(ROOT, 'lib', 'lab-markers.js')));
+      res.end(fs.readFileSync(path.join(ROOT, 'lib', path.basename(urlPath))));
       return;
     }
     if (urlPath === '/api/catalog-names') {
@@ -283,6 +283,8 @@ async function main() {
       switchTab('labs');
       var panel = document.querySelector('#panel-labs .panel-scroll');
       if (panel) panel.scrollTop = 0;
+      Array.prototype.forEach.call(document.querySelectorAll('#lab-trends details'), function(el) { el.open = true; });
+      Array.prototype.forEach.call(document.querySelectorAll('#lab-trends .lab-chart'), function(el) { el.hidden = false; });
       function card(name) {
         var cards = Array.prototype.slice.call(document.querySelectorAll('#lab-trends .trend-card'));
         return cards.find(function(el) { return el.querySelector('.trend-latest') && el.querySelector('.trend-latest').textContent === name; }) || null;
