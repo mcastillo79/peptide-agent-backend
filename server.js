@@ -7,6 +7,7 @@ const { Pinecone } = require('@pinecone-database/pinecone');
 const OpenAI = require('openai');
 const fs = require('fs');
 const crypto = require('crypto');
+const { loadCatalogs, catalogSummary, formatModelCatalog } = require('./lib/catalogs');
 
 const app = express();
 app.use(cors());
@@ -21,6 +22,8 @@ const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 fs.mkdirSync(uploadDir, { recursive: true });
 fs.mkdirSync(dataDir, { recursive: true });
+
+const productCatalogs = loadCatalogs();
 
 const upload = multer({
   dest: uploadDir,
@@ -661,6 +664,7 @@ app.post('/chat', async (req, res) => {
     if (question.length > 4000) question = question.slice(-4000);
     const context = await getRelevantContext(question);
     let systemWithContext = context ? SYSTEM_PROMPT + '\n\nRELEVANT EXPERT CONTENT FROM YOUR KNOWLEDGE BASE:\n' + context : SYSTEM_PROMPT;
+    systemWithContext += '\n\n' + formatModelCatalog(productCatalogs);
     const stackBlock = formatActiveStack(body.activeStack);
     if (stackBlock) systemWithContext += stackBlock;
     console.log('[chat] activeStack=' + (stackBlock ? 'yes' : 'no'));
@@ -900,6 +904,10 @@ app.post('/api/waitlist', function(req, res) {
     return res.status(500).json({ error: 'Could not join the waitlist' });
   }
   res.json({ ok: true });
+});
+
+app.get('/api/catalogs', function(req, res) {
+  res.json(catalogSummary(productCatalogs));
 });
 
 app.get('/api/stats', async function(req, res) {

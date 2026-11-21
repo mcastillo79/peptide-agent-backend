@@ -1,0 +1,363 @@
+{
+  "source": "pharmacy",
+  "type": "Rx",
+  "label": "Licensed pharmacy compounds (Rx via provider)",
+  "products": [
+    {
+      "name": "Semaglutide",
+      "category": "GLP-1/metabolic",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Semaglutide Oral RDT 0.50mg (30/60/90 tablets); Semaglutide 1.50mg Oral ODT (30/60/90 tablets); Semaglutide Injectable 2.5mg/mL (0.5, 1, 2, 3, 4mL), 5mg/mL (2, 5mL), 10mg/mL (5mL)",
+      "forms": [
+        {
+          "form": "oral RDT",
+          "strengths": ["0.50 mg"],
+          "counts": [30, 60, 90],
+          "count_unit": "tablets"
+        },
+        {
+          "form": "oral ODT",
+          "strengths": ["1.50 mg"],
+          "counts": [30, 60, 90],
+          "count_unit": "tablets"
+        },
+        {
+          "form": "injectable",
+          "presentations": [
+            { "strength": "2.5 mg/mL", "volumes_mL": [0.5, 1, 2, 3, 4] },
+            { "strength": "5 mg/mL", "volumes_mL": [2, 5] },
+            { "strength": "10 mg/mL", "volumes_mL": [5] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tirzepatide",
+      "category": "GLP-1/metabolic",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Tirzepatide Oral RDT 0.50mg (30/60/90 tablets); Tirzepatide Injectable 10mg/mL (1-5mL), 15mg/mL (4mL), 20mg/mL (3, 5mL), 40mg 5mL",
+      "forms": [
+        {
+          "form": "oral RDT",
+          "strengths": ["0.50 mg"],
+          "counts": [30, 60, 90],
+          "count_unit": "tablets"
+        },
+        {
+          "form": "injectable",
+          "presentations": [
+            { "strength": "10 mg/mL", "volumes_mL": [1, 2, 3, 4, 5], "as_listed": "10 mg/mL (1-5 mL)" },
+            { "strength": "15 mg/mL", "volumes_mL": [4] },
+            { "strength": "20 mg/mL", "volumes_mL": [3, 5] },
+            { "strength": "40 mg", "volumes_mL": [5], "as_listed": "40 mg 5 mL" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Retatrutide",
+      "category": "GLP-1/metabolic",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Retatrutide Injectable 10mg/mL and 20mg/mL (1, 3, 5mL)",
+      "forms": [
+        {
+          "form": "injectable",
+          "presentations": [
+            { "strength": "10 mg/mL", "volumes_mL": [1, 3, 5] },
+            { "strength": "20 mg/mL", "volumes_mL": [1, 3, 5] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Semaglutide/NAD+",
+      "category": "GLP-1/metabolic",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Semaglutide/NAD+ 2.5/50 mg/mL 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["2.5/50 mg/mL"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "Tirzepatide/Glycine",
+      "category": "GLP-1/metabolic",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Tirzepatide/Glycine 20/5 and 25/5 mg 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["20/5 mg", "25/5 mg"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "Tirzepatide/Cyanocobalamin",
+      "category": "GLP-1/metabolic",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Tirzepatide/Cyanocobalamin 20/0.5mg 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["20/0.5 mg"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "BPC-157",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "BPC-157 5mg and 10mg/mL injectable 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["5 mg", "10 mg/mL"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "TB-500 (Thymosin Beta-4)",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "TB-500 (Thymosin Beta-4) 5mg/mL and 10mg injectable 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["5 mg/mL", "10 mg"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "NAD+",
+      "category": "supplement/cofactor",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "NAD+ 200mg/mL injectable 5mL; NAD+ Nasal Spray 300mg/mL 10mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["200 mg/mL"],
+          "volume": "5 mL"
+        },
+        {
+          "form": "nasal spray",
+          "strengths": ["300 mg/mL"],
+          "volume": "10 mL"
+        }
+      ]
+    },
+    {
+      "name": "MOTS-c",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "MOTS-c 5mg/mL and 10mg/mL 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["5 mg/mL", "10 mg/mL"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "Sermorelin",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Sermorelin 4mg/mL and 7.5mg/mL 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["4 mg/mL", "7.5 mg/mL"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "Tesamorelin",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Tesamorelin 5mg/mL 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["5 mg/mL"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "CJC-1295 without DAC / Ipamorelin",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "CJC-1295 without DAC / Ipamorelin 5/5mg 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["5/5 mg"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "GHK-Cu",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "GHK-Cu injectable 25mg/mL and 50mg/mL (3, 5mL); GHK-Cu Cream 5% 15mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "presentations": [
+            { "strength": "25 mg/mL", "volumes_mL": [3, 5] },
+            { "strength": "50 mg/mL", "volumes_mL": [3, 5] }
+          ]
+        },
+        {
+          "form": "cream",
+          "strengths": ["5%"],
+          "volume": "15 mL"
+        }
+      ]
+    },
+    {
+      "name": "Semax",
+      "category": "nasal spray",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Semax 2.5 Nasal Spray 10mL",
+      "forms": [
+        {
+          "form": "nasal spray",
+          "strengths": ["2.5"],
+          "volume": "10 mL"
+        }
+      ]
+    },
+    {
+      "name": "Selank",
+      "category": "nasal spray",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Selank 2.5mg Nasal Spray 10mL",
+      "forms": [
+        {
+          "form": "nasal spray",
+          "strengths": ["2.5 mg"],
+          "volume": "10 mL"
+        }
+      ]
+    },
+    {
+      "name": "KPV",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "KPV 5mg/mL 5mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["5 mg/mL"],
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "PT-141",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "PT-141 10mg/mL injectable and nasal spray 10mL",
+      "forms": [
+        {
+          "form": "injectable",
+          "strengths": ["10 mg/mL"]
+        },
+        {
+          "form": "nasal spray",
+          "strengths": ["10 mg/mL"],
+          "volume": "10 mL"
+        }
+      ]
+    },
+    {
+      "name": "Glutathione",
+      "category": "supplement/cofactor",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Glutathione 200mg/mL",
+      "forms": [
+        {
+          "form": "not specified",
+          "strengths": ["200 mg/mL"]
+        }
+      ]
+    },
+    {
+      "name": "Glow",
+      "category": "peptide",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Glow 5mL injectable solution",
+      "forms": [
+        {
+          "form": "injectable solution",
+          "volume": "5 mL"
+        }
+      ]
+    },
+    {
+      "name": "Sildenafil/Tadalafil",
+      "category": "compounded oral",
+      "source": "pharmacy",
+      "type": "Rx",
+      "label": "Licensed pharmacy compounds (Rx via provider)",
+      "as_listed": "Sildenafil/Tadalafil 55/22mg ODT 30ct",
+      "forms": [
+        {
+          "form": "ODT",
+          "strengths": ["55/22 mg"],
+          "count": "30ct"
+        }
+      ]
+    }
+  ]
+}
