@@ -106,8 +106,11 @@ body.dark #save-conv-submit { background: var(--accent); }
 body.dark .usr { background: #1f6feb; }
 .err { align-self: flex-start; background: #fff5f5; border: 1px solid #fed7d7; color: #c53030; border-radius: 4px 16px 16px 16px; font-size: 13px; }
 .msg a { color: var(--accent); text-decoration: underline; overflow-wrap: anywhere; }
-.msg-copy { display: block; font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 6px; background: none; border: none; padding: 0; font-family: inherit; }
-.msg-copy:hover { opacity: 0.8; }
+.msg.bot { position: relative; padding-right: 44px; }
+.msg-copy { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-soft); padding: 0; margin: 0; cursor: pointer; font-family: inherit; }
+.msg-copy:hover, .msg-copy:focus-visible { color: var(--accent); border-color: var(--accent); }
+#copy-toast { position: fixed; z-index: 3000; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(8px); background: #0a2540; color: #fff; border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 650; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; }
+#copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
 #typer span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-soft); animation: bb 1s infinite; display: inline-block; }
 #typer span:nth-child(2) { animation-delay: 0.2s; }
@@ -250,7 +253,36 @@ body.dark .state-btn, body.dark .source-go, body.dark .pro-join, body.dark .labs
 .pro-done { display: none; font-size: 13px; font-weight: 650; color: var(--accent); }
 .pro-error { min-height: 16px; color: #c53030; font-size: 12px; margin-top: 6px; }
 .section-label { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-soft); margin: 16px 0 8px; }
-#print-report { display: none; }
+#print-report, #lab-print { display: none; }
+.pro-badge { display: inline-block; margin-left: 6px; padding: 2px 6px; border-radius: 999px; background: var(--header-bg); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; line-height: 1.4; vertical-align: middle; }
+body.dark .pro-badge { background: var(--accent); color: #04140a; }
+.pro-banner { display: flex; gap: 8px; align-items: flex-start; margin: 8px 0 12px; padding: 8px 10px; border: 1px solid var(--border-col); border-radius: 12px; background: rgba(26,107,60,0.08); }
+.pro-banner p { margin: 0; font-size: 12px; line-height: 1.45; color: var(--text-main); }
+.pro-banner .pro-badge { margin: 1px 0 0; flex-shrink: 0; }
+.pro-banner-link { background: none; border: none; padding: 0; color: var(--accent); font-weight: 700; font-size: 12px; font-family: inherit; cursor: pointer; text-decoration: underline; }
+.pro-banner-link:disabled { color: var(--accent); cursor: default; text-decoration: none; }
+.pro-feature h3 { font-size: 14px; color: var(--text-main); margin-bottom: 2px; }
+.track-note, .cost-note { font-size: 12px; color: var(--text-soft); line-height: 1.45; margin: 0 0 8px; }
+.stack-total { font-size: 15px; font-weight: 700; color: var(--text-main); margin: 2px 0 8px; }
+.cost-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.cost-grid .intake-field { margin-bottom: 0; }
+::selection { background: #9ec1ff; color: #0a2540; }
+.trend-card { border: 1px solid var(--border-col); border-radius: 12px; padding: 10px 12px; margin: 0 0 10px; background: var(--card-bg); }
+.trend-latest { font-size: 14px; font-weight: 700; color: var(--text-main); }
+.trend-sub { margin-top: 2px; }
+.trend-svg { width: 100%; height: auto; display: block; margin-top: 6px; }
+.trend-band { fill: rgba(26,107,60,0.16); }
+body.dark .trend-band { fill: rgba(63,185,80,0.22); }
+.trend-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.trend-dot { fill: var(--accent); }
+.trend-axis { fill: var(--text-soft); font-size: 10px; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; }
+.labs-actions .labs-btn, #lab-trends .labs-btn { margin-bottom: 8px; }
+.reorder-btn { width: 100%; margin-top: 8px; }
+html, body, body * { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
+button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, #sbtn, #upload-btn, #theme-toggle, #hdr-menu-btn, #jump-bottom, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
+-webkit-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important;
+}
+input, textarea, select { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
 @media (max-width: 720px) {
 #hdr { padding: 10px 12px; }
 #logo { width: 34px; height: 34px; }
@@ -260,21 +292,26 @@ body.dark .state-btn, body.dark .source-go, body.dark .pro-join, body.dark .labs
 }
 @media (max-width: 420px) {
 .stack-grid { grid-template-columns: 1fr; }
+.cost-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
 .quiz-step.on, #quiz-bar { animation: none; transition: none; }
 }
 @media print {
+@page { size: letter; margin: 0.5in; }
 html, body { height: auto !important; min-height: 0 !important; overflow: visible !important; display: block !important; background: #fff !important; padding: 0 !important; }
-#wrap, #intake-overlay, #save-conv-overlay { display: none !important; }
-#print-report { display: block !important; color: #111; background: #fff; padding: 24px; font-family: Georgia, serif; }
-#print-report h1 { font-size: 22px; margin-bottom: 6px; }
-#print-report h2 { font-size: 16px; margin: 18px 0 6px; }
-#print-report p, #print-report li { font-size: 12px; line-height: 1.45; }
+#wrap, #intake-overlay, #save-conv-overlay, #copy-toast, #hdr-menu-panel { display: none !important; }
+#print-report, #lab-print { display: none !important; color: #111; background: #fff; padding: 0; font-family: Georgia, serif; }
+body.print-labs #lab-print { display: block !important; }
+body.print-doctor #print-report, body:not(.print-labs):not(.print-doctor) #print-report { display: block !important; }
+#print-report h1, #lab-print h1 { font-size: 20px; margin-bottom: 4px; }
+#print-report h2, #lab-print h2 { font-size: 13px; margin: 10px 0 2px; page-break-after: avoid; }
+#print-report p, #print-report li, #lab-print p, #lab-print li { font-size: 11px; line-height: 1.35; }
 #print-report table { width: 100%; border-collapse: collapse; }
 #print-report th, #print-report td { text-align: left; vertical-align: top; padding: 4px 8px 4px 0; border-bottom: 1px solid #ddd; font-size: 12px; }
 #print-report th { width: 34%; }
 .print-kicker, .print-foot { color: #444; }
+#lab-print .print-row { margin: 0 0 6px; page-break-inside: avoid; }
 }
 </style>
 <script>
@@ -467,8 +504,18 @@ To personalize my guidance, tell me:<br>
 </div>
 </div>
 <div class="intake-field">
-<label for="stack-start">Start date</label>
+<label for="stack-start">Start / purchase date</label>
 <input type="date" id="stack-start">
+</div>
+<div class="stack-grid" id="stack-cost-fields">
+<div class="intake-field">
+<label for="stack-price">Price paid</label>
+<input type="number" id="stack-price" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 48.00" autocomplete="off">
+</div>
+<div class="intake-field">
+<label for="stack-supply">Supply (days)</label>
+<input type="number" id="stack-supply" min="1" step="1" inputmode="numeric" placeholder="e.g. 30" autocomplete="off">
+</div>
 </div>
 <div class="intake-field">
 <label for="stack-notes">Notes</label>
@@ -477,10 +524,11 @@ To personalize my guidance, tell me:<br>
 <div id="stack-error" class="pro-error"></div>
 <button type="button" class="quiz-next" onclick="addStackFromForm()">Add to stack</button>
 </div>
+<div id="stack-pro"></div>
 <div id="stack-list" aria-live="polite"></div>
 <div class="pro-card">
 <h2>Scout Pro — Coming Soon</h2>
-<p>Lab trend charts, custom dose reminders, and priority AI.</p>
+<p>Priority AI is still on the way.</p>
 <button type="button" class="pro-join" onclick="joinWaitlist()">Join Pro Waitlist ($9/mo early access)</button>
 <div class="pro-done">You're on the Scout Pro waitlist.</div>
 <div class="pro-error"></div>
@@ -495,10 +543,11 @@ To personalize my guidance, tell me:<br>
 <button type="button" class="labs-btn primary" onclick="openLabPicker()">Upload new labs</button>
 <button type="button" class="labs-btn" onclick="printDoctorReport()">Print / Save Doctor PDF</button>
 </div>
+<div id="lab-trends"></div>
 <div id="labs-list" aria-live="polite"></div>
 <div class="pro-card">
 <h2>Scout Pro — Coming Soon</h2>
-<p>Lab trend charts, custom dose reminders, and priority AI.</p>
+<p>Priority AI is still on the way.</p>
 <button type="button" class="pro-join" onclick="joinWaitlist()">Join Pro Waitlist ($9/mo early access)</button>
 <div class="pro-done">You're on the Scout Pro waitlist.</div>
 <div class="pro-error"></div>
@@ -534,6 +583,8 @@ To personalize my guidance, tell me:<br>
 <div id="ftr">Independent educational AI tool - No products sold - Always consult a physician</div>
 </div>
 <div id="print-report"></div>
+<div id="lab-print"></div>
+<div id="copy-toast" role="status" aria-live="polite"></div>
 <div id="hdr-menu-panel" hidden role="menu">
 <button type="button" id="hdr-account" role="menuitem" onclick="openAccountRestore()">Sign in / Switch account</button>
 </div>
@@ -555,6 +606,8 @@ console.log('Firebase init skipped');
 }
 
 var BACKEND = '/chat';
+// Flip to false to hide lab trends and the cost tracker. The waitlist stays.
+var PRO_PREVIEW_OPEN = true;
 var hist = [];
 var busy = false;
 var CHAT_STORAGE_KEY = 'peptideChatHistory';
@@ -715,18 +768,48 @@ el.style.height = 'auto';
 el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
+function messagePlainText(msgDiv) {
+var clone = msgDiv.cloneNode(true);
+var extras = clone.querySelectorAll('.msg-copy');
+for (var i = 0; i < extras.length; i++) extras[i].parentNode.removeChild(extras[i]);
+return (clone.innerText || clone.textContent || '').replace(/\u00a0/g, ' ').trim();
+}
+
+function showCopiedToast() {
+var toast = document.getElementById('copy-toast');
+if (!toast) return;
+toast.textContent = 'Copied';
+toast.classList.add('show');
+clearTimeout(showCopiedToast.timer);
+showCopiedToast.timer = setTimeout(function() { toast.classList.remove('show'); }, 1600);
+}
+
+function copyPlainText(text) {
+var value = String(text || '');
+function fallback() {
+fallbackCopy(value);
+showCopiedToast();
+}
+if (navigator.clipboard && navigator.clipboard.writeText) {
+navigator.clipboard.writeText(value).then(showCopiedToast).catch(fallback);
+return;
+}
+fallback();
+}
+
 function addCopyButton(msgDiv) {
-var cleanText = msgDiv.innerText.trim();
+if (!msgDiv || msgDiv.querySelector('.msg-copy')) return;
 var copyBtn = document.createElement('button');
+copyBtn.type = 'button';
 copyBtn.className = 'msg-copy';
-copyBtn.textContent = 'Copy';
-copyBtn.onclick = function(e) {
+copyBtn.setAttribute('aria-label', 'Copy message');
+copyBtn.title = 'Copy';
+copyBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>';
+copyBtn.addEventListener('click', function(e) {
 e.preventDefault();
-navigator.clipboard.writeText(cleanText).then(function() {
-copyBtn.textContent = 'Copied!';
-setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+e.stopPropagation();
+copyPlainText(messagePlainText(msgDiv));
 });
-};
 msgDiv.appendChild(copyBtn);
 }
 
@@ -1702,7 +1785,7 @@ return raw.filter(function(item) { return item && typeof item === 'object' && it
 } catch (e) { return []; }
 }
 
-function saveStack(items) {
+function persistStack(items) {
 try { localStorage.setItem('peptideUserStack', JSON.stringify(items)); } catch (e) {}
 var email = localStorage.getItem('peptideUserEmail');
 if (email && window.firebase && firebase.apps && firebase.apps.length) {
@@ -1711,7 +1794,122 @@ stack: items,
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).catch(function() {});
 }
+}
+
+function saveStack(items) {
+persistStack(items);
 renderStack();
+}
+
+function optionalMoney(raw) {
+var text = String(raw == null ? '' : raw).trim();
+if (!text) return null;
+var n = Number(text);
+if (!isFinite(n) || n < 0) return null;
+return Math.round(n * 100) / 100;
+}
+
+function optionalDays(raw) {
+var text = String(raw == null ? '' : raw).trim();
+if (!text) return null;
+var n = Number(text);
+if (!isFinite(n) || n < 1) return null;
+return Math.round(n);
+}
+
+function formatMoney(n) {
+var v = Math.round(Number(n) * 100) / 100;
+return '$' + v.toFixed(2);
+}
+
+function monthlySpend(item) {
+if (!item) return null;
+var price = Number(item.price);
+var days = Number(item.supplyDays);
+if (!isFinite(price) || price < 0 || !isFinite(days) || days <= 0) return null;
+return price * (30 / days);
+}
+
+function purchaseDateValue(item) {
+var raw = item && (item.purchaseDate || item.startDate);
+var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(raw || ''));
+if (!match) return null;
+var date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+if (isNaN(date.getTime())) return null;
+return date;
+}
+
+function projectedReorder(item) {
+var start = purchaseDateValue(item);
+var days = Number(item && item.supplyDays);
+if (!start || !isFinite(days) || days <= 0) return null;
+var date = new Date(start.getTime());
+date.setDate(date.getDate() + Math.round(days));
+return date;
+}
+
+function daysUntilDate(date) {
+var today = new Date();
+var startToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+var target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+return Math.round((target.getTime() - startToday.getTime()) / 86400000);
+}
+
+function reorderDue(item) {
+var when = projectedReorder(item);
+if (!when) return false;
+return daysUntilDate(when) <= 7;
+}
+
+function reorderDestination() {
+var profile = {};
+try { profile = JSON.parse(localStorage.getItem('peptideUserProfile') || '{}') || {}; } catch (e) { profile = {}; }
+var state = profile.state || '';
+if (state === 'Florida') return { partner: 'pharmacy', state: 'Florida', destination: 'https://bit.ly/RXpeptides' };
+if (state === 'New York') return { partner: 'pharmacy', state: 'New York', destination: 'http://bit.ly/sterile503aPpharmacyNY' };
+if (state === 'Other') return { partner: 'pharmacy', state: 'Other', destination: 'https://clinicsourcedirect.pages.dev/' };
+return { partner: 'altura', state: '', destination: 'https://bit.ly/AlturaUSASups' };
+}
+
+function reorderStackItem() {
+var dest = reorderDestination();
+openSource(dest.partner, dest.state, dest.destination, 'stack');
+}
+
+function proBannerMarkup() {
+var joined = false;
+try { joined = localStorage.getItem('proWaitlist') === 'true'; } catch (e) {}
+var action = joined
+? '<button type="button" class="pro-banner-link" disabled>You\'re on the Pro waitlist.</button>'
+: '<button type="button" class="pro-banner-link" onclick="joinWaitlist()">Join the Pro waitlist</button>';
+var lead = PRO_PREVIEW_OPEN ? 'Pro preview, free while in beta. ' : 'Pro preview is closed. ';
+return '<div class="pro-banner"><span class="pro-badge">PRO</span><p>' + lead + action + '</p></div>';
+}
+
+function stackProMarkup(items) {
+var html = '<div class="pro-feature"><h3>Cost tracker <span class="pro-badge">PRO</span></h3>' + proBannerMarkup();
+if (!PRO_PREVIEW_OPEN) return html + '</div>';
+var total = 0;
+var counted = 0;
+(items || []).forEach(function(item) {
+var monthly = monthlySpend(item);
+if (monthly == null) return;
+total += monthly;
+counted += 1;
+});
+if (!counted) html += '<p class="cost-note">Add a price and days of supply to see monthly spend.</p>';
+else html += '<p class="stack-total">Monthly total ' + formatMoney(total) + '</p><p class="cost-note">Monthly spend is the price spread over a 30-day month. Items without a price and supply length are left out.</p>';
+return html + '</div>';
+}
+
+function stackCostLine(item) {
+var bits = [];
+var monthly = monthlySpend(item);
+var when = projectedReorder(item);
+if (monthly != null) bits.push('Monthly ' + formatMoney(monthly));
+if (when) bits.push('Projected reorder ' + formatWhen(when.toISOString()));
+else if (monthly != null) bits.push('Add a start / purchase date to project a reorder date.');
+return bits.join(' · ');
 }
 
 function activeStackPayload() {
@@ -1737,24 +1935,41 @@ if (item.notes) line = line ? line + '. ' + item.notes : item.notes;
 return line;
 }
 
-function renderStack() {
-var list = document.getElementById('stack-list');
-if (!list) return;
-var items = loadStack();
-if (!items.length) {
-list.innerHTML = '<p class="empty-note">Nothing in your stack yet. Add a peptide or supplement you are using.</p>';
-return;
-}
-list.innerHTML = items.map(function(item) {
+function renderStackItem(item) {
 var paused = item.active === false;
+var cost = '';
+if (PRO_PREVIEW_OPEN) {
+var line = stackCostLine(item);
+cost = '<div class="cost-grid">' +
+'<div class="intake-field"><label>Price paid<input type="number" min="0" step="0.01" inputmode="decimal" data-cost="price" data-id="' + escapeHtml(item.id) + '" value="' + (item.price == null ? '' : escapeHtml(item.price)) + '"></label></div>' +
+'<div class="intake-field"><label>Supply (days)<input type="number" min="1" step="1" inputmode="numeric" data-cost="supplyDays" data-id="' + escapeHtml(item.id) + '" value="' + (item.supplyDays == null ? '' : escapeHtml(item.supplyDays)) + '"></label></div>' +
+'</div>' +
+(line ? '<div class="stack-meta">' + escapeHtml(line) + '</div>' : '') +
+(reorderDue(item) ? '<button type="button" class="labs-btn primary reorder-btn" data-action="reorder" data-id="' + escapeHtml(item.id) + '">Reorder</button>' : '');
+}
 return '<article class="stack-item' + (paused ? ' paused' : '') + '">' +
 '<div class="stack-top"><div class="stack-name">' + escapeHtml(item.name) + '</div><div class="stack-actions">' +
 '<button type="button" class="mini-btn" data-action="toggle" data-id="' + escapeHtml(item.id) + '">' + (paused ? 'Paused' : 'Active') + '</button>' +
 '<button type="button" class="mini-btn danger" data-action="remove" data-id="' + escapeHtml(item.id) + '">Remove</button>' +
 '</div></div>' +
 (stackDetail(item) ? '<div class="stack-meta">' + escapeHtml(stackDetail(item)) + '</div>' : '') +
+cost +
 '</article>';
-}).join('');
+}
+
+function renderStack() {
+var list = document.getElementById('stack-list');
+var pro = document.getElementById('stack-pro');
+var costFields = document.getElementById('stack-cost-fields');
+if (costFields) costFields.hidden = !PRO_PREVIEW_OPEN;
+if (!list) return;
+var items = loadStack();
+if (pro) pro.innerHTML = stackProMarkup(items);
+if (!items.length) {
+list.innerHTML = '<p class="empty-note">Nothing in your stack yet. Add a peptide or supplement you are using.</p>';
+return;
+}
+list.innerHTML = items.map(renderStackItem).join('');
 }
 
 function addStackFromForm() {
@@ -1769,7 +1984,7 @@ if (items.length >= 40) {
 if (err) err.textContent = 'Your stack is full. Remove one to add another.';
 return;
 }
-items.push({
+var nextItem = {
 id: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
 name: name,
 dose: document.getElementById('stack-dose').value.trim(),
@@ -1777,12 +1992,19 @@ schedule: document.getElementById('stack-schedule').value.trim(),
 startDate: document.getElementById('stack-start').value,
 notes: document.getElementById('stack-notes').value.trim(),
 active: true
-});
+};
+var price = optionalMoney(document.getElementById('stack-price') && document.getElementById('stack-price').value);
+var supplyDays = optionalDays(document.getElementById('stack-supply') && document.getElementById('stack-supply').value);
+if (price != null) nextItem.price = price;
+if (supplyDays != null) nextItem.supplyDays = supplyDays;
+items.push(nextItem);
 document.getElementById('stack-name').value = '';
 document.getElementById('stack-dose').value = '';
 document.getElementById('stack-schedule').value = '';
 document.getElementById('stack-start').value = '';
 document.getElementById('stack-notes').value = '';
+if (document.getElementById('stack-price')) document.getElementById('stack-price').value = '';
+if (document.getElementById('stack-supply')) document.getElementById('stack-supply').value = '';
 if (err) err.textContent = '';
 saveStack(items);
 }
@@ -1807,13 +2029,29 @@ return raw.filter(function(item) { return item && typeof item === 'object'; });
 } catch (e) { return []; }
 }
 
+function finiteOrNull(value) {
+if (typeof value === 'number') return isFinite(value) ? value : null;
+if (value == null) return null;
+var text = String(value).replace(/,/g, '').trim();
+if (!text || !/^-?\d+(?:\.\d+)?$/.test(text)) return null;
+var n = Number(text);
+return isFinite(n) ? n : null;
+}
+
 function cleanBiomarkers(list) {
 if (!Array.isArray(list)) return [];
 return list.map(function(item) {
 if (!item || !item.name) return null;
 var flag = String(item.flag || 'info').toLowerCase();
 if (['normal', 'high', 'low', 'info'].indexOf(flag) === -1) flag = 'info';
-return { name: String(item.name), value: String(item.value == null ? '' : item.value), unit: String(item.unit || ''), flag: flag };
+var out = { name: String(item.name), value: String(item.value == null ? '' : item.value), unit: String(item.unit || ''), flag: flag };
+var refLow = finiteOrNull(item.refLow);
+var refHigh = finiteOrNull(item.refHigh);
+if (refLow != null && refHigh != null && refHigh >= refLow) {
+out.refLow = refLow;
+out.refHigh = refHigh;
+}
+return out;
 }).filter(Boolean);
 }
 
@@ -1857,7 +2095,176 @@ if (flag === 'normal') return 'Normal';
 return 'Info';
 }
 
+function labNumber(value) {
+var match = String(value == null ? '' : value).replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
+if (!match) return null;
+var n = Number(match[0]);
+return isFinite(n) ? n : null;
+}
+
+function formatLabNumber(n) {
+if (n == null || !isFinite(n)) return '';
+var rounded = Math.round(n * 100) / 100;
+return String(rounded);
+}
+
+function formatDelta(current, previous) {
+if (current == null || previous == null) return '';
+var diff = Math.round((current - previous) * 100) / 100;
+if (diff === 0) return 'no change';
+return (diff > 0 ? '↑ ' : '↓ ') + formatLabNumber(Math.abs(diff));
+}
+
+function shortWhen(iso) {
+var d = new Date(iso);
+if (isNaN(d.getTime())) return '';
+try { return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
+catch (e) { return formatWhen(iso); }
+}
+
+function rangeNearName(text, name) {
+var source = String(text || '');
+var key = String(name || '').trim();
+if (!source || key.length < 2) return null;
+var idx = source.toLowerCase().indexOf(key.toLowerCase());
+if (idx === -1) return null;
+var slice = source.slice(idx, idx + key.length + 90);
+var match = slice.match(/(-?\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(-?\d+(?:\.\d+)?)/);
+if (!match) return null;
+var low = Number(match[1]);
+var high = Number(match[2]);
+if (!isFinite(low) || !isFinite(high) || high < low) return null;
+return { low: low, high: high };
+}
+
+function labSeries() {
+var labs = loadLabHistory().slice().sort(function(a, b) { return String(a.date || '').localeCompare(String(b.date || '')); });
+var groups = {};
+var order = [];
+labs.forEach(function(lab) {
+(lab.biomarkers || []).forEach(function(item) {
+var name = String(item && item.name || '').trim();
+var y = labNumber(item && item.value);
+if (!name || y == null) return;
+var key = name.toLowerCase();
+if (!groups[key]) {
+groups[key] = { name: name, unit: '', points: [] };
+order.push(key);
+}
+var group = groups[key];
+if (item.unit) group.unit = String(item.unit);
+var point = {
+y: y,
+date: lab.date || '',
+label: shortWhen(lab.date),
+refLow: finiteOrNull(item.refLow),
+refHigh: finiteOrNull(item.refHigh),
+summary: lab.summary || ''
+};
+var prev = group.points[group.points.length - 1];
+if (prev && prev.date === point.date) group.points[group.points.length - 1] = point;
+else group.points.push(point);
+});
+});
+return order.map(function(key) {
+var group = groups[key];
+var range = null;
+for (var i = group.points.length - 1; i >= 0 && !range; i--) {
+var point = group.points[i];
+if (point.refLow != null && point.refHigh != null && point.refHigh >= point.refLow) range = { low: point.refLow, high: point.refHigh };
+else range = rangeNearName(point.summary, group.name);
+}
+return { name: group.name, unit: group.unit, points: group.points, range: range };
+}).sort(function(a, b) {
+var ad = a.points[a.points.length - 1].date || '';
+var bd = b.points[b.points.length - 1].date || '';
+return String(bd).localeCompare(String(ad));
+});
+}
+
+function trendChartSvg(points, range) {
+var w = 320;
+var h = 150;
+var padL = 46;
+var padR = 12;
+var padT = 16;
+var padB = 26;
+var plotW = w - padL - padR;
+var plotH = h - padT - padB;
+var min = points[0].y;
+var max = points[0].y;
+points.forEach(function(point) {
+if (point.y < min) min = point.y;
+if (point.y > max) max = point.y;
+});
+if (range) {
+if (range.low < min) min = range.low;
+if (range.high > max) max = range.high;
+}
+if (min === max) { min -= 1; max += 1; }
+var span = max - min;
+min -= span * 0.12;
+max += span * 0.12;
+function xAt(index) {
+if (points.length === 1) return padL + plotW / 2;
+return padL + (plotW * index) / (points.length - 1);
+}
+function yAt(value) {
+return padT + ((max - value) / (max - min)) * plotH;
+}
+var parts = ['<svg class="trend-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Saved results over time">'];
+if (range) {
+var yHigh = yAt(range.high);
+var yLow = yAt(range.low);
+var top = Math.min(yHigh, yLow);
+parts.push('<rect class="trend-band" x="' + padL + '" y="' + top.toFixed(2) + '" width="' + plotW + '" height="' + Math.abs(yLow - yHigh).toFixed(2) + '"></rect>');
+}
+var coords = points.map(function(point, index) { return xAt(index).toFixed(2) + ',' + yAt(point.y).toFixed(2); });
+parts.push('<polyline class="trend-line" points="' + coords.join(' ') + '"></polyline>');
+points.forEach(function(point, index) {
+parts.push('<circle class="trend-dot" cx="' + xAt(index).toFixed(2) + '" cy="' + yAt(point.y).toFixed(2) + '" r="3.5"></circle>');
+});
+var axisSpan = max - min;
+function axisLabel(n) {
+if (axisSpan >= 20) return String(Math.round(n));
+return formatLabNumber(Math.round(n * 10) / 10);
+}
+parts.push('<text class="trend-axis" x="' + (padL - 6) + '" y="' + (padT + 4) + '" text-anchor="end">' + escapeHtml(axisLabel(max)) + '</text>');
+parts.push('<text class="trend-axis" x="' + (padL - 6) + '" y="' + (padT + plotH) + '" text-anchor="end">' + escapeHtml(axisLabel(min)) + '</text>');
+parts.push('<text class="trend-axis" x="' + xAt(0).toFixed(2) + '" y="' + (h - 6) + '" text-anchor="' + (points.length === 1 ? 'middle' : 'start') + '">' + escapeHtml(points[0].label) + '</text>');
+if (points.length > 1) parts.push('<text class="trend-axis" x="' + xAt(points.length - 1).toFixed(2) + '" y="' + (h - 6) + '" text-anchor="end">' + escapeHtml(points[points.length - 1].label) + '</text>');
+parts.push('</svg>');
+return parts.join('');
+}
+
+function renderLabTrends() {
+var host = document.getElementById('lab-trends');
+if (!host) return;
+var html = '<div class="pro-feature"><h3>Lab trends <span class="pro-badge">PRO</span></h3>' + proBannerMarkup();
+if (!PRO_PREVIEW_OPEN) {
+host.innerHTML = html + '</div>';
+return;
+}
+html += '<p class="track-note">For tracking only. Discuss your results with your healthcare provider. A shaded band is the reference range when one was saved with the result.</p>';
+html += '<button type="button" class="labs-btn" onclick="exportLabSummary()">Export PDF summary</button>';
+var series = labSeries();
+if (!series.length) html += '<p class="empty-note">Upload labs to see a value over time.</p>';
+series.forEach(function(item) {
+var last = item.points[item.points.length - 1];
+var prev = item.points.length > 1 ? item.points[item.points.length - 2] : null;
+var unit = item.unit ? ' ' + escapeHtml(item.unit) : '';
+var delta = prev ? formatDelta(last.y, prev.y) : '';
+html += '<article class="trend-card"><div class="trend-latest">' + escapeHtml(item.name) + '</div>';
+html += '<p class="trend-sub">Latest ' + escapeHtml(formatLabNumber(last.y)) + unit + (delta ? ' · ' + escapeHtml(delta) : '') + '</p>';
+if (item.range) html += '<p class="trend-sub">Reference range ' + escapeHtml(formatLabNumber(item.range.low)) + '–' + escapeHtml(formatLabNumber(item.range.high)) + unit + '</p>';
+html += trendChartSvg(item.points, item.range);
+html += '</article>';
+});
+host.innerHTML = html + '</div>';
+}
+
 function renderLabs() {
+renderLabTrends();
 var list = document.getElementById('labs-list');
 if (!list) return;
 var labs = loadLabHistory().slice().sort(function(a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
@@ -1934,6 +2341,43 @@ html.push('<p>' + escapeHtml(String(lab.summary).slice(0, 700)) + '</p>');
 });
 html.push('<p class="print-foot">Independent educational AI tool. No products sold. Always consult a physician. Generated ' + escapeHtml(new Date().toLocaleString()) + '.</p>');
 document.getElementById('print-report').innerHTML = html.join('');
+armPrint('print-doctor');
+}
+
+function buildLabPrint() {
+var profile = {};
+try { profile = JSON.parse(localStorage.getItem('peptideUserProfile') || '{}') || {}; } catch (e) { profile = {}; }
+var series = labSeries();
+var html = [];
+html.push('<p class="print-kicker">Scout lab summary</p>');
+html.push('<h1>' + escapeHtml(profile.name || 'Lab summary') + '</h1>');
+html.push('<p>For tracking only. Discuss your results with your healthcare provider.</p>');
+html.push('<p class="print-kicker">Generated ' + escapeHtml(formatWhen(new Date().toISOString())) + '</p>');
+if (!series.length) html.push('<p>No numeric lab values saved yet.</p>');
+series.forEach(function(item) {
+var last = item.points[item.points.length - 1];
+var prev = item.points.length > 1 ? item.points[item.points.length - 2] : null;
+var unit = item.unit ? ' ' + item.unit : '';
+var delta = prev ? formatDelta(last.y, prev.y) : '';
+html.push('<div class="print-row"><h2>' + escapeHtml(item.name) + '</h2>');
+html.push('<p>Latest ' + escapeHtml(formatLabNumber(last.y) + unit) + ' on ' + escapeHtml(last.label || formatWhen(last.date)) + (delta ? ' · ' + escapeHtml(delta) + ' from the prior saved result' : '') + '.</p>');
+if (item.range) html.push('<p>Reference range ' + escapeHtml(formatLabNumber(item.range.low) + '–' + formatLabNumber(item.range.high) + unit) + '.</p>');
+html.push('</div>');
+});
+html.push('<p class="print-foot">For tracking only. Discuss your results with your healthcare provider.</p>');
+document.getElementById('lab-print').innerHTML = html.join('');
+}
+
+function exportLabSummary() {
+if (!PRO_PREVIEW_OPEN) return;
+buildLabPrint();
+armPrint('print-labs');
+}
+
+function armPrint(kind) {
+document.body.classList.remove('print-labs');
+document.body.classList.remove('print-doctor');
+document.body.classList.add(kind);
 window.print();
 }
 
@@ -1946,6 +2390,8 @@ var done = cards[i].querySelector('.pro-done');
 if (join) join.style.display = joined ? 'none' : 'block';
 if (done) done.style.display = joined ? 'block' : 'none';
 }
+if (document.getElementById('stack-list')) renderStack();
+if (document.getElementById('labs-list')) renderLabs();
 }
 
 function joinWaitlist() {
@@ -2092,8 +2538,8 @@ if (h.indexOf('bit.ly/AlturaUSASups') !== -1) return { partner: 'altura', state:
 return null;
 }
 
-function openSource(partner, state, destination) {
-trackClick(partner, destination, state, 'sources');
+function openSource(partner, state, destination, page) {
+trackClick(partner, destination, state, page || 'sources');
 window.open(destination, '_blank', 'noopener,noreferrer');
 }
 
@@ -2168,6 +2614,29 @@ if (!btn || btn === this) return;
 var id = btn.getAttribute('data-id');
 if (btn.getAttribute('data-action') === 'toggle') toggleStackItem(id);
 if (btn.getAttribute('data-action') === 'remove') removeStackItem(id);
+if (btn.getAttribute('data-action') === 'reorder') reorderStackItem();
+});
+document.getElementById('stack-list').addEventListener('change', function(e) {
+var input = e.target;
+if (!input || !input.getAttribute || !input.getAttribute('data-cost')) return;
+var id = input.getAttribute('data-id');
+var field = input.getAttribute('data-cost');
+var items = loadStack();
+items.forEach(function(item) {
+if (item.id !== id) return;
+var next = field === 'supplyDays' ? optionalDays(input.value) : optionalMoney(input.value);
+if (next == null) delete item[field];
+else item[field] = next;
+});
+saveStack(items);
+});
+var costFields = document.getElementById('stack-cost-fields');
+if (costFields) costFields.hidden = !PRO_PREVIEW_OPEN;
+var starterBots = document.querySelectorAll('#msgs .msg.bot');
+for (var b = 0; b < starterBots.length; b++) addCopyButton(starterBots[b]);
+window.addEventListener('afterprint', function() {
+document.body.classList.remove('print-labs');
+document.body.classList.remove('print-doctor');
 });
 var restoreEmail = document.getElementById('restore-email');
 if (restoreEmail) {
