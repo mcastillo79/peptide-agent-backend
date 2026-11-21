@@ -41,6 +41,10 @@
 --trend-plot: #f8fafc;
 --trend-grid: #94a3b8;
 --trend-frame: #64748b;
+--range-in: #e7eef6;
+--range-in-text: #1e3a5f;
+--range-out: #f4f0e6;
+--range-out-text: #3f3a32;
 }
 body.dark {
 --page-bg: #0d1117;
@@ -66,6 +70,10 @@ body.dark {
 --trend-plot: #0d1117;
 --trend-grid: #8b949e;
 --trend-frame: #c9d1d9;
+--range-in: #1c2836;
+--range-in-text: #d6e2f0;
+--range-out: #2e2a24;
+--range-out-text: #e7e0d4;
 }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 html, body { height: 100vh; height: 100dvh; overflow: hidden; }
@@ -354,8 +362,72 @@ body.dark .trend-band { fill: rgba(63,185,80,0.32); }
 .trend-value { fill: var(--text-main); font-size: 13px; font-weight: 700; }
 .trend-hint { margin: 6px 0 0; font-size: 0.75rem; line-height: 1.4; color: var(--text-soft); }
 .labs-actions .labs-btn, #lab-trends .labs-btn { margin-bottom: 8px; }
+.labs-view-bar { display: flex; flex-direction: column; gap: 8px; margin: 0 0 12px; }
+.labs-views { display: flex; gap: 6px; }
+.labs-views button { flex: 1; min-width: 0; min-height: 40px; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); border-radius: 10px; font-family: inherit; font-size: 0.8125rem; font-weight: 700; cursor: pointer; padding: 8px 4px; }
+.labs-views button[aria-selected="true"] { background: var(--header-bg); color: #fff; border-color: transparent; }
+body.dark .labs-views button[aria-selected="true"] { background: var(--accent); color: #04140a; }
+.export-row { display: flex; gap: 8px; align-items: center; }
+.export-row .labs-btn { flex: 1; margin-bottom: 0; }
+.compare-pdf-opt { display: flex; align-items: center; gap: 6px; font-size: 0.8125rem; font-weight: 700; color: var(--text-main); white-space: nowrap; }
+.compare-pdf-opt input { width: 18px; height: 18px; margin: 0; }
+.lab-excluded, .lab-uploads, .lab-group { border: 1px solid var(--border-col); border-radius: 12px; background: var(--card-bg); }
+.lab-excluded, .lab-uploads { margin: 0 0 12px; padding: 8px 10px; }
+.lab-excluded summary, .lab-uploads summary, .lab-group summary { cursor: pointer; font-weight: 700; color: var(--text-main); }
+.lab-excluded summary, .lab-uploads summary { font-size: 0.8125rem; line-height: 1.4; }
+.lab-excluded ul { margin: 8px 0 8px 18px; color: var(--text-main); font-size: 0.8125rem; }
+.lab-excluded .labs-actions { margin: 8px 0 0; }
+.lab-group { margin: 0 0 8px; }
+.lab-group summary { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; padding: 10px 12px; list-style: none; }
+.lab-group summary::-webkit-details-marker { display: none; }
+.lab-group-name { font-size: 0.875rem; }
+.lab-group-meta { font-size: 0.75rem; font-weight: 650; color: var(--text-soft); text-align: right; }
+@media (max-width: 420px) {
+.lab-group summary { flex-direction: column; align-items: flex-start; gap: 2px; }
+.lab-group-meta { text-align: left; }
+}
+.lab-group-body { padding: 0 10px 8px; }
+.lab-row { display: flex; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border-col); }
+.lab-row-text { flex: 1; min-width: 0; }
+.lab-row-name { font-weight: 700; font-size: 0.875rem; color: var(--text-main); }
+.lab-row-value { font-size: 0.8125rem; color: var(--text-main); margin-top: 2px; }
+.spark-btn { width: 84px; height: 40px; flex-shrink: 0; border: 1px solid var(--border-col); background: var(--input-bg); border-radius: 8px; padding: 4px; cursor: pointer; }
+.spark-btn[aria-expanded="true"] { border-color: var(--accent); }
+.spark-line { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.spark-dot { fill: var(--accent); }
+.lab-chart { margin: 0 0 8px; }
+.marker-block.trend-open { border-radius: 12px; box-shadow: inset 0 0 0 2px var(--accent); }
+.range-badge { display: inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 999px; font-size: 0.6875rem; font-weight: 700; line-height: 1.35; }
+.range-badge.in { background: var(--range-in); color: var(--range-in-text); }
+.range-badge.out { background: var(--range-out); color: var(--range-out-text); }
+.compare-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.compare-dates label, .compare-filters { font-size: 0.75rem; }
+.compare-dates label { display: block; font-weight: 700; color: var(--text-soft); }
+.compare-dates input { width: 100%; min-height: 40px; margin-top: 4px; }
+.compare-filters { display: flex; gap: 6px; margin: 8px 0; }
+.compare-filters button { flex: 1; min-height: 40px; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); border-radius: 10px; font-family: inherit; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 8px 4px; }
+.compare-filters button[aria-pressed="true"] { background: var(--header-bg); color: #fff; border-color: transparent; }
+body.dark .compare-filters button[aria-pressed="true"] { background: var(--accent); color: #04140a; }
+.compare-table .compare-group, .compare-table .compare-group th { display: block; text-align: left; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-soft); padding: 10px 0 4px; }
+.compare-table { width: 100%; border-collapse: collapse; }
+.compare-table .marker-row { display: block; border: 1px solid var(--border-col); border-radius: 12px; padding: 8px 10px; margin: 0 0 8px; background: var(--card-bg); }
+.compare-table .marker-row td { display: block; padding: 4px 0; font-size: 0.8125rem; color: var(--text-main); }
+.compare-table .marker-row td::before { content: attr(data-label); display: block; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text-soft); }
+.year-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 8px; }
+.year-grid { border-collapse: separate; border-spacing: 4px; }
+.year-grid th, .year-grid td { font-size: 0.75rem; padding: 6px 4px; border-radius: 8px; text-align: center; white-space: nowrap; color: var(--text-main); }
+.year-grid thead th { font-weight: 700; white-space: normal; line-height: 1.15; }
+.year-date, .year-year { display: block; }
+.year-grid .marker-col { text-align: left; position: sticky; left: 0; background: var(--card-bg); z-index: 1; min-width: 6.4rem; font-weight: 700; }
+.year-cell.in { background: var(--range-in); color: var(--range-in-text); }
+.year-cell.out { background: var(--range-out); color: var(--range-out-text); }
+.year-cell.none { background: var(--input-bg); color: var(--text-main); }
+.year-cell.empty { color: var(--text-soft); }
+.year-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.year-legend span { font-size: 0.6875rem; font-weight: 700; padding: 3px 6px; border-radius: 999px; }
+.marker-link { background: none; border: none; padding: 0; margin: 0; color: var(--text-main); font: inherit; font-weight: 700; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .reorder-btn { width: 100%; margin-top: 8px; }
-html, body, #msgs, #thread, #wrap, .panel, .panel-scroll, .msg, .msg strong, .msg a, .msg br {
+html, body, #msgs, #thread, #wrap, .panel, .panel-scroll, .msg, .msg strong, .msg a, .msg br, .lab-row-text, .compare-table, .year-grid, .lab-excluded, .lab-group-meta {
 -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important;
 }
 button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, .stack-suggest button, .stack-suggest input, .status-btn, #sbtn, #upload-btn, #theme-toggle, #text-size-btn, #quiz-text-size-btn, #hdr-menu-btn, #jump-bottom, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
@@ -390,8 +462,8 @@ body.print-doctor #print-report, body:not(.print-labs):not(.print-doctor) #print
 #print-report h1, #lab-print h1 { font-size: 1.25rem; margin-bottom: 4px; }
 #print-report h2, #lab-print h2 { font-size: 0.8125rem; margin: 10px 0 2px; page-break-after: avoid; }
 #print-report p, #print-report li, #lab-print p, #lab-print li { font-size: 0.6875rem; line-height: 1.35; }
-#print-report table { width: 100%; border-collapse: collapse; }
-#print-report th, #print-report td { text-align: left; vertical-align: top; padding: 4px 8px 4px 0; border-bottom: 1px solid #ddd; font-size: 0.75rem; }
+#print-report table, #lab-print table { width: 100%; border-collapse: collapse; }
+#print-report th, #print-report td, #lab-print th, #lab-print td { text-align: left; vertical-align: top; padding: 4px 8px 4px 0; border-bottom: 1px solid #ddd; font-size: 0.75rem; color: #111; }
 #print-report th { width: 34%; }
 .print-kicker, .print-foot { color: #444; }
 #lab-print .print-row { margin: 0 0 6px; page-break-inside: avoid; }
@@ -638,13 +710,16 @@ To personalize my guidance, tell me:<br>
 <section id="panel-labs" class="panel" role="tabpanel">
 <div class="panel-scroll">
 <h2>Labs</h2>
-<p class="panel-lead">A timeline of biomarkers saved from your uploads. Newest first.</p>
+<p class="panel-lead">Bloodwork saved from your uploads. Overview, compare two dates, or see the year.</p>
 <div class="labs-actions">
 <button type="button" class="labs-btn primary" onclick="openLabPicker()">Upload new labs</button>
 <button type="button" class="labs-btn" onclick="printDoctorReport()">Print / Save Doctor PDF</button>
 </div>
 <div id="lab-trends"></div>
+<details id="labs-uploads" class="lab-uploads">
+<summary>Saved uploads</summary>
 <div id="labs-list" aria-live="polite"></div>
+</details>
 <div class="pro-card">
 <h2>Scout Pro — Coming Soon</h2>
 <p>Priority AI is still on the way.</p>
@@ -714,6 +789,7 @@ To personalize my guidance, tell me:<br>
 </div>
 
 <script src="/lab-markers.js"></script>
+<script src="/lab-compare.js"></script>
 <script>
 var firebaseConfig = {
 apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
@@ -3153,6 +3229,8 @@ if (refLow != null && refHigh != null && refHigh >= refLow) {
 out.refLow = refLow;
 out.refHigh = refHigh;
 }
+var panel = String(item.panel || item.category || '').trim().slice(0, 60);
+if (panel) out.panel = panel;
 return out;
 }).filter(Boolean);
 }
@@ -3256,18 +3334,20 @@ var y = labNumber(item && item.value);
 if (!name || y == null) return;
 var key = name.toLowerCase();
 if (!groups[key]) {
-groups[key] = { name: name, unit: '', points: [] };
+groups[key] = { name: name, unit: '', points: [], panel: '' };
 order.push(key);
 }
 var group = groups[key];
 if (item.unit) group.unit = String(item.unit);
+if (!group.panel && (item.panel || item.category)) group.panel = String(item.panel || item.category);
 var point = {
 y: y,
 date: lab.date || '',
 label: shortWhen(lab.date),
 refLow: finiteOrNull(item.refLow),
 refHigh: finiteOrNull(item.refHigh),
-summary: lab.summary || ''
+summary: lab.summary || '',
+panel: String(item.panel || item.category || '')
 };
 var prev = group.points[group.points.length - 1];
 if (prev && prev.date === point.date) group.points[group.points.length - 1] = point;
@@ -3282,7 +3362,7 @@ var point = group.points[i];
 if (point.refLow != null && point.refHigh != null && point.refHigh >= point.refLow) range = { low: point.refLow, high: point.refHigh };
 else range = rangeNearName(point.summary, group.name);
 }
-return { name: group.name, unit: group.unit, points: group.points, range: range };
+return { name: group.name, unit: group.unit, points: group.points, range: range, panel: group.panel || '' };
 }).sort(function(a, b) {
 var ad = a.points[a.points.length - 1].date || '';
 var bd = b.points[b.points.length - 1].date || '';
@@ -3376,34 +3456,542 @@ var ratio = (h / w * 100).toFixed(4);
 return '<div class="trend-frame-wrap" style="--trend-ratio:' + ratio + '%"><svg class="trend-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Saved results over time" style="font-size:11px">' + parts.join('') + '</svg></div>';
 }
 
-function renderLabTrends() {
-var host = document.getElementById('lab-trends');
-if (!host) return;
-var html = '<div class="pro-feature"><h3>Lab trends <span class="pro-badge">PRO</span></h3>' + proBannerMarkup();
-if (!PRO_PREVIEW_OPEN) {
-host.innerHTML = html + '</div>';
-return;
+var labsView = 'overview';
+var labsScrollKeep = true;
+var compareDayA = '';
+var compareDayB = '';
+var compareFilter = 'all';
+var compareInPdf = false;
+var openTrendKey = '';
+var scrollTrendIntoView = false;
+var openPanels = {};
+var LAB_DISMISS_KEY = 'peptideLabExcludedDismissed';
+
+function markerDomId(name) {
+var slug = String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+return slug || 'marker';
 }
-html += '<p class="track-note">For tracking only. Discuss your results with your healthcare provider. A shaded band is the reference range when one was saved with the result.</p>';
-var hiddenMarkers = countHiddenLabMarkers();
-noteHiddenLabMarkers(hiddenMarkers);
-if (hiddenMarkers) html += '<p class="track-note">Supplement doses saved from a product label are hidden here. They are still stored on this device and were not deleted.</p>';
-html += '<button type="button" class="labs-btn" onclick="exportLabSummary()">Export PDF summary</button>';
-var series = labSeries();
-if (!series.length) html += '<p class="empty-note">Upload labs to see a value over time.</p>';
-series.forEach(function(item) {
+
+function formatDayKey(day) {
+var parts = String(day || '').split('-');
+if (parts.length !== 3) return day || 'Undated';
+var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+if (isNaN(d.getTime())) return day || 'Undated';
+try { return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+catch (e) { return day; }
+}
+
+function shortDayParts(day) {
+var parts = String(day || '').split('-');
+if (parts.length !== 3) return { top: day || '', bottom: '' };
+var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+if (isNaN(d.getTime())) return { top: day || '', bottom: '' };
+var month = '';
+try { month = d.toLocaleDateString(undefined, { month: 'short' }); }
+catch (e) { month = parts[1]; }
+return { top: month + ' ' + d.getDate(), bottom: String(d.getFullYear()) };
+}
+
+function panelOrder() {
+if (!window.LabMarkers) return ['Other'];
+return window.LabMarkers.panelCatalog().map(function(panel) { return panel.label; });
+}
+
+function panelMeta(name, hint) {
+if (!window.LabMarkers) return { id: 'other', label: hint || 'Other' };
+return window.LabMarkers.panelFor(name, hint || '');
+}
+
+function dismissedExcludedMap() {
+try {
+var raw = JSON.parse(localStorage.getItem(LAB_DISMISS_KEY) || '[]');
+var map = {};
+if (!Array.isArray(raw)) return map;
+raw.forEach(function(key) { map[String(key)] = true; });
+return map;
+} catch (e) { return {}; }
+}
+
+function visibleExcludedItems() {
+if (!window.LabMarkers) return [];
+var dismissed = dismissedExcludedMap();
+return window.LabMarkers.excludedMarkers(loadLabHistory(), productMatchNames()).filter(function(item) {
+return !dismissed[item.key];
+});
+}
+
+function pointStatus(point) {
+if (!point || point.refLow == null || point.refHigh == null || point.refHigh < point.refLow) return '';
+if (point.y >= point.refLow && point.y <= point.refHigh) return 'within';
+return 'outside';
+}
+
+function rangeBadgeHtml(status) {
+if (!window.LabCompare) return '';
+var label = window.LabCompare.statusLabel(status);
+if (!label) return '';
+var kind = status === 'outside' ? 'out' : 'in';
+return '<span class="range-badge ' + kind + '">' + escapeHtml(label) + '</span>';
+}
+
+function sparklineSvg(points) {
+var w = 72;
+var h = 28;
+var pad = 3;
+if (!points || !points.length) return '';
+var min = points[0].y;
+var max = points[0].y;
+points.forEach(function(point) {
+if (point.y < min) min = point.y;
+if (point.y > max) max = point.y;
+});
+if (min === max) { min -= 1; max += 1; }
+function xAt(index) {
+if (points.length === 1) return w / 2;
+return pad + ((w - pad * 2) * index) / (points.length - 1);
+}
+function yAt(value) {
+return pad + ((h - pad * 2) * (max - value)) / (max - min);
+}
+var parts = [];
+if (points.length > 1) {
+var coords = points.map(function(point, index) { return xAt(index).toFixed(1) + ',' + yAt(point.y).toFixed(1); });
+parts.push('<polyline class="spark-line" points="' + coords.join(' ') + '"></polyline>');
+} else {
+parts.push('<circle class="spark-dot" cx="' + xAt(0).toFixed(1) + '" cy="' + yAt(points[0].y).toFixed(1) + '" r="2.5"></circle>');
+}
+return '<svg class="spark-svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" aria-hidden="true">' + parts.join('') + '</svg>';
+}
+
+function markerChartHtml(item) {
 var last = item.points[item.points.length - 1];
 var prev = item.points.length > 1 ? item.points[item.points.length - 2] : null;
 var unit = item.unit ? ' ' + escapeHtml(item.unit) : '';
 var delta = prev ? formatDelta(last.y, prev.y) : '';
-html += '<article class="trend-card"><div class="trend-latest">' + escapeHtml(item.name) + '</div>';
+var html = '<article class="trend-card"><div class="trend-latest">' + escapeHtml(item.name) + '</div>';
 html += '<p class="trend-sub">Latest ' + escapeHtml(formatLabNumber(last.y)) + unit + (delta ? ' · ' + escapeHtml(delta) : '') + '</p>';
 if (item.range) html += '<p class="trend-sub">Reference range ' + escapeHtml(formatLabNumber(item.range.low)) + '–' + escapeHtml(formatLabNumber(item.range.high)) + unit + '</p>';
 html += trendChartSvg(item.points, item.range);
 if (item.points.length < 2) html += '<p class="trend-hint">Add another result to see a trend</p>';
 html += '</article>';
+return html;
+}
+
+function groupSummary(items) {
+var outside = 0;
+items.forEach(function(item) {
+if (pointStatus(item.points[item.points.length - 1]) === 'outside') outside += 1;
 });
+var noun = items.length === 1 ? 'marker' : 'markers';
+var tail = outside === 1 ? '1 outside saved reference range' : outside + ' outside saved reference range';
+if (outside === 0) tail = 'none outside saved reference range';
+return items.length + ' ' + noun + ' · ' + tail;
+}
+
+function overviewHtml() {
+var series = labSeries();
+if (!series.length) return '<p class="empty-note">No lab results saved yet. Upload a PDF or photo of your bloodwork.</p>';
+var buckets = {};
+panelOrder().forEach(function(label) { buckets[label] = []; });
+series.forEach(function(item) {
+var meta = panelMeta(item.name, item.panel);
+if (!buckets[meta.label]) buckets[meta.label] = [];
+item.panelId = meta.id;
+item.panelLabel = meta.label;
+buckets[meta.label].push(item);
+});
+var html = '';
+panelOrder().forEach(function(label) {
+var items = buckets[label];
+if (!items || !items.length) return;
+items.sort(function(a, b) {
+var an = a.name.toLowerCase();
+var bn = b.name.toLowerCase();
+if (an < bn) return -1;
+if (an > bn) return 1;
+return 0;
+});
+var panelId = items[0].panelId;
+var open = openPanels[panelId] ? ' open' : '';
+html += '<details class="lab-group" data-panel="' + escapeHtml(panelId) + '"' + open + '>';
+html += '<summary><span class="lab-group-name">' + escapeHtml(label) + '</span><span class="lab-group-meta">' + escapeHtml(groupSummary(items)) + '</span></summary>';
+html += '<div class="lab-group-body">';
+items.forEach(function(item) {
+var last = item.points[item.points.length - 1];
+var key = markerDomId(item.name);
+var openChart = openTrendKey === key;
+var unit = item.unit ? ' ' + escapeHtml(item.unit) : '';
+html += '<div class="marker-block' + (openChart ? ' trend-open' : '') + '" id="trend-' + escapeHtml(key) + '">';
+html += '<div class="lab-row"><div class="lab-row-text">';
+html += '<div class="lab-row-name">' + escapeHtml(item.name) + '</div>';
+html += '<div class="lab-row-value">' + escapeHtml(formatLabNumber(last.y)) + unit + '</div>';
+html += rangeBadgeHtml(pointStatus(last));
+html += '</div><button type="button" class="spark-btn" data-trend-key="' + escapeHtml(key) + '" aria-expanded="' + (openChart ? 'true' : 'false') + '" aria-label="Show ' + escapeHtml(item.name) + ' chart">';
+html += sparklineSvg(item.points);
+html += '</button></div>';
+html += '<div class="lab-chart"' + (openChart ? '' : ' hidden') + '>' + markerChartHtml(item) + '</div>';
+html += '</div>';
+});
+html += '</div></details>';
+});
+return html;
+}
+
+function compareEmptyCopy(dates) {
+if (!dates.length) return 'No lab dates saved yet. Upload bloodwork from two different dates to compare values.';
+if (dates.length === 1) return 'One lab date is saved (' + formatDayKey(dates[0].day) + '). Upload another date to compare values and see the year overview.';
+return '';
+}
+
+function filterLabel(filter) {
+if (filter === 'changed') return 'changed';
+if (filter === 'out') return 'out of range';
+return 'all';
+}
+
+function resolvedComparePair(dates) {
+var days = {};
+dates.forEach(function(item) { days[item.day] = true; });
+var fallback = window.LabCompare.defaultPair(dates);
+var a = days[compareDayA] ? compareDayA : fallback.a;
+var b = days[compareDayB] ? compareDayB : fallback.b;
+compareDayA = a;
+compareDayB = b;
+return { a: a, b: b };
+}
+
+function compareRowsFor(labs, pair) {
+var rows = window.LabCompare.buildRows(labs, pair.a, pair.b);
+rows = window.LabCompare.filterRows(rows, compareFilter);
+return window.LabCompare.sortRows(rows, panelOrder());
+}
+
+function compareValueText(cell) {
+if (!cell) return 'Not saved on this date';
+return cell.text;
+}
+
+function compareHtml() {
+if (!window.LabCompare) return '<p class="empty-note">Compare is unavailable.</p>';
+var labs = visibleLabEntries();
+var dates = window.LabCompare.datesFromLabs(labs);
+var empty = compareEmptyCopy(dates);
+if (empty) return '<p class="empty-note">' + escapeHtml(empty) + '</p>';
+var pair = resolvedComparePair(dates);
+var html = '<div class="compare-dates">';
+html += '<label>Date A<input type="date" id="compare-day-a" value="' + escapeHtml(pair.a) + '" min="' + escapeHtml(dates[0].day) + '" max="' + escapeHtml(dates[dates.length - 1].day) + '"></label>';
+html += '<label>Date B<input type="date" id="compare-day-b" value="' + escapeHtml(pair.b) + '" min="' + escapeHtml(dates[0].day) + '" max="' + escapeHtml(dates[dates.length - 1].day) + '"></label>';
+html += '</div>';
+html += '<div class="compare-filters" role="group" aria-label="Filter markers">';
+['all', 'changed', 'out'].forEach(function(filter) {
+var label = filter === 'all' ? 'All' : (filter === 'changed' ? 'Changed' : 'Out of range');
+html += '<button type="button" data-compare-filter="' + filter + '" aria-pressed="' + (compareFilter === filter ? 'true' : 'false') + '">' + label + '</button>';
+});
+html += '</div>';
+if (pair.a && pair.a === pair.b) return html + '<p class="empty-note">Pick two different dates to compare.</p>';
+var rows = compareRowsFor(labs, pair);
+if (!rows.length) return html + '<p class="empty-note">No markers match this filter.</p>';
+html += '<table class="compare-table"><tbody>';
+window.LabCompare.groupRows(rows).forEach(function(group) {
+if (group.name) html += '<tr class="compare-group"><th colspan="5">' + escapeHtml(group.name) + '</th></tr>';
+group.rows.forEach(function(row) {
+var change = row.change || ((row.a && row.b) ? '' : 'Not saved on one date');
+html += '<tr class="marker-row">';
+html += '<td data-label="Marker">' + escapeHtml(row.name) + '</td>';
+html += '<td data-label="' + escapeHtml(formatDayKey(pair.a)) + '">' + escapeHtml(compareValueText(row.a)) + rangeBadgeHtml(row.a && row.a.status) + '</td>';
+html += '<td data-label="' + escapeHtml(formatDayKey(pair.b)) + '">' + escapeHtml(compareValueText(row.b)) + rangeBadgeHtml(row.b && row.b.status) + '</td>';
+html += '<td data-label="Change">' + escapeHtml(change) + '</td>';
+html += '<td data-label="Unit">' + escapeHtml(row.unit || '') + '</td>';
+html += '</tr>';
+});
+});
+html += '</tbody></table>';
+return html;
+}
+
+function visibleLabEntries() {
+return loadLabHistory().map(function(lab) {
+return {
+date: lab.date,
+biomarkers: displayBiomarkers(lab).map(function(item) {
+var meta = panelMeta(item.name, item.panel || item.category || '');
+var copy = {
+name: item.name,
+value: item.value,
+unit: item.unit || '',
+panel: meta.label
+};
+if (item.refLow != null && item.refHigh != null) {
+copy.refLow = item.refLow;
+copy.refHigh = item.refHigh;
+}
+return copy;
+})
+};
+}).filter(function(lab) { return lab.biomarkers.length; });
+}
+
+function yearHtml() {
+if (!window.LabCompare) return '<p class="empty-note">The year overview is unavailable.</p>';
+var labs = visibleLabEntries();
+var dates = window.LabCompare.datesFromLabs(labs);
+var empty = compareEmptyCopy(dates);
+if (empty) return '<p class="empty-note">' + escapeHtml(empty) + '</p>';
+var model = window.LabCompare.yearModel(labs);
+var rows = window.LabCompare.sortRows(model.rows, panelOrder());
+var groups = window.LabCompare.groupRows(rows);
+var html = '<div class="year-wrap"><table class="year-grid"><thead><tr><th class="marker-col">Marker</th>';
+model.dates.forEach(function(date) {
+var bits = shortDayParts(date.day);
+html += '<th><span class="year-date">' + escapeHtml(bits.top) + '</span><span class="year-year">' + escapeHtml(bits.bottom) + '</span></th>';
+});
+html += '</tr></thead><tbody>';
+groups.forEach(function(group) {
+if (group.name) html += '<tr><th class="marker-col" colspan="' + (model.dates.length + 1) + '">' + escapeHtml(group.name) + '</th></tr>';
+group.rows.forEach(function(row) {
+var meta = panelMeta(row.name, row.group);
+var key = markerDomId(row.name);
+html += '<tr><th class="marker-col"><button type="button" class="marker-link" data-year-key="' + escapeHtml(key) + '" data-panel-id="' + escapeHtml(meta.id) + '">' + escapeHtml(row.name) + '</button>';
+if (row.unit) html += '<div class="lab-row-value">' + escapeHtml(row.unit) + '</div>';
+html += '</th>';
+model.dates.forEach(function(date) {
+var cell = row.cells[date.day];
+if (!cell) {
+html += '<td class="year-cell empty">—</td>';
+return;
+}
+var kind = cell.status === 'within' ? 'in' : (cell.status === 'outside' ? 'out' : 'none');
+var label = window.LabCompare.statusLabel(cell.status) || 'No reference range saved';
+html += '<td class="year-cell ' + kind + '" title="' + escapeHtml(cell.text + ', ' + label) + '">' + escapeHtml(cell.text) + '</td>';
+});
+html += '</tr>';
+});
+});
+html += '</tbody></table></div>';
+html += '<div class="year-legend" aria-hidden="true">';
+html += '<span class="year-cell in">Within saved reference range</span>';
+html += '<span class="year-cell out">Outside saved reference range</span>';
+html += '<span class="year-cell none">No reference range saved</span>';
+html += '</div>';
+return html;
+}
+
+function excludedNoticeHtml() {
+var items = visibleExcludedItems();
+if (!items.length) return '';
+var count = items.length;
+var sentence = count === 1
+? 'We found 1 item that looks like a supplement or medication, not a lab result.'
+: 'We found ' + count + ' items that look like supplements or medications, not lab results.';
+var html = '<details class="lab-excluded" open><summary>' + escapeHtml(sentence) + '</summary><ul>';
+items.forEach(function(item) {
+html += '<li>' + escapeHtml(item.name) + '</li>';
+});
+html += '</ul><p class="track-note">They are still stored on this device and were not deleted. Nothing is removed unless you tap Move to My Stack. Dismiss only hides this notice.</p>';
+html += '<div class="labs-actions"><button type="button" class="labs-btn primary" data-lab-action="move">Move to My Stack</button>';
+html += '<button type="button" class="labs-btn" data-lab-action="dismiss">Dismiss</button></div></details>';
+return html;
+}
+
+function viewButton(id, label) {
+var selected = labsView === id;
+return '<button type="button" role="tab" data-labs-view="' + id + '" aria-selected="' + (selected ? 'true' : 'false') + '">' + label + '</button>';
+}
+
+function renderLabTrends() {
+var host = document.getElementById('lab-trends');
+if (!host) return;
+bindLabTrends();
+var hiddenMarkers = countHiddenLabMarkers();
+noteHiddenLabMarkers(hiddenMarkers);
+var scroller = document.querySelector('#panel-labs .panel-scroll');
+var top = scroller ? scroller.scrollTop : 0;
+var html = excludedNoticeHtml();
+html += '<div class="pro-feature"><h3>Lab trends <span class="pro-badge">PRO</span></h3>' + proBannerMarkup();
+if (!PRO_PREVIEW_OPEN) {
 host.innerHTML = html + '</div>';
+return;
+}
+html += '<p class="track-note">For tracking only. Discuss your results with your healthcare provider. A shaded band is the reference range when one was saved with the result.</p>';
+html += '<div class="labs-view-bar"><div class="labs-views" role="tablist" aria-label="Labs views">';
+html += viewButton('overview', 'Overview');
+html += viewButton('compare', 'Compare');
+html += viewButton('year', 'Year');
+html += '</div><div class="export-row"><button type="button" class="labs-btn" onclick="exportLabSummary()">Export PDF summary</button>';
+html += '<label class="compare-pdf-opt" for="lab-compare-pdf"><input type="checkbox" id="lab-compare-pdf"' + (compareInPdf ? ' checked' : '') + '> Compare</label></div></div>';
+if (labsView === 'compare') html += compareHtml();
+else if (labsView === 'year') html += yearHtml();
+else html += overviewHtml();
+host.innerHTML = html + '</div>';
+if (scroller) scroller.scrollTop = labsScrollKeep ? top : 0;
+labsScrollKeep = true;
+if (scrollTrendIntoView && openTrendKey) {
+var chart = document.getElementById('trend-' + openTrendKey);
+if (chart && chart.scrollIntoView) chart.scrollIntoView({ block: 'nearest' });
+scrollTrendIntoView = false;
+}
+}
+
+function printCellText(cell) {
+if (!cell) return 'Not saved on this date';
+var text = cell.text;
+if (cell.unit) text += ' ' + cell.unit;
+if (window.LabCompare) {
+var label = window.LabCompare.statusLabel(cell.status);
+if (label) text += ' (' + label + ')';
+}
+return text;
+}
+
+function comparePrintHtml() {
+if (!compareInPdf || !window.LabCompare) return '';
+var labs = visibleLabEntries();
+var dates = window.LabCompare.datesFromLabs(labs);
+var html = ['<h2>Compare</h2>'];
+var empty = compareEmptyCopy(dates);
+if (empty) {
+html.push('<p>' + escapeHtml(empty) + '</p>');
+return html.join('');
+}
+var pair = resolvedComparePair(dates);
+html.push('<p>' + escapeHtml(formatDayKey(pair.a) + ' and ' + formatDayKey(pair.b) + '. Showing ' + filterLabel(compareFilter) + '.') + '</p>');
+if (pair.a === pair.b) {
+html.push('<p>Pick two different dates to compare.</p>');
+return html.join('');
+}
+var rows = compareRowsFor(labs, pair);
+if (!rows.length) {
+html.push('<p>No markers match this filter.</p>');
+return html.join('');
+}
+html.push('<table><thead><tr><th>Marker</th><th>' + escapeHtml(formatDayKey(pair.a)) + '</th><th>' + escapeHtml(formatDayKey(pair.b)) + '</th><th>Change</th><th>Unit</th></tr></thead><tbody>');
+window.LabCompare.groupRows(rows).forEach(function(group) {
+if (group.name) html.push('<tr><th colspan="5">' + escapeHtml(group.name) + '</th></tr>');
+group.rows.forEach(function(row) {
+var change = row.change || ((row.a && row.b) ? '' : 'Not saved on one date');
+html.push('<tr><td>' + escapeHtml(row.name) + '</td><td>' + escapeHtml(printCellText(row.a)) + '</td><td>' + escapeHtml(printCellText(row.b)) + '</td><td>' + escapeHtml(change) + '</td><td>' + escapeHtml(row.unit || '') + '</td></tr>');
+});
+});
+html.push('</tbody></table>');
+return html.join('');
+}
+
+function moveExcludedToStack() {
+if (!window.LabMarkers) return;
+var items = visibleExcludedItems();
+if (!items.length) return;
+var stack = loadStack();
+var moved = {};
+items.forEach(function(item, index) {
+var exists = stack.some(function(entry) {
+return window.LabMarkers.normName(entry && entry.name) === item.key;
+});
+if (exists) {
+moved[item.key] = true;
+return;
+}
+if (stack.length >= 40) return;
+stack.push({
+id: 's' + Date.now().toString(36) + index.toString(36) + Math.random().toString(36).slice(2, 5),
+name: item.name,
+dose: '',
+schedule: '',
+notes: '',
+active: true,
+status: 'considering'
+});
+moved[item.key] = true;
+});
+saveStack(stack);
+var next = [];
+loadLabHistory().forEach(function(lab) {
+var had = (lab.biomarkers || []).length;
+var biomarkers = (lab.biomarkers || []).filter(function(item) {
+if (!item || !item.name) return false;
+return !moved[window.LabMarkers.normName(item.name)];
+});
+if (had && !biomarkers.length) return;
+var copy = {
+id: lab.id,
+date: lab.date,
+filenames: lab.filenames || [],
+biomarkers: biomarkers,
+summary: lab.summary || ''
+};
+next.push(copy);
+});
+try { localStorage.setItem('peptideLabHistory', JSON.stringify(next)); } catch (e) {}
+syncLabHistory(next);
+renderLabs();
+}
+
+function dismissExcluded() {
+var map = dismissedExcludedMap();
+visibleExcludedItems().forEach(function(item) { map[item.key] = true; });
+try { localStorage.setItem(LAB_DISMISS_KEY, JSON.stringify(Object.keys(map))); } catch (e) {}
+renderLabTrends();
+}
+
+function onLabTrendsClick(e) {
+var node = e.target && e.target.closest ? e.target.closest('[data-labs-view], [data-compare-filter], [data-trend-key], [data-year-key], [data-lab-action]') : null;
+if (!node) return;
+if (node.hasAttribute('data-labs-view')) {
+labsView = node.getAttribute('data-labs-view') || 'overview';
+labsScrollKeep = false;
+renderLabTrends();
+return;
+}
+if (node.hasAttribute('data-compare-filter')) {
+compareFilter = node.getAttribute('data-compare-filter') || 'all';
+renderLabTrends();
+return;
+}
+if (node.hasAttribute('data-trend-key')) {
+var key = node.getAttribute('data-trend-key');
+openTrendKey = openTrendKey === key ? '' : key;
+renderLabTrends();
+return;
+}
+if (node.hasAttribute('data-year-key')) {
+openTrendKey = node.getAttribute('data-year-key') || '';
+var panelId = node.getAttribute('data-panel-id') || '';
+if (panelId) openPanels[panelId] = true;
+labsView = 'overview';
+labsScrollKeep = false;
+scrollTrendIntoView = true;
+renderLabTrends();
+return;
+}
+var action = node.getAttribute('data-lab-action');
+if (action === 'move') moveExcludedToStack();
+if (action === 'dismiss') dismissExcluded();
+}
+
+function onLabTrendsChange(e) {
+var t = e.target;
+if (!t || !t.id) return;
+if (t.id === 'compare-day-a') compareDayA = t.value;
+else if (t.id === 'compare-day-b') compareDayB = t.value;
+else if (t.id === 'lab-compare-pdf') { compareInPdf = !!t.checked; return; }
+else return;
+renderLabTrends();
+}
+
+function onLabTrendsToggle(e) {
+var node = e.target;
+if (!node || !node.getAttribute) return;
+var id = node.getAttribute('data-panel');
+if (!id) return;
+openPanels[id] = !!node.open;
+}
+
+function bindLabTrends() {
+var host = document.getElementById('lab-trends');
+if (!host || host.getAttribute('data-bound') === '1') return;
+host.setAttribute('data-bound', '1');
+host.addEventListener('click', onLabTrendsClick);
+host.addEventListener('change', onLabTrendsChange);
+host.addEventListener('toggle', onLabTrendsToggle, true);
 }
 
 function renderLabs() {
@@ -3523,6 +4111,7 @@ html.push('<p>Latest ' + escapeHtml(formatLabNumber(last.y) + unit) + ' on ' + e
 if (item.range) html.push('<p>Reference range ' + escapeHtml(formatLabNumber(item.range.low) + '–' + formatLabNumber(item.range.high) + unit) + '.</p>');
 html.push('</div>');
 });
+html.push(comparePrintHtml());
 html.push('<p class="print-foot">For tracking only. Discuss your results with your healthcare provider.</p>');
 document.getElementById('lab-print').innerHTML = html.join('');
 }

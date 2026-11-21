@@ -7,7 +7,7 @@ const { Pinecone } = require('@pinecone-database/pinecone');
 const OpenAI = require('openai');
 const fs = require('fs');
 const crypto = require('crypto');
-const { loadCatalogs, catalogSummary, formatModelCatalog, suggestStackItems } = require('./lib/catalogs');
+const { loadCatalogs, catalogSummary, formatModelCatalog, suggestStackItems, aliasesFor } = require('./lib/catalogs');
 const { looksLikeSupplementLabel, isLabUnit, filterLabMarkers } = require('./lib/lab-markers');
 
 const app = express();
@@ -106,6 +106,19 @@ async function getRelevantContext(question) {
   }
 }
 
+function sendLibScript(res, name) {
+  res.type('application/javascript');
+  res.sendFile(path.join(__dirname, 'lib', name));
+}
+
+app.get('/lab-markers.js', function(req, res) {
+  sendLibScript(res, 'lab-markers.js');
+});
+
+app.get('/lab-compare.js', function(req, res) {
+  sendLibScript(res, 'lab-compare.js');
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -188,6 +201,19 @@ function withReferenceRange(item, low, high) {
   return item;
 }
 
+function clipPanel(value) {
+  const text = clipText(value, 60);
+  if (!text || text.length < 2) return '';
+  if (/^(panel|category|section|test|result|results)$/i.test(text)) return '';
+  return text;
+}
+
+function attachPanel(item, panel) {
+  const text = clipPanel(panel);
+  if (text) item.panel = text;
+  return item;
+}
+
 function normalizeBiomarker(item) {
   if (!item || typeof item !== 'object') return null;
   const name = clipText(item.name || item.marker || '', 80);
@@ -195,7 +221,7 @@ function normalizeBiomarker(item) {
   if (!name || !value) return null;
   const unit = clipText(item.unit || '', 24);
   const flag = normalizeFlag(item.flag) || 'info';
-  return withReferenceRange({ name: name, value: value, unit: unit, flag: flag }, item.refLow, item.refHigh);
+  return attachPanel(withReferenceRange({ name: name, value: value, unit: unit, flag: flag }, item.refLow, item.refHigh), item.panel || item.category);
 }
 
 function extractBiomarkerJson(text) {
@@ -236,6 +262,7 @@ function catalogMatchNames(catalogs) {
   }
   [catalogs.altura, catalogs.pharmacy].forEach(function(catalog) {
     (catalog.products || []).forEach(function(product) {
+      aliasesFor(product).forEach(add);
       add(product.name);
       (product.variants || []).forEach(function(variant) {
         add(variant && variant.name);
@@ -248,9 +275,15 @@ function catalogMatchNames(catalogs) {
 function parseBiomarkerLines(text) {
   const results = [];
   const seen = new Set();
+  let currentPanel = '';
   String(text || '').split(/\r?\n/).forEach(function(line) {
     let clean = line.replace(/^[\s>*\-•\u2022]+/, '').trim();
     if (!clean || clean.length > 200) return;
+    const panelLine = clean.match(/^(?:panel|category|section)\s*[:\-]\s*(.{2,60})$/i);
+    if (panelLine && !/\d/.test(panelLine[1])) {
+      currentPanel = clipPanel(panelLine[1]);
+      return;
+    }
     if (!/-?\d+(?:\.\d+)?/.test(clean)) return;
     if (/^(file|based on|user message|please|here is|this is)\b/i.test(clean)) return;
     let refLow = null;
@@ -287,7 +320,7 @@ function parseBiomarkerLines(text) {
     const key = name.toLowerCase() + '|' + value + '|' + unit.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
-    results.push(withReferenceRange({ name: name, value: value, unit: unit, flag: flag || 'info' }, refLow, refHigh));
+    results.push(attachPanel(withReferenceRange({ name: name, value: value, unit: unit, flag: flag || 'info' }, refLow, refHigh), currentPanel));
   });
   return results;
 }
@@ -318,7 +351,7 @@ function collectBiomarkers(parts) {
   return all.slice(0, 100);
 }
 
-const BIOMARKER_PROMPT_SUFFIX = '\n\nAfter the extraction, end your reply with a machine-readable block and nothing after it:\nBIOMARKERS_JSON\n[{"name":"Marker","value":"0","unit":"","flag":"info","refLow":null,"refHigh":null}]\nflag must be exactly "normal", "high", "low", or "info". Put only a measured blood or lab result in value, and put the laboratory unit separately (for example ng/mL, mg/dL, mmol/L, mIU/L, g/dL, or %). refLow and refHigh are the numeric reference range bounds printed on the report, or null when no range is visible. Do not include supplement facts, product-label ingredients, serving sizes, or doses in mg, mcg, µg, g, or IU. If this is a supplement facts panel, a product label, or anything other than a lab report, end with BIOMARKERS_JSON followed by []. If no lab markers are visible, end with BIOMARKERS_JSON followed by [].';
+const BIOMARKER_PROMPT_SUFFIX = '\n\nAfter the extraction, end your reply with a machine-readable block and nothing after it:\nBIOMARKERS_JSON\n[{"name":"Marker","value":"0","unit":"","flag":"info","refLow":null,"refHigh":null,"panel":null}]\nflag must be exactly "normal", "high", "low", or "info". Put only a measured blood or lab result in value, and put the laboratory unit separately (for example ng/mL, mg/dL, mmol/L, mIU/L, g/dL, or %). refLow and refHigh are the numeric reference range bounds printed on the report, or null when no range is visible. panel is the panel or category name printed with that result, such as CBC or Lipid panel, or null when none is printed. Do not include supplement facts, product-label ingredients, serving sizes, or doses in mg, mcg, µg, g, or IU. If this is a supplement facts panel, a product label, or anything other than a lab report, end with BIOMARKERS_JSON followed by []. If no lab markers are visible, end with BIOMARKERS_JSON followed by [].';
 
 async function extractLabReport(file) {
   const kind = uploadKind(file);
