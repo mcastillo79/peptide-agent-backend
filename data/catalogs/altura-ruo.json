@@ -1,0 +1,756 @@
+{
+  "source": "altura",
+  "type": "RUO",
+  "label": "Research-use-only products (Altura)",
+  "disclaimer": "Third-party research-use-only product suggestion (Altura). Not medical advice. Not for human consumption.",
+  "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+  "scraped_at": "2026-11-21T17:08:36.486Z",
+  "sources": {
+    "catalog_js": "https://altura-preview.vercel.app/js/catalog.js",
+    "product_page": "https://altura-preview.vercel.app/product.html"
+  },
+  "products": [
+    {
+      "name": "5-AMINO-1MQ",
+      "sku": "ALT-5-AMINO-1MQ",
+      "category": "Metabolic",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A small-molecule NNMT inhibitor investigated in preclinical models of adipocyte metabolism and cellular NAD+ salvage pathways. Supplied as a research compound for laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Adamax",
+      "sku": "ALT-ADAMAX",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "An adamantyl-conjugated peptide analog of the ACTH-fragment class, investigated in laboratory models of BDNF signaling and synaptic plasticity. For research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "5-mg",
+          "mg": "5-mg"
+        }
+      ]
+    },
+    {
+      "name": "AOD-9604",
+      "sku": "ALT-AOD-9604",
+      "category": "Metabolic",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A modified fragment of the C-terminal region (176-191) of human growth hormone, investigated in preclinical models of lipid metabolism. Research compound; not for human consumption.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "ARA-290",
+      "sku": "ALT-ARA-290",
+      "category": "Immune",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "An 11-amino-acid peptide derived from the helix B domain of erythropoietin, studied in preclinical work on the innate repair receptor and small-fiber neuropathy models. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "BPC-157",
+      "sku": "ALT-BPC-157",
+      "category": "Tissue Repair",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "The pentadecapeptide BPC-157, derived from a gastric protein sequence and investigated in preclinical angiogenesis and tissue-repair models. Supplied for laboratory research only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "20 mg",
+          "mg": "20 mg"
+        }
+      ]
+    },
+    {
+      "name": "BPC-157 + TB-500",
+      "sku": "ALT-BPC-157-TB-500",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "BPC-157 and TB-500 supplied together in a single vial for comparative preclinical work on repair signaling and cytoskeletal dynamics. Research compound; not for human or veterinary use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "10-mg-10-mg",
+          "mg": "10 mg / 10 mg"
+        }
+      ]
+    },
+    {
+      "name": "Cagrilintide",
+      "sku": "ALT-CAGRILINTIDE",
+      "category": "Metabolic",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Cagrilintide, a long-acting amylin analog studied in preclinical metabolic and energy-balance research, frequently examined alongside incretin receptor agonists. For laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "CJC-1295 (No DAC)",
+      "sku": "ALT-CJC-1295",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Modified GRF (1-29), a growth hormone-releasing hormone analog without the DAC moiety, investigated in preclinical somatotropic axis research. Research compound; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "CJC-1295 + IPAMORELIN",
+      "sku": "ALT-CJC-1295-IPAMORELIN",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A dual preparation of modified GRF (1-29) and ipamorelin, pairing a GHRH analog with a selective ghrelin receptor agonist for preclinical secretagogue research. Laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Dsip",
+      "sku": "ALT-DSIP",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Delta sleep-inducing peptide, a nonapeptide first isolated from cerebral venous blood and investigated in preclinical sleep-architecture and EEG research. For research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Epithalon",
+      "sku": "ALT-EPITHALON",
+      "category": "Cellular",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A synthetic tetrapeptide (Ala-Glu-Asp-Gly) modeled on pineal extract, studied in preclinical telomerase and cellular-aging research. Research compound; not for human consumption.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "50-mg",
+          "mg": "50 mg"
+        }
+      ]
+    },
+    {
+      "name": "Foxo4",
+      "sku": "ALT-FOXO4",
+      "category": "Cellular",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "FOXO4-DRI, a D-retro-inverso peptide designed to disrupt the FOXO4-p53 interaction, studied in preclinical senolytic and cellular-senescence research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "GHK-Cu",
+      "sku": "ALT-GHK-CU",
+      "category": "Dermal",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "The copper-binding tripeptide glycyl-L-histidyl-L-lysine, investigated in preclinical work on extracellular matrix remodeling and dermal fibroblast signaling. For research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Glow",
+      "sku": "ALT-GLOW",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A combined research preparation of GHK-Cu, BPC-157 and TB-500, formulated for preclinical study of matrix remodeling and repair signaling in a single vial. Laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Glutathione",
+      "sku": "ALT-GLUTATHIONE",
+      "category": "Dermal",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "The endogenous tripeptide gamma-glutamyl-cysteinyl-glycine, used as a reference compound in laboratory redox, oxidative-stress and detoxification research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Humanin",
+      "sku": "ALT-HUMANIN",
+      "category": "Cellular",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A mitochondrial-derived peptide encoded within the 16S rRNA region, investigated in preclinical cytoprotection and aging research. Supplied for laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "IGF-1 LR3",
+      "sku": "ALT-IGF-1-LR3",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Long R3 IGF-1, an 83-amino-acid analog with reduced binding-protein affinity, used as a growth-signaling reference in cell culture and preclinical research. Not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Ipamorelin",
+      "sku": "ALT-IPAMORELIN",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A selective pentapeptide agonist at the ghrelin receptor (GHS-R1a), investigated in preclinical growth hormone secretagogue research. Research compound; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Kisspeptin",
+      "sku": "ALT-KISSPEPTIN",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Kisspeptin-10, the active decapeptide fragment of KISS1, investigated in preclinical research on GnRH release and hypothalamic-pituitary-gonadal signaling. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Klow",
+      "sku": "ALT-KLOW",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A four-component research blend of GHK-Cu, KPV, BPC-157 and TB-500, prepared for preclinical study of repair and inflammatory signaling pathways. Laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Kpv",
+      "sku": "ALT-KPV",
+      "category": "Immune",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "The C-terminal tripeptide of alpha-MSH, investigated in preclinical models of mucosal and inflammatory signaling. Research compound; not for human or veterinary use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "LL-37",
+      "sku": "ALT-LL-37",
+      "category": "Immune",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "The human cathelicidin-derived antimicrobial peptide LL-37, studied extensively in preclinical innate immunity and host-defense research. Supplied for laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "MOTS-C",
+      "sku": "ALT-MOTS-C",
+      "category": "Metabolic",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A 16-amino-acid mitochondrial-derived peptide encoded in the 12S rRNA region, investigated in preclinical metabolic regulation and AMPK signaling research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "NAD+",
+      "sku": "ALT-NAD",
+      "category": "Cellular",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Nicotinamide adenine dinucleotide, the central redox coenzyme used as a reference compound in preclinical mitochondrial, sirtuin and cellular-metabolism research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Oxytocin",
+      "sku": "ALT-OXYTOCIN",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A nine-amino-acid hypothalamic neuropeptide, investigated across preclinical models of social behavior, neuroendocrine signaling and receptor pharmacology. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Pinealon",
+      "sku": "ALT-PINEALON",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A short peptide bioregulator (Glu-Asp-Arg) of the Khavinson class, studied in preclinical research on neuronal gene expression and cerebral cell function. Laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "PT-141",
+      "sku": "ALT-PT-141",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Bremelanotide, a cyclic melanocortin receptor agonist derived from the alpha-MSH scaffold, investigated in preclinical MC3R and MC4R signaling research. Not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "GLP-3R",
+      "sku": "ALT-RTA",
+      "category": "Metabolic",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A triple-agonist incretin-class research compound investigated in preclinical metabolic and energy-expenditure research. Research compound; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "60 mg",
+          "mg": "60 mg"
+        },
+        {
+          "label": "30 mg",
+          "mg": "30 mg"
+        },
+        {
+          "label": "20 mg",
+          "mg": "20 mg"
+        },
+        {
+          "label": "10 mg",
+          "mg": "10 mg"
+        }
+      ]
+    },
+    {
+      "name": "Selank",
+      "sku": "ALT-SELANK",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A synthetic heptapeptide derived from the immunomodulatory fragment tuftsin, investigated in preclinical anxiolytic and neuropeptide research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Selank Amidate",
+      "sku": "ALT-SELANK-AMIDATE",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A stabilized N-acetylated, amidated form of Selank, a tuftsin-derived heptapeptide studied in preclinical anxiolytic and GABAergic neuropeptide research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Semax",
+      "sku": "ALT-SEMAX",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A synthetic analog of the ACTH (4-10) fragment, studied in preclinical neurotrophic, BDNF-expression and cerebral ischemia models. Research compound; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Semax Amidate",
+      "sku": "ALT-SEMAX-AMIDATE",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A stabilized N-acetylated, amidated analog of Semax, itself derived from the ACTH (4-10) fragment, investigated in preclinical BDNF and neuroplasticity research. Laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Sermorelin",
+      "sku": "ALT-SERMORELIN",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "GRF (1-29), the shortest fully active fragment of growth hormone-releasing hormone, investigated in preclinical somatotropic axis research. Laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "SS-31",
+      "sku": "ALT-SS-31",
+      "category": "Cellular",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Elamipretide, a mitochondria-targeting tetrapeptide that associates with cardiolipin on the inner membrane, studied in preclinical bioenergetics research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "TB-500",
+      "sku": "ALT-TB-500",
+      "category": "Tissue Repair",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "TB-500, a synthetic peptide corresponding to the actin-binding domain of thymosin beta-4, studied in preclinical cell migration and remodeling research. Not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "20 mg",
+          "mg": "20 mg"
+        }
+      ]
+    },
+    {
+      "name": "Tesamorelin",
+      "sku": "ALT-TESAMORELIN",
+      "category": "Endocrine",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A stabilized trans-3-hexenoyl analog of GHRH (1-44), investigated in preclinical research on growth hormone-releasing hormone receptor signaling. Laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "20 mg",
+          "mg": "20 mg"
+        }
+      ]
+    },
+    {
+      "name": "TESAMORELIN + IPAMORELIN",
+      "sku": "ALT-TESAMORELIN-IPAMORELIN",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A dual preparation of tesamorelin and ipamorelin, pairing a stabilized GHRH analog with a selective ghrelin receptor agonist for preclinical secretagogue research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "THYMOSIN ALPHA-1",
+      "sku": "ALT-THYMOSIN-ALPHA-1",
+      "category": "Immune",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Thymosin alpha-1, a 28-amino-acid thymic peptide investigated across preclinical immunomodulation and T-cell maturation research. Supplied for laboratory use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "GLP-2T",
+      "sku": "ALT-TRZ",
+      "category": "Metabolic",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "A dual-agonist incretin-class research compound investigated in preclinical glucoregulatory and metabolic research. Research compound; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "sizes": [
+        {
+          "label": "60 mg",
+          "mg": "60 mg"
+        },
+        {
+          "label": "30 mg",
+          "mg": "30 mg"
+        },
+        {
+          "label": "20 mg",
+          "mg": "20 mg"
+        },
+        {
+          "label": "10 mg",
+          "mg": "10 mg"
+        }
+      ]
+    },
+    {
+      "name": "Vip",
+      "sku": "ALT-VIP",
+      "category": "Immune",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Vasoactive intestinal peptide, a 28-amino-acid neuropeptide of the secretin family, investigated in preclinical smooth muscle, secretory and immune signaling research. Research use only.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Bacteriostatic Water",
+      "sku": "ALT-BAC-WATER",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Sterile bacteriostatic water (0.9% benzyl alcohol) for laboratory reconstitution of lyophilised research material. Not for human or animal use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "SEMAX AMIDATE — Nasal",
+      "sku": "ALT-SEMAX-NASAL",
+      "category": "Neuro",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Intranasal-format research preparation. Own product imagery pending. Research compound; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers."
+    },
+    {
+      "name": "Summit",
+      "sku": "ALT-STACK-SUMMIT",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — 5-Amino-1MQ 50mg, GLP-3R, CJC-1295 + Ipamorelin. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "5-Amino-1MQ",
+          "mg": "50 mg"
+        },
+        {
+          "name": "GLP-3R",
+          "mg": "30 mg"
+        },
+        {
+          "name": "CJC-1295 + Ipamorelin",
+          "mg": "5 mg / 5 mg"
+        }
+      ]
+    },
+    {
+      "name": "Sunset",
+      "sku": "ALT-STACK-SUNSET",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — DSIP, Selank, Sermorelin. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "DSIP",
+          "mg": "10 mg"
+        },
+        {
+          "name": "Selank",
+          "mg": "10 mg"
+        },
+        {
+          "name": "Sermorelin",
+          "mg": "10 mg"
+        }
+      ]
+    },
+    {
+      "name": "Reforge",
+      "sku": "ALT-STACK-REFORGE",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — BPC-157, TB-500, CJC-1295 (no DAC), Ipamorelin. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "BPC-157",
+          "mg": "10 mg"
+        },
+        {
+          "name": "TB-500",
+          "mg": "10 mg"
+        },
+        {
+          "name": "CJC-1295 (No DAC)",
+          "mg": "10 mg"
+        },
+        {
+          "name": "Ipamorelin",
+          "mg": "10 mg"
+        }
+      ]
+    },
+    {
+      "name": "Traverse",
+      "sku": "ALT-STACK-TRAVERSE",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — BPC-157 + TB-500, IGF-1 LR3 x2, 5-Amino-1MQ. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "BPC-157 + TB-500",
+          "mg": "10 mg / 10 mg"
+        },
+        {
+          "name": "IGF-1 LR3 (x2)",
+          "mg": "1 mg each"
+        },
+        {
+          "name": "5-Amino-1MQ",
+          "mg": "50 mg"
+        }
+      ]
+    },
+    {
+      "name": "Dante's Peak",
+      "sku": "ALT-STACK-DANTES",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — GLP-3R, Tesamorelin, 5-Amino-1MQ, IGF-1 LR3 x2. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "GLP-3R",
+          "mg": "30 mg"
+        },
+        {
+          "name": "Tesamorelin",
+          "mg": "10 mg"
+        },
+        {
+          "name": "5-Amino-1MQ",
+          "mg": "50 mg"
+        },
+        {
+          "name": "IGF-1 LR3 (x2)",
+          "mg": "1 mg each"
+        }
+      ]
+    },
+    {
+      "name": "Basecamp",
+      "sku": "ALT-STACK-BASECAMP",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — GLP-2T, NAD+, MOTS-c. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "GLP-2T",
+          "mg": "30 mg"
+        },
+        {
+          "name": "NAD+",
+          "mg": "1000 mg"
+        },
+        {
+          "name": "MOTS-c",
+          "mg": "40 mg"
+        }
+      ]
+    },
+    {
+      "name": "Riptide",
+      "sku": "ALT-STACK-RIPTIDE",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — Cagrilintide, MOTS-c, KPV. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "Cagrilintide",
+          "mg": "10 mg"
+        },
+        {
+          "name": "MOTS-c",
+          "mg": "40 mg"
+        },
+        {
+          "name": "KPV",
+          "mg": "10 mg"
+        }
+      ]
+    },
+    {
+      "name": "Everest",
+      "sku": "ALT-STACK-EVEREST",
+      "category": "Research Stacks",
+      "availability": "in stock",
+      "source": "altura",
+      "type": "RUO",
+      "label": "Research-use-only products (Altura)",
+      "site_description_verbatim": "Curated multi-compound research stack — IGF-1 LR3 x2, 5-Amino-1MQ, KLOW. Includes bacteriostatic water. Priced below the sum of its parts. Research compounds; not for human use.",
+      "ruo_label_verbatim": "For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.",
+      "variants": [
+        {
+          "name": "IGF-1 LR3 (x2)",
+          "mg": "1 mg each"
+        },
+        {
+          "name": "5-Amino-1MQ",
+          "mg": "50 mg"
+        },
+        {
+          "name": "KLOW",
+          "mg": "80 mg"
+        }
+      ]
+    }
+  ]
+}
