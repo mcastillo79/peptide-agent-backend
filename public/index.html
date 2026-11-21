@@ -92,24 +92,41 @@ body.dark #save-conv-submit { background: var(--accent); }
 #wrap { display: flex; flex-direction: column; height: calc(100vh - 32px); height: calc(100dvh - 32px); width: 100%; min-width: 0; min-height: 0; max-width: 700px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); background: var(--card-bg); transition: background 0.3s; }
 #hdr { padding: 16px 20px; background: var(--header-bg); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 #logo { width: 40px; height: 40px; border-radius: 50%; background: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 0.8125rem; font-weight: 600; color: #fff; flex-shrink: 0; }
-#ttl { font-size: 0.9375rem; font-weight: 600; color: #fff; }
-#sub { font-size: 0.6875rem; color: #8ba4bf; margin-top: 2px; }
-#theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; margin-left: auto; padding: 4px; line-height: 1; color: #fff; }
-#dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; margin-left: 10px; }
+#hdr-copy { min-width: 0; flex: 1; overflow: hidden; }
+#ttl { font-size: 0.9375rem; font-weight: 600; color: #fff; overflow: hidden; }
+#sub { font-size: 0.6875rem; color: #8ba4bf; margin-top: 2px; line-height: 1.35; overflow: hidden; }
+#hdr-tools { display: flex; align-items: center; gap: 2px; margin-left: auto; flex-shrink: 0; }
+#theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; margin-left: 0; padding: 4px; line-height: 1; color: #fff; flex-shrink: 0; width: 40px; height: 40px; border-radius: 8px; }
+#dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; margin-left: 4px; flex-shrink: 0; }
 #thread { position: relative; flex: 1 1 auto; min-height: 0; min-width: 0; display: flex; flex-direction: column; }
 #msgs { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--chat-bg); min-width: 0; min-height: 0; overflow-anchor: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 #jump-bottom { position: absolute; right: 14px; bottom: 14px; z-index: 5; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-main); box-shadow: 0 2px 10px rgba(0,0,0,0.18); cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 1.125rem; line-height: 1; padding: 0; font-family: inherit; }
 #jump-bottom.visible { display: flex; }
 #jump-bottom:hover { border-color: var(--accent); color: var(--accent); }
-.msg { max-width: 88%; min-width: 0; padding: 12px 16px; font-size: 0.875rem; line-height: 1.7; overflow-wrap: anywhere; }
+.msg { max-width: 88%; min-width: 0; padding: 12px 16px; font-size: 0.875rem; line-height: 1.7; overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 .bot { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 4px 16px 16px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .usr { align-self: flex-end; background: var(--header-bg); color: #fff; border-radius: 16px 4px 16px 16px; }
 body.dark .usr { background: #1f6feb; }
 .err { align-self: flex-start; background: #fff5f5; border: 1px solid #fed7d7; color: #c53030; border-radius: 4px 16px 16px 16px; font-size: 0.8125rem; }
-.msg a { color: var(--accent); text-decoration: underline; overflow-wrap: anywhere; }
-.msg.bot { position: relative; padding-right: 44px; }
-.msg-copy { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-soft); padding: 0; margin: 0; cursor: pointer; font-family: inherit; }
+.msg a { color: var(--accent); text-decoration: underline; overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+.msg.bot, .msg.usr { position: relative; padding-right: 44px; }
+.msg-copy { position: absolute; top: 6px; right: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-soft); padding: 0; margin: 0; cursor: pointer; font-family: inherit; opacity: 1; visibility: visible; z-index: 1; }
 .msg-copy:hover, .msg-copy:focus-visible { color: var(--accent); border-color: var(--accent); }
+.usr .msg-copy { background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.45); }
+.msg-quote { margin: 0 0 8px; padding: 6px 8px; border-left: 3px solid rgba(255,255,255,0.55); background: rgba(255,255,255,0.14); border-radius: 6px; color: rgba(255,255,255,0.86); font-size: 0.8125rem; line-height: 1.45; }
+.msg-quote-body { white-space: normal; }
+body.dark #copy-toast { background: #e6edf3; color: #0d1117; }
+#quote-chip { display: flex; gap: 8px; align-items: flex-start; margin: 8px 16px 0; padding: 8px 8px 8px 10px; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-col); border-left: 3px solid var(--accent); border-radius: 10px; flex-shrink: 0; }
+#quote-chip-text { flex: 1; min-width: 0; color: var(--text-soft); font-size: 0.8125rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+#quote-chip-remove { width: 32px; height: 32px; border: none; background: transparent; color: var(--text-soft); font-size: 1.25rem; line-height: 1; cursor: pointer; font-family: inherit; flex-shrink: 0; padding: 0; border-radius: 8px; }
+#quote-chip-remove:hover, #quote-chip-remove:focus-visible { color: var(--text-main); background: var(--border-col); }
+#sel-actions { position: fixed; z-index: 1250; display: flex; gap: 6px; padding: 4px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.22); max-width: calc(100vw - 16px); }
+#sel-actions button { appearance: none; border: none; background: var(--input-bg); color: var(--text-main); font-family: inherit; font-size: 0.8125rem; font-weight: 700; border-radius: 8px; min-height: 36px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+#sel-actions button:hover, #sel-actions button:focus-visible { color: var(--accent); }
+#sel-actions #sel-ask { background: var(--header-bg); color: #fff; }
+body.dark #sel-actions #sel-ask { background: var(--accent); color: #04140a; }
+#sel-actions #sel-ask:hover, #sel-actions #sel-ask:focus-visible { color: #fff; }
+body.dark #sel-actions #sel-ask:hover, body.dark #sel-actions #sel-ask:focus-visible { color: #04140a; }
 #copy-toast { position: fixed; z-index: 3000; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(8px); background: #0a2540; color: #fff; border-radius: 999px; padding: 8px 14px; font-size: 0.8125rem; font-weight: 650; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; }
 #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
@@ -158,7 +175,7 @@ body.dark #sbtn { background: var(--accent); }
 #ftr { text-align: center; font-size: 0.6875rem; color: var(--text-soft); padding: 8px 16px 10px; background: var(--card-bg); flex-shrink: 0; }
 html.skip-intake #intake-overlay { display: none; }
 #wrap, #wrap > *, .panel, .panel > * { min-width: 0; }
-#hdr-copy { min-width: 0; flex: 1; }
+#hdr-copy { min-width: 0; flex: 1; overflow: hidden; }
 #ttl, #sub, .stack-name, .panel-scroll h2, .source-card h2, #ftr { overflow-wrap: anywhere; }
 #logo { font-size: 1.125rem; font-weight: 700; }
 #sub { line-height: 1.35; }
@@ -180,7 +197,9 @@ html.skip-intake #intake-overlay { display: none; }
 .panel-scroll .intake-field textarea { height: 52px; }
 .panel-scroll .quiz-next { margin-top: 4px; }
 .file-input-clip { position: fixed; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
-.quiz-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; color: var(--text-main); font-size: 0.8125rem; }
+.quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; color: var(--text-main); font-size: 0.8125rem; }
+.quiz-top-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+#quiz-step-label { white-space: nowrap; }
 .quiz-track { height: 4px; background: var(--border-col); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
 #quiz-bar { height: 100%; width: 33%; background: var(--accent); transition: width 0.2s ease; }
 #quiz-error { min-height: 16px; margin: 0 0 8px; color: #c53030; font-size: 0.75rem; }
@@ -202,7 +221,7 @@ body.dark .quiz-next { background: var(--accent); color: #04140a; }
 #intake-signin:hover, #intake-signin:focus-visible { background: rgba(26,107,60,0.08); }
 body.dark #intake-signin:hover, body.dark #intake-signin:focus-visible { background: rgba(63,185,80,0.14); }
 #intake-restore { display: block; width: 100%; background: none; border: none; cursor: pointer; text-align: center; margin-top: 12px; padding: 8px 4px; font-size: 0.8125rem; color: var(--accent); text-decoration: underline; font-family: inherit; }
-#intake-restore-panel[hidden], #intake-quiz[hidden], #quiz-track[hidden], #hdr-menu-panel[hidden], #intake-restore[hidden] { display: none !important; }
+#intake-restore-panel[hidden], #intake-quiz[hidden], #quiz-track[hidden], #hdr-menu-panel[hidden], #text-size-popover[hidden], #quote-chip[hidden], #sel-actions[hidden], #intake-restore[hidden] { display: none !important; }
 .quiz-top, #quiz-track, #quiz-error, #intake-restore { flex-shrink: 0; }
 #restore-error { min-height: 18px; margin: 0 0 8px; color: #c53030; font-size: 0.8125rem; line-height: 1.4; }
 body.dark #restore-error { color: #ffb4b4; }
@@ -210,17 +229,22 @@ body.dark #restore-error { color: #ffb4b4; }
 body.dark #restore-submit { background: var(--accent); color: #04140a; }
 #restore-submit:disabled { opacity: 0.65; cursor: progress; }
 #restore-cancel { display: block; width: 100%; background: none; border: none; text-align: center; margin-top: 12px; padding: 8px 4px; font-size: 0.8125rem; color: var(--text-soft); cursor: pointer; text-decoration: underline; font-family: inherit; }
-#hdr-menu-btn { appearance: none; background: transparent; border: none; color: #fff; cursor: pointer; font-size: 1.375rem; line-height: 1; width: 40px; height: 40px; padding: 0; flex-shrink: 0; border-radius: 8px; }
-#hdr-menu-btn:hover, #hdr-menu-btn:focus-visible { background: rgba(255,255,255,0.12); }
-#hdr-menu-panel { position: fixed; z-index: 1100; min-width: 220px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.28); padding: 6px; }
+#text-size-btn, #hdr-menu-btn { appearance: none; background: transparent; border: none; color: #fff; cursor: pointer; font-family: inherit; line-height: 1; width: 40px; height: 40px; padding: 0; flex-shrink: 0; border-radius: 8px; }
+#text-size-btn { font-size: 0.9375rem; font-weight: 700; letter-spacing: -0.04em; }
+#hdr-menu-btn { font-size: 1.375rem; }
+#text-size-btn:hover, #text-size-btn:focus-visible, #text-size-btn[aria-expanded="true"], #hdr-menu-btn:hover, #hdr-menu-btn:focus-visible, #theme-toggle:hover, #theme-toggle:focus-visible { background: rgba(255,255,255,0.12); }
+#quiz-text-size-btn { appearance: none; width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); font-family: inherit; font-size: 0.875rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1; padding: 0; cursor: pointer; }
+#quiz-text-size-btn:hover, #quiz-text-size-btn:focus-visible, #quiz-text-size-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+#hdr-menu-panel, #text-size-popover { position: fixed; z-index: 1300; min-width: 220px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.28); padding: 6px; }
+#text-size-popover { z-index: 1400; min-width: 15rem; }
 .text-size { padding: 8px 8px 4px; }
 .text-size-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 6px; }
 .text-size-row { display: flex; align-items: center; gap: 8px; }
-.text-size-row button, #text-reset { font-family: inherit; cursor: pointer; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); border-radius: 8px; }
+.text-size-row button, .text-size-reset { font-family: inherit; cursor: pointer; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); border-radius: 8px; }
 .text-size-row button { flex: 1; min-height: 40px; font-size: 1rem; font-weight: 700; }
-#text-size-value { min-width: 4.25rem; text-align: center; font-size: 0.875rem; font-weight: 700; color: var(--text-main); }
-#text-reset { display: block; width: 100%; margin-top: 8px; min-height: 36px; font-size: 0.8125rem; font-weight: 650; }
-.text-size-row button:disabled, #text-reset:disabled { opacity: 0.4; cursor: default; }
+.text-size-readout { min-width: 4.25rem; text-align: center; font-size: 0.875rem; font-weight: 700; color: var(--text-main); -webkit-user-select: none; user-select: none; }
+.text-size-reset { display: block; width: 100%; margin-top: 8px; min-height: 36px; font-size: 0.8125rem; font-weight: 650; }
+.text-size-row button:disabled, .text-size-reset:disabled { opacity: 0.4; cursor: default; }
 .text-size + #hdr-account { margin-top: 4px; }
 #hdr-account { display: block; width: 100%; text-align: left; background: transparent; border: none; color: var(--text-main); font-family: inherit; font-size: 0.9375rem; font-weight: 650; padding: 12px; border-radius: 8px; cursor: pointer; min-height: 44px; }
 #hdr-account:hover, #hdr-account:focus-visible { background: var(--input-bg); }
@@ -290,14 +314,19 @@ body.dark .trend-band { fill: rgba(63,185,80,0.22); }
 .trend-axis { fill: var(--text-soft); font-size: 0.625rem; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; }
 .labs-actions .labs-btn, #lab-trends .labs-btn { margin-bottom: 8px; }
 .reorder-btn { width: 100%; margin-top: 8px; }
-html, body, body * { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
-button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, #sbtn, #upload-btn, #theme-toggle, #hdr-menu-btn, #jump-bottom, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
+html, body, #msgs, #thread, #wrap, .panel, .panel-scroll, .msg, .msg strong, .msg a, .msg br {
+-webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important;
+}
+button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, #sbtn, #upload-btn, #theme-toggle, #text-size-btn, #quiz-text-size-btn, #hdr-menu-btn, #jump-bottom, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
 -webkit-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important;
 }
-input, textarea, select { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
+input, textarea, select, .msg, .msg strong, .msg a {
+-webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important;
+}
 @media (max-width: 720px) {
-#hdr { padding: 10px 12px; }
+#hdr { padding: 10px 12px; gap: 8px; }
 #logo { width: 34px; height: 34px; }
+#text-size-btn, #hdr-menu-btn, #theme-toggle { width: 40px; height: 40px; }
 #tabs { padding: 0 8px 8px; }
 #ftr { padding: 6px 10px 8px; }
 input, textarea, select { font-size: max(16px, 1rem); }
@@ -313,7 +342,7 @@ input, textarea, select { font-size: max(16px, 1rem); }
 @page { size: letter; margin: 0.5in; }
 html { font-size: 100% !important; }
 html, body { height: auto !important; min-height: 0 !important; overflow: visible !important; display: block !important; background: #fff !important; padding: 0 !important; }
-#wrap, #intake-overlay, #save-conv-overlay, #copy-toast, #hdr-menu-panel { display: none !important; }
+#wrap, #intake-overlay, #save-conv-overlay, #copy-toast, #hdr-menu-panel, #text-size-popover, #sel-actions, #quote-chip { display: none !important; }
 #print-report, #lab-print { display: none !important; color: #111; background: #fff; padding: 0; font-family: Georgia, serif; }
 body.print-labs #lab-print { display: block !important; }
 body.print-doctor #print-report, body:not(.print-labs):not(.print-doctor) #print-report { display: block !important; }
@@ -343,7 +372,7 @@ document.documentElement.style.fontSize = savedTextSize + '%';
 
 <div id="intake-overlay">
 <div id="intake-box">
-<div class="quiz-top"><strong>Scout</strong><span id="quiz-step-label">Step 1 of 3</span></div>
+<div class="quiz-top"><strong>Scout</strong><span class="quiz-top-right"><span id="quiz-step-label">Step 1 of 3</span><button type="button" id="quiz-text-size-btn" class="text-size-launch" aria-label="Text size" aria-haspopup="dialog" aria-expanded="false" aria-controls="text-size-popover" title="Text size" onclick="toggleTextSizePopover(event)">Aa</button></span></div>
 <div class="quiz-track" id="quiz-track" aria-hidden="true"><div id="quiz-bar"></div></div>
 <div id="quiz-error" role="alert"></div>
 <div id="intake-quiz">
@@ -448,9 +477,12 @@ document.documentElement.style.fontSize = savedTextSize + '%';
 <div id="ttl">Scout</div>
 <div id="sub">Peptide & Longevity Guidance · Educational AI</div>
 </div>
+<div id="hdr-tools">
+<button type="button" id="text-size-btn" class="text-size-launch" aria-label="Text size" aria-haspopup="dialog" aria-expanded="false" aria-controls="text-size-popover" title="Text size" onclick="toggleTextSizePopover(event)">Aa</button>
 <button type="button" id="hdr-menu-btn" aria-label="Menu" aria-haspopup="true" aria-expanded="false" aria-controls="hdr-menu-panel" title="Menu" onclick="toggleHeaderMenu(event)">☰</button>
-<button id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
+<button type="button" id="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
 <div id="dot"></div>
+</div>
 </div>
 <nav id="tabs" role="tablist" aria-label="Scout sections">
 <button type="button" class="tab active" role="tab" data-tab="chat" aria-selected="true" aria-controls="panel-chat" onclick="switchTab('chat')">Chat</button>
@@ -494,6 +526,10 @@ To personalize my guidance, tell me:<br>
 
 <div id="upload-status"></div>
 <div id="file-chips"></div>
+<div id="quote-chip" hidden>
+<div id="quote-chip-text"></div>
+<button type="button" id="quote-chip-remove" aria-label="Remove quote" title="Remove quote">×</button>
+</div>
 
 <div id="inp-area">
 <label for="file-upload" id="upload-btn" title="Add bloodwork files" aria-label="Add bloodwork files">📎</label>
@@ -602,15 +638,30 @@ To personalize my guidance, tell me:<br>
 <div id="print-report"></div>
 <div id="lab-print"></div>
 <div id="copy-toast" role="status" aria-live="polite"></div>
+<div id="sel-actions" hidden role="toolbar" aria-label="Selection">
+<button type="button" id="sel-ask">Ask about this</button>
+<button type="button" id="sel-copy">Copy</button>
+</div>
+<div id="text-size-popover" hidden role="dialog" aria-label="Text size">
+<div class="text-size" role="group" aria-label="Text size">
+<div class="text-size-label">Text size</div>
+<div class="text-size-row">
+<button type="button" data-text-step="-1" aria-label="Smaller text">A-</button>
+<span class="text-size-readout" aria-live="polite">100%</span>
+<button type="button" data-text-step="1" aria-label="Larger text">A+</button>
+</div>
+<button type="button" class="text-size-reset" data-text-reset>Reset</button>
+</div>
+</div>
 <div id="hdr-menu-panel" hidden role="menu">
 <div class="text-size" role="group" aria-labelledby="text-size-label">
 <div class="text-size-label" id="text-size-label">Text size</div>
 <div class="text-size-row">
-<button type="button" id="text-smaller" aria-label="Smaller text">A-</button>
-<span id="text-size-value" aria-live="polite">100%</span>
-<button type="button" id="text-larger" aria-label="Larger text">A+</button>
+<button type="button" id="text-smaller" data-text-step="-1" aria-label="Smaller text">A-</button>
+<span id="text-size-value" class="text-size-readout" aria-live="polite">100%</span>
+<button type="button" id="text-larger" data-text-step="1" aria-label="Larger text">A+</button>
 </div>
-<button type="button" id="text-reset">Reset</button>
+<button type="button" id="text-reset" class="text-size-reset" data-text-reset>Reset</button>
 </div>
 <button type="button" id="hdr-account" role="menuitem" onclick="openAccountRestore()">Sign in / Switch account</button>
 </div>
@@ -810,29 +861,43 @@ clearTimeout(showCopiedToast.timer);
 showCopiedToast.timer = setTimeout(function() { toast.classList.remove('show'); }, 1600);
 }
 
+function prefersSyncCopy() {
+var ua = navigator.userAgent || '';
+if (/iPad|iPhone|iPod/.test(ua)) return true;
+if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return true;
+if (window.navigator.standalone) return true;
+try {
+if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+} catch (e) {}
+return false;
+}
+
 function copyPlainText(text) {
 var value = String(text || '');
-function fallback() {
-fallbackCopy(value);
-showCopiedToast();
+function finish(ok) { if (ok) showCopiedToast(); }
+if (prefersSyncCopy()) {
+if (fallbackCopy(value)) { finish(true); return; }
 }
 if (navigator.clipboard && navigator.clipboard.writeText) {
-navigator.clipboard.writeText(value).then(showCopiedToast).catch(fallback);
+var pending = navigator.clipboard.writeText(value);
+if (pending && typeof pending.then === 'function') {
+pending.then(function() { finish(true); }).catch(function() { finish(fallbackCopy(value)); });
 return;
 }
-fallback();
+}
+finish(fallbackCopy(value));
 }
 
 function addCopyButton(msgDiv) {
 if (!msgDiv || msgDiv.querySelector('.msg-copy')) return;
+if (!msgDiv.classList || (!msgDiv.classList.contains('bot') && !msgDiv.classList.contains('usr'))) return;
 var copyBtn = document.createElement('button');
 copyBtn.type = 'button';
 copyBtn.className = 'msg-copy';
-copyBtn.setAttribute('aria-label', 'Copy message');
+copyBtn.setAttribute('aria-label', 'Copy');
 copyBtn.title = 'Copy';
 copyBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>';
 copyBtn.addEventListener('click', function(e) {
-e.preventDefault();
 e.stopPropagation();
 copyPlainText(messagePlainText(msgDiv));
 });
@@ -842,6 +907,17 @@ msgDiv.appendChild(copyBtn);
 var shouldAutoScroll = true;
 var scrollLock = false;
 var scrollScheduled = false;
+var scrollForce = false;
+var msgsPointerDown = false;
+var msgsPointerTimer = null;
+var deferredChatRebuild = null;
+var flushingStreams = false;
+var textSizeAnchor = null;
+var pendingQuote = '';
+var selBarText = '';
+var selGestureDown = false;
+var selBarTimer = null;
+var selBarHandledAt = 0;
 var currentTab = 'chat';
 var savedChatScroll = 0;
 var STICKY_BOTTOM_PX = 120;
@@ -849,6 +925,184 @@ var JUMP_AWAY_PX = 300;
 
 function distanceFromBottom(box) {
 return box.scrollHeight - box.scrollTop - box.clientHeight;
+}
+
+function hasTextSelection() {
+var sel;
+try { sel = window.getSelection(); } catch (e) { return false; }
+if (!sel || sel.isCollapsed || !sel.rangeCount) return false;
+var text = sel.toString();
+return !!(text && text.length);
+}
+
+function selectionHost(node) {
+if (!node) return null;
+return node.nodeType === 1 ? node : node.parentNode;
+}
+
+function selectionIntersects(el) {
+if (!el || !hasTextSelection()) return false;
+var sel = window.getSelection();
+var anchor = selectionHost(sel.anchorNode);
+var focus = selectionHost(sel.focusNode);
+if (anchor && el.contains(anchor)) return true;
+if (focus && el.contains(focus)) return true;
+return false;
+}
+
+function holdChatMutation(el) {
+if (msgsPointerDown) return true;
+var box = document.getElementById('msgs');
+if (box && selectionIntersects(box)) return true;
+if (el && el !== box && selectionIntersects(el)) return true;
+return false;
+}
+
+function noteMsgsPointerDown(e) {
+var box = document.getElementById('msgs');
+if (!box || !e || !e.target || !box.contains(e.target)) return;
+msgsPointerDown = true;
+clearTimeout(msgsPointerTimer);
+msgsPointerTimer = setTimeout(function() {
+msgsPointerDown = false;
+if (!hasTextSelection()) flushStreamBubbles();
+}, 4000);
+}
+
+function noteMsgsPointerUp() {
+if (!msgsPointerDown) return;
+clearTimeout(msgsPointerTimer);
+msgsPointerDown = false;
+setTimeout(function() {
+if (!hasTextSelection()) flushStreamBubbles();
+}, 50);
+}
+
+function isIOSDevice() {
+var ua = navigator.userAgent || '';
+if (/iPad|iPhone|iPod/.test(ua)) return true;
+if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return true;
+return false;
+}
+
+function closestFrom(node, selector) {
+var el = selectionHost(node);
+if (!el || !el.closest) return null;
+return el.closest(selector);
+}
+
+function selectionAllowedText() {
+var sel;
+try { sel = window.getSelection(); } catch (e) { return ''; }
+if (!sel || sel.isCollapsed || !sel.rangeCount) return '';
+var text = String(sel.toString() || '').replace(/\u00a0/g, ' ');
+if (!String(text).replace(/\s/g, '').length) return '';
+var el = selectionHost(sel.anchorNode || sel.getRangeAt(0).commonAncestorContainer);
+if (!el) return '';
+if (closestFrom(el, '#sel-actions, #quote-chip, button, textarea, input, select, #cinput')) return '';
+var zone = closestFrom(el, '#msgs .msg, #panel-labs, #panel-stack, #panel-sources');
+if (!zone) return '';
+return text;
+}
+
+function hideSelBar() {
+var bar = document.getElementById('sel-actions');
+if (bar) bar.hidden = true;
+}
+
+function dockSelBarTop(bh, margin) {
+var top = window.innerHeight - bh - margin;
+if (currentTab === 'chat') {
+var inp = document.getElementById('inp-area');
+if (inp) {
+var ir = inp.getBoundingClientRect();
+if (ir.top > bh + margin * 2) top = Math.min(top, ir.top - bh - margin);
+}
+}
+return Math.max(margin, top);
+}
+
+function placeSelBar(bar) {
+var sel = window.getSelection();
+if (!sel || !sel.rangeCount) return;
+var range = sel.getRangeAt(0);
+var rects = range.getClientRects();
+var first = null;
+var last = null;
+for (var i = 0; i < rects.length; i++) {
+if (rects[i].width < 1 && rects[i].height < 1) continue;
+if (!first) first = rects[i];
+last = rects[i];
+}
+if (!first) return;
+bar.hidden = false;
+var bw = bar.offsetWidth || 220;
+var bh = bar.offsetHeight || 44;
+var margin = 8;
+var left = first.left;
+var top;
+if (isIOSDevice()) {
+top = last.bottom + margin;
+if (top + bh > window.innerHeight - margin) top = dockSelBarTop(bh, margin);
+} else {
+top = first.top - bh - margin;
+if (top < margin) top = last.bottom + margin;
+if (top + bh > window.innerHeight - margin) top = dockSelBarTop(bh, margin);
+}
+if (left + bw > window.innerWidth - margin) left = window.innerWidth - margin - bw;
+if (left < margin) left = margin;
+if (top < margin) top = margin;
+bar.style.left = Math.round(left) + 'px';
+bar.style.top = Math.round(top) + 'px';
+}
+
+function updateSelBar() {
+var bar = document.getElementById('sel-actions');
+if (!bar) return;
+if (selGestureDown) return;
+var text = selectionAllowedText();
+if (!text) {
+bar.hidden = true;
+return;
+}
+selBarText = text;
+placeSelBar(bar);
+}
+
+function scheduleSelBar() {
+clearTimeout(selBarTimer);
+selBarTimer = setTimeout(updateSelBar, 180);
+}
+
+function runSelAction(id) {
+if (id === 'sel-copy') {
+var value = String(selBarText || '').trim();
+if (value) copyPlainText(value);
+return;
+}
+if (id === 'sel-ask') askAboutSelection();
+}
+
+function askAboutSelection() {
+var live = selectionAllowedText();
+if (live) selBarText = live;
+var excerpt = capExcerpt(selBarText);
+if (!excerpt) return;
+pendingQuote = excerpt;
+renderQuoteChip();
+hideSelBar();
+try {
+var sel = window.getSelection();
+if (sel) sel.removeAllRanges();
+} catch (e) {}
+if (currentTab !== 'chat') switchTab('chat');
+setTimeout(function() {
+var input = document.getElementById('cinput');
+if (!input) return;
+input.focus();
+var len = input.value.length;
+try { input.setSelectionRange(len, len); } catch (e2) {}
+}, 40);
 }
 
 function updateJumpButton() {
@@ -859,16 +1113,21 @@ if (distanceFromBottom(box) > JUMP_AWAY_PX) btn.classList.add('visible');
 else btn.classList.remove('visible');
 }
 
-function scrollToBottom() {
+function scrollToBottom(force) {
 var box = document.getElementById('msgs');
 if (!box) return;
+if (force) scrollForce = true;
+if (!scrollForce && (hasTextSelection() || msgsPointerDown)) return;
 scrollLock = true;
 box.scrollTop = box.scrollHeight;
 scrollLock = false;
 if (scrollScheduled) return;
 scrollScheduled = true;
 requestAnimationFrame(function() {
+var useForce = scrollForce;
+scrollForce = false;
 scrollScheduled = false;
+if (!useForce && (hasTextSelection() || msgsPointerDown)) return;
 var next = document.getElementById('msgs');
 if (!next) return;
 scrollLock = true;
@@ -882,7 +1141,7 @@ function jumpToBottom() {
 var btn = document.getElementById('jump-bottom');
 shouldAutoScroll = true;
 if (btn) btn.classList.remove('visible');
-scrollToBottom();
+scrollToBottom(true);
 }
 
 function onMsgsScroll() {
@@ -897,7 +1156,7 @@ var box = document.getElementById('msgs');
 var d = document.createElement('div');
 d.className = 'msg ' + cls;
 d.innerHTML = html;
-if (cls === 'bot') {
+if (cls === 'bot' || cls === 'usr') {
 addCopyButton(d);
 }
 scrollLock = true;
@@ -915,6 +1174,22 @@ else updateJumpButton();
 function escapeChatText(value) {
 var s = String(value === null || value === undefined ? '' : value);
 return s.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split(String.fromCharCode(10)).join('<br>');
+}
+
+function splitQuotedMessage(text) {
+var marker = 'Regarding this part: "';
+if (String(text || '').indexOf(marker) !== 0) return null;
+var rest = String(text).slice(marker.length);
+var sep = '"\n\n';
+var idx = rest.indexOf(sep);
+if (idx === -1) return null;
+return { excerpt: rest.slice(0, idx), body: rest.slice(idx + sep.length) };
+}
+
+function quoteBlockHtml(excerpt, body) {
+var html = '<blockquote class="msg-quote">' + escapeChatText(excerpt) + '</blockquote>';
+if (body) html += '<div class="msg-quote-body">' + escapeChatText(body) + '</div>';
+return html;
 }
 
 function displayUserMsg(text) {
@@ -939,9 +1214,15 @@ var fileEnd = fileRest.indexOf('\n');
 attached = fileEnd === -1 ? fileRest : fileRest.slice(0, fileEnd);
 }
 var label = attached.trim() ? '[File uploaded and saved: ' + escapeChatText(attached.trim()) + ']' : '[File uploaded and saved]';
-if (note.trim()) return escapeChatText(note.trim()) + '<br>' + label;
+if (note.trim()) {
+var quotedNote = splitQuotedMessage(note.trim());
+if (quotedNote) return quoteBlockHtml(quotedNote.excerpt, quotedNote.body) + '<br>' + label;
+return escapeChatText(note.trim()) + '<br>' + label;
+}
 return label;
 }
+var quoted = splitQuotedMessage(t);
+if (quoted) return quoteBlockHtml(quoted.excerpt, quoted.body);
 return escapeChatText(t);
 }
 
@@ -1129,15 +1410,18 @@ if (n === 100) localStorage.removeItem(TEXT_SIZE_KEY);
 else localStorage.setItem(TEXT_SIZE_KEY, String(n));
 } catch (e) {}
 }
-var label = document.getElementById('text-size-value');
-if (label) label.textContent = n + '%';
+var labels = document.querySelectorAll('.text-size-readout');
+for (var i = 0; i < labels.length; i++) labels[i].textContent = n + '%';
 var idx = TEXT_SIZES.indexOf(n);
-var smaller = document.getElementById('text-smaller');
-var larger = document.getElementById('text-larger');
-if (smaller) smaller.disabled = idx <= 0;
-if (larger) larger.disabled = idx >= TEXT_SIZES.length - 1;
-var reset = document.getElementById('text-reset');
-if (reset) reset.disabled = n === 100;
+var smallers = document.querySelectorAll('[data-text-step="-1"]');
+var largers = document.querySelectorAll('[data-text-step="1"]');
+for (var s = 0; s < smallers.length; s++) smallers[s].disabled = idx <= 0;
+for (var l = 0; l < largers.length; l++) largers[l].disabled = idx >= TEXT_SIZES.length - 1;
+var resets = document.querySelectorAll('[data-text-reset]');
+for (var r = 0; r < resets.length; r++) resets[r].disabled = n === 100;
+if (textSizeAnchor && document.getElementById('text-size-popover') && !document.getElementById('text-size-popover').hidden) {
+placeTextPopover(document.getElementById('text-size-popover'), textSizeAnchor);
+}
 }
 
 function stepTextSize(delta) {
@@ -1153,8 +1437,49 @@ if (panel) panel.hidden = true;
 if (btn) btn.setAttribute('aria-expanded', 'false');
 }
 
+function closeTextSizePopover() {
+var pop = document.getElementById('text-size-popover');
+if (pop) pop.hidden = true;
+textSizeAnchor = null;
+var launches = document.querySelectorAll('.text-size-launch');
+for (var i = 0; i < launches.length; i++) launches[i].setAttribute('aria-expanded', 'false');
+}
+
+function placeTextPopover(pop, btn) {
+if (!pop || !btn) return;
+pop.hidden = false;
+var rect = btn.getBoundingClientRect();
+var width = pop.offsetWidth || 240;
+var height = pop.offsetHeight || 140;
+var left = rect.right - width;
+if (left < 8) left = 8;
+if (left + width > window.innerWidth - 8) left = Math.max(8, window.innerWidth - 8 - width);
+var top = rect.bottom + 6;
+if (top + height > window.innerHeight - 8 && rect.top - height - 6 > 8) top = rect.top - height - 6;
+pop.style.left = Math.round(left) + 'px';
+pop.style.top = Math.round(top) + 'px';
+pop.style.right = 'auto';
+}
+
+function toggleTextSizePopover(event) {
+if (event) event.stopPropagation();
+var btn = event && event.currentTarget;
+var pop = document.getElementById('text-size-popover');
+if (!pop || !btn) return;
+if (!pop.hidden && textSizeAnchor === btn) {
+closeTextSizePopover();
+return;
+}
+closeHeaderMenu();
+textSizeAnchor = btn;
+placeTextPopover(pop, btn);
+var launches = document.querySelectorAll('.text-size-launch');
+for (var i = 0; i < launches.length; i++) launches[i].setAttribute('aria-expanded', launches[i] === btn ? 'true' : 'false');
+}
+
 function toggleHeaderMenu(event) {
 if (event) event.stopPropagation();
+closeTextSizePopover();
 var panel = document.getElementById('hdr-menu-panel');
 var btn = document.getElementById('hdr-menu-btn');
 if (!panel || !btn) return;
@@ -1168,6 +1493,49 @@ panel.style.right = Math.round(Math.max(8, window.innerWidth - rect.right)) + 'p
 panel.style.left = 'auto';
 panel.hidden = false;
 btn.setAttribute('aria-expanded', 'true');
+}
+
+function paintStreamBubble(el) {
+if (!el || el._streamText == null) return false;
+if (holdChatMutation(el)) return false;
+var copyBtn = el.querySelector('.msg-copy');
+scrollLock = true;
+el.innerHTML = fmt(el._streamText);
+if (copyBtn) el.appendChild(copyBtn);
+if (el._streamNeedsCopy) addCopyButton(el);
+scrollLock = false;
+el._paintedText = el._streamText;
+if (el._streamDone) {
+el._streamText = null;
+el._streamNeedsCopy = false;
+}
+return true;
+}
+
+function flushStreamBubbles() {
+if (flushingStreams) return;
+flushingStreams = true;
+try {
+var nodes = document.querySelectorAll('#msgs .msg');
+for (var i = 0; i < nodes.length; i++) {
+if (nodes[i]._streamText == null) continue;
+if (nodes[i]._paintedText === nodes[i]._streamText && !nodes[i]._streamNeedsCopy) {
+if (nodes[i]._streamDone) {
+nodes[i]._streamText = null;
+nodes[i]._streamNeedsCopy = false;
+}
+continue;
+}
+paintStreamBubble(nodes[i]);
+}
+if (deferredChatRebuild && !holdChatMutation(document.getElementById('msgs'))) {
+var job = deferredChatRebuild;
+deferredChatRebuild = null;
+job();
+}
+} finally {
+flushingStreams = false;
+}
 }
 
 function openAccountRestore() {
@@ -1329,10 +1697,18 @@ historyReady = true;
 return;
 }
 if (doc.exists && doc.data().messages && doc.data().messages.length > 2) {
-hist = doc.data().messages;
+var cloudMessages = doc.data().messages;
+function applyCloudMessages() {
+if (busy || userMessageCount > 0) return;
+var box = document.getElementById('msgs');
+if (holdChatMutation(box)) {
+deferredChatRebuild = applyCloudMessages;
+return;
+}
+hist = cloudMessages;
 knownCloudMsgCount = hist.length;
 maybeWriteSnapshot(userEmail, 'load');
-document.getElementById('msgs').innerHTML = '';
+box.innerHTML = '';
 addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?', false);
 hist.slice(2).forEach(function(msg) {
 if (msg.role === 'user') {
@@ -1342,6 +1718,9 @@ addMsg('bot', fmt(msg.content), false);
 }
 });
 console.log('Loaded conversation history from cloud');
+if (!holdChatMutation(box)) scrollToBottom();
+}
+applyCloudMessages();
 }
 historyReady = true;
 scrollToBottom();
@@ -1415,12 +1794,13 @@ sawError = true;
 showStreamError(friendlyStreamError(parsed));
 } else if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
 fullText += parsed.delta.text;
-scrollLock = true;
-msgDiv.innerHTML = fmt(fullText);
+msgDiv._streamText = fullText;
+msgDiv._streamDone = false;
+if (paintStreamBubble(msgDiv)) {
 var follow = shouldAutoScroll || distanceFromBottom(msgs) <= STICKY_BOTTOM_PX;
-scrollLock = false;
 if (follow) scrollToBottom();
 else updateJumpButton();
+}
 }
 } catch(e) {}
 }
@@ -1432,8 +1812,10 @@ if (fullText) {
 hist.push({ role: 'assistant', content: fullText });
 saveChatHistory();
 saveConversationAuto();
-addCopyButton(msgDiv);
-if (shouldAutoScroll) scrollToBottom();
+msgDiv._streamText = fullText;
+msgDiv._streamDone = true;
+msgDiv._streamNeedsCopy = true;
+if (paintStreamBubble(msgDiv) && shouldAutoScroll) scrollToBottom();
 } else if (msgDiv.parentNode) {
 msgDiv.parentNode.removeChild(msgDiv);
 }
@@ -1475,7 +1857,7 @@ saveChatHistory();
 saveConversationAuto();
 userMessageCount++;
 showTyping(true);
-scrollToBottom();
+scrollToBottom(true);
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
@@ -1490,20 +1872,59 @@ document.getElementById('sbtn').disabled = false;
 });
 }
 
+function capExcerpt(text) {
+var clean = String(text || '').replace(/\s+/g, ' ').trim().split('"').join("'");
+if (!clean) return '';
+if (clean.length <= 500) return clean;
+var cut = clean.slice(0, 500);
+var trimmed = cut.replace(/\s+\S*$/, '');
+if (trimmed.length < 400) trimmed = cut;
+return trimmed + '\u2026';
+}
+
+function composeOutgoing(txt) {
+var typed = String(txt || '').trim();
+if (!pendingQuote) return typed;
+var body = typed || 'Can you explain this in more detail?';
+return 'Regarding this part: "' + pendingQuote + '"\n\n' + body;
+}
+
+function renderQuoteChip() {
+var chip = document.getElementById('quote-chip');
+var text = document.getElementById('quote-chip-text');
+if (!chip || !text) return;
+if (!pendingQuote) {
+chip.hidden = true;
+text.textContent = '';
+return;
+}
+text.textContent = pendingQuote;
+chip.hidden = false;
+}
+
+function clearPendingQuote() {
+pendingQuote = '';
+renderQuoteChip();
+}
+
 function sendMsgFromInput() {
 if (busy) return;
 var el = document.getElementById('cinput');
 var txt = el.value.trim();
 if (pendingFiles.length) {
+var note = composeOutgoing(txt);
 el.value = '';
 el.style.height = 'auto';
-submitBloodwork(txt);
+clearPendingQuote();
+submitBloodwork(note);
 return;
 }
-if (!txt) return;
+if (!txt && !pendingQuote) return;
+var outgoing = composeOutgoing(txt);
 el.value = '';
 el.style.height = 'auto';
-sendMsg(txt);
+clearPendingQuote();
+sendMsg(outgoing);
 }
 
 function saveEmailAndConversation() {
@@ -1669,7 +2090,7 @@ return;
 busy = true;
 document.getElementById('sbtn').disabled = true;
 shouldAutoScroll = true;
-scrollToBottom();
+scrollToBottom(true);
 showUploadNote('Reading your files...', false);
 var files = pendingFiles.slice();
 var formData = new FormData();
@@ -1708,7 +2129,7 @@ saveChatHistory();
 saveConversationAuto();
 showUploadNote('Analyzing your bloodwork...', false);
 showTyping(true);
-scrollToBottom();
+scrollToBottom(true);
 fetch(BACKEND, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
@@ -2609,14 +3030,45 @@ window.open(destination, '_blank', 'noopener,noreferrer');
 
 function fallbackCopy(text) {
 var ta = document.createElement('textarea');
-ta.value = text;
+ta.value = String(text || '');
 ta.setAttribute('readonly', '');
+ta.setAttribute('aria-hidden', 'true');
 ta.style.position = 'fixed';
-ta.style.left = '-9999px';
+ta.style.top = '0';
+ta.style.left = '0';
+ta.style.width = '1px';
+ta.style.height = '1px';
+ta.style.padding = '0';
+ta.style.border = 'none';
+ta.style.outline = 'none';
+ta.style.boxShadow = 'none';
+ta.style.background = 'transparent';
+ta.style.fontSize = '16px';
 document.body.appendChild(ta);
+var sel = null;
+var saved = null;
+try { sel = window.getSelection(); } catch (e) { sel = null; }
+if (sel && sel.rangeCount) {
+try { saved = sel.getRangeAt(0).cloneRange(); } catch (e) { saved = null; }
+}
+try {
+if (ta.focus) ta.focus({ preventScroll: true });
+else ta.focus();
+} catch (e) {
+try { ta.focus(); } catch (e2) {}
+}
 ta.select();
-try { document.execCommand('copy'); } catch (e) {}
+try { ta.setSelectionRange(0, ta.value.length); } catch (e) {}
+var ok = false;
+try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
 document.body.removeChild(ta);
+if (saved && sel) {
+try {
+sel.removeAllRanges();
+sel.addRange(saved);
+} catch (e) {}
+}
+return !!ok;
 }
 
 function copyDiscount(btn) {
@@ -2697,16 +3149,92 @@ saveStack(items);
 var costFields = document.getElementById('stack-cost-fields');
 if (costFields) costFields.hidden = !PRO_PREVIEW_OPEN;
 applyTextSize(readTextSize(), false);
-var textSizeBox = document.querySelector('.text-size');
-if (textSizeBox) textSizeBox.addEventListener('click', function(e) { e.stopPropagation(); });
-var textSmaller = document.getElementById('text-smaller');
-var textLarger = document.getElementById('text-larger');
-var textReset = document.getElementById('text-reset');
-if (textSmaller) textSmaller.addEventListener('click', function() { stepTextSize(-1); });
-if (textLarger) textLarger.addEventListener('click', function() { stepTextSize(1); });
-if (textReset) textReset.addEventListener('click', function() { applyTextSize(100, true); });
-var starterBots = document.querySelectorAll('#msgs .msg.bot');
-for (var b = 0; b < starterBots.length; b++) addCopyButton(starterBots[b]);
+var textSizeBoxes = document.querySelectorAll('.text-size');
+for (var t = 0; t < textSizeBoxes.length; t++) {
+textSizeBoxes[t].addEventListener('click', function(e) { e.stopPropagation(); });
+}
+var stepButtons = document.querySelectorAll('[data-text-step]');
+for (var s = 0; s < stepButtons.length; s++) {
+stepButtons[s].addEventListener('click', function(e) {
+e.stopPropagation();
+stepTextSize(Number(this.getAttribute('data-text-step')));
+});
+}
+var resetButtons = document.querySelectorAll('[data-text-reset]');
+for (var r = 0; r < resetButtons.length; r++) {
+resetButtons[r].addEventListener('click', function(e) {
+e.stopPropagation();
+applyTextSize(100, true);
+});
+}
+var starterMsgs = document.querySelectorAll('#msgs .msg.bot, #msgs .msg.usr');
+for (var b = 0; b < starterMsgs.length; b++) addCopyButton(starterMsgs[b]);
+var msgsBox = document.getElementById('msgs');
+if (msgsBox) {
+msgsBox.addEventListener('pointerdown', noteMsgsPointerDown, { passive: true });
+msgsBox.addEventListener('touchstart', noteMsgsPointerDown, { passive: true });
+}
+document.addEventListener('pointerup', noteMsgsPointerUp, { passive: true });
+document.addEventListener('pointercancel', noteMsgsPointerUp, { passive: true });
+document.addEventListener('touchend', noteMsgsPointerUp, { passive: true });
+document.addEventListener('touchcancel', noteMsgsPointerUp, { passive: true });
+document.addEventListener('selectionchange', function() {
+scheduleSelBar();
+if (hasTextSelection() || msgsPointerDown) return;
+flushStreamBubbles();
+});
+document.addEventListener('pointerdown', function(e) {
+if (e.target && e.target.closest && e.target.closest('#sel-actions')) return;
+selGestureDown = true;
+hideSelBar();
+}, { passive: true });
+document.addEventListener('pointerup', function() {
+selGestureDown = false;
+scheduleSelBar();
+}, { passive: true });
+document.addEventListener('pointercancel', function() {
+selGestureDown = false;
+scheduleSelBar();
+}, { passive: true });
+document.addEventListener('mouseup', scheduleSelBar, { passive: true });
+document.addEventListener('touchend', scheduleSelBar, { passive: true });
+var selBar = document.getElementById('sel-actions');
+if (selBar) {
+selBar.addEventListener('pointerdown', function(e) {
+e.preventDefault();
+e.stopPropagation();
+});
+selBar.addEventListener('pointerup', function(e) {
+e.preventDefault();
+e.stopPropagation();
+var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+if (!btn) return;
+selBarHandledAt = Date.now();
+runSelAction(btn.id);
+});
+selBar.addEventListener('click', function(e) {
+e.preventDefault();
+e.stopPropagation();
+var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+if (!btn) return;
+if (Date.now() - selBarHandledAt < 500) return;
+runSelAction(btn.id);
+});
+}
+var quoteRemove = document.getElementById('quote-chip-remove');
+if (quoteRemove) quoteRemove.addEventListener('click', function(e) {
+e.preventDefault();
+e.stopPropagation();
+clearPendingQuote();
+});
+var scrollZones = document.querySelectorAll('#msgs, .panel-scroll');
+for (var z = 0; z < scrollZones.length; z++) {
+scrollZones[z].addEventListener('scroll', scheduleSelBar, { passive: true });
+}
+window.addEventListener('resize', function() {
+var pop = document.getElementById('text-size-popover');
+if (pop && !pop.hidden && textSizeAnchor) placeTextPopover(pop, textSizeAnchor);
+});
 window.addEventListener('afterprint', function() {
 document.body.classList.remove('print-labs');
 document.body.classList.remove('print-doctor');
@@ -2725,9 +3253,13 @@ if (!restoreBusy) setRestoreError('');
 }
 document.addEventListener('click', function() {
 closeHeaderMenu();
+closeTextSizePopover();
 });
 document.addEventListener('keydown', function(e) {
-if (e.key === 'Escape') closeHeaderMenu();
+if (e.key === 'Escape') {
+closeHeaderMenu();
+closeTextSizePopover();
+}
 });
 showQuizStep(1);
 renderStack();
