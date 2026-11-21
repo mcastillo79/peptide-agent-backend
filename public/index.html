@@ -267,6 +267,28 @@ body.dark .state-btn, body.dark .source-go, body.dark .pro-join, body.dark .labs
 .labs-actions .labs-btn { flex: 1; }
 .stack-item { border: 1px solid var(--border-col); border-radius: 12px; padding: 10px 12px; margin-top: 8px; background: var(--card-bg); }
 .stack-item.paused { opacity: 0.72; }
+.stack-item.is-new { box-shadow: inset 0 0 0 2px var(--accent); background: rgba(26,107,60,0.1); }
+.stack-suggest { align-self: stretch; max-width: 100%; border: 1px solid var(--border-col); border-radius: 14px; padding: 12px; background: var(--card-bg); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.stack-suggest h3 { font-size: 0.9375rem; line-height: 1.35; color: var(--text-main); margin-bottom: 4px; }
+.stack-suggest-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--border-col); cursor: pointer; }
+.stack-suggest-item input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; }
+.suggest-name { display: block; font-weight: 700; color: var(--text-main); font-size: 0.875rem; line-height: 1.35; }
+.suggest-source { display: block; margin-top: 2px; font-size: 0.75rem; font-weight: 700; line-height: 1.35; }
+.suggest-source.altura { color: #1f6feb; }
+.suggest-source.pharmacy { color: var(--accent); }
+.suggest-source.mentioned { color: var(--text-soft); }
+.suggest-disclaimer { display: block; margin-top: 4px; font-size: 0.75rem; line-height: 1.4; color: var(--text-soft); }
+.stack-suggest-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.stack-suggest-actions .quiz-next, .stack-suggest-actions .quiz-back { width: 100%; margin-top: 0; }
+.suggest-error { min-height: 0; margin: 4px 0 0; color: #c53030; font-size: 0.75rem; }
+.suggest-error:empty { display: none; }
+.status-toggle { display: flex; gap: 4px; margin-top: 8px; }
+.status-btn { flex: 1; min-width: 0; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); border-radius: 999px; padding: 6px 4px; font-size: 0.6875rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+.status-btn.on { background: var(--header-bg); color: #fff; border-color: var(--header-bg); }
+body.dark .status-btn.on { background: var(--accent); color: #04140a; border-color: var(--accent); }
+.stack-note-field { margin-top: 8px; margin-bottom: 0; }
+.stack-note-field textarea { height: 64px; }
+.stack-edit { display: grid; gap: 8px; margin-top: 8px; }
 .stack-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
 .stack-name { font-weight: 700; color: var(--text-main); font-size: 0.875rem; }
 .stack-meta, .empty-note, .lab-summary, .lab-files { color: var(--text-soft); font-size: 0.75rem; line-height: 1.45; }
@@ -317,7 +339,7 @@ body.dark .trend-band { fill: rgba(63,185,80,0.22); }
 html, body, #msgs, #thread, #wrap, .panel, .panel-scroll, .msg, .msg strong, .msg a, .msg br {
 -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important;
 }
-button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, #sbtn, #upload-btn, #theme-toggle, #text-size-btn, #quiz-text-size-btn, #hdr-menu-btn, #jump-bottom, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
+button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, .stack-suggest button, .stack-suggest input, .status-btn, #sbtn, #upload-btn, #theme-toggle, #text-size-btn, #quiz-text-size-btn, #hdr-menu-btn, #jump-bottom, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
 -webkit-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important;
 }
 input, textarea, select, .msg, .msg strong, .msg a {
@@ -540,7 +562,7 @@ To personalize my guidance, tell me:<br>
 <section id="panel-stack" class="panel" role="tabpanel">
 <div class="panel-scroll">
 <h2>My Stack</h2>
-<p class="panel-lead">Peptides and supplements you are using. Active items are sent with each chat so Scout can keep them in mind.</p>
+<p class="panel-lead">Peptides and supplements you are considering or using. Taking and considering items are included when you chat. Stopped items stay here and are left out.</p>
 <div class="stack-form">
 <div class="intake-field">
 <label for="stack-name">Name</label>
@@ -549,7 +571,7 @@ To personalize my guidance, tell me:<br>
 <div class="stack-grid">
 <div class="intake-field">
 <label for="stack-dose">Dose</label>
-<input type="text" id="stack-dose" placeholder="e.g. 250 mcg" autocomplete="off">
+<input type="text" id="stack-dose" placeholder="Your notes" autocomplete="off">
 </div>
 <div class="intake-field">
 <label for="stack-schedule">Schedule</label>
@@ -572,7 +594,7 @@ To personalize my guidance, tell me:<br>
 </div>
 <div class="intake-field">
 <label for="stack-notes">Notes</label>
-<textarea id="stack-notes" placeholder="Optional"></textarea>
+<textarea id="stack-notes" placeholder="Your notes"></textarea>
 </div>
 <div id="stack-error" class="pro-error"></div>
 <button type="button" class="quiz-next" onclick="addStackFromForm()">Add to stack</button>
@@ -685,6 +707,10 @@ console.log('Firebase init skipped');
 var BACKEND = '/chat';
 // Flip to false to hide lab trends and the cost tracker. The waitlist stays.
 var PRO_PREVIEW_OPEN = true;
+var ALTURA_STACK_DISCLAIMER = 'Third-party research-use-only product (Altura). Not medical advice. Not for human consumption.';
+var highlightedStackIds = {};
+var editingStackId = '';
+var SUGGEST_DISMISS_KEY = 'peptideSuggestDismissed';
 var hist = [];
 var busy = false;
 var CHAT_STORAGE_KEY = 'peptideChatHistory';
@@ -1163,12 +1189,167 @@ scrollLock = true;
 box.appendChild(d);
 if (scroll === false) {
 scrollLock = false;
-return;
+return d;
 }
 var follow = shouldAutoScroll || distanceFromBottom(box) <= STICKY_BOTTOM_PX;
 scrollLock = false;
 if (follow) scrollToBottom();
 else updateJumpButton();
+return d;
+}
+
+function suggestDismissKey(text) {
+var s = String(text || '').slice(0, 500);
+var h = 0;
+for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+return String(h);
+}
+
+function suggestDismissed(key) {
+try {
+var raw = JSON.parse(sessionStorage.getItem(SUGGEST_DISMISS_KEY) || '[]');
+return Array.isArray(raw) && raw.indexOf(key) !== -1;
+} catch (e) { return false; }
+}
+
+function rememberSuggestDismissed(key) {
+try {
+var raw = JSON.parse(sessionStorage.getItem(SUGGEST_DISMISS_KEY) || '[]');
+if (!Array.isArray(raw)) raw = [];
+if (raw.indexOf(key) === -1) raw.push(key);
+sessionStorage.setItem(SUGGEST_DISMISS_KEY, JSON.stringify(raw.slice(-40)));
+} catch (e) {}
+}
+
+function latestUserText() {
+for (var i = hist.length - 1; i >= 0; i--) {
+if (hist[i] && hist[i].role === 'user' && hist[i].content) return String(hist[i].content);
+}
+return '';
+}
+
+function buildSuggestCard(items, key) {
+var card = document.createElement('aside');
+card.className = 'stack-suggest';
+card.setAttribute('aria-label', 'Add to My Stack?');
+card._items = items;
+card._dismissKey = key;
+var html = '<h3>Add to My Stack?</h3>';
+items.forEach(function(item, index) {
+var sourceClass = item.source === 'altura' ? 'altura' : (item.source === 'pharmacy' ? 'pharmacy' : 'mentioned');
+html += '<label class="stack-suggest-item"><input type="checkbox" checked data-index="' + index + '"><span>';
+html += '<span class="suggest-name">' + escapeHtml(item.name) + '</span>';
+if (item.sourceLabel) html += '<span class="suggest-source ' + sourceClass + '">' + escapeHtml(item.sourceLabel) + '</span>';
+if (item.source === 'altura') html += '<span class="suggest-disclaimer">' + escapeHtml(item.disclaimer || ALTURA_STACK_DISCLAIMER) + '</span>';
+html += '</span></label>';
+});
+html += '<p class="suggest-error"></p><div class="stack-suggest-actions">';
+html += '<button type="button" class="quiz-next" data-suggest="add">Add selected</button>';
+html += '<button type="button" class="quiz-back" data-suggest="dismiss">Not now</button>';
+html += '</div>';
+card.innerHTML = html;
+return card;
+}
+
+function offerStackSuggestions(msgDiv, replyText, userText) {
+var reply = String(replyText || '');
+if (!msgDiv || !reply.trim()) return;
+var key = suggestDismissKey(reply);
+if (suggestDismissed(key)) return;
+fetch('/api/suggested-items', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ reply: reply.slice(0, 24000), userText: String(userText || '').slice(0, 8000) })
+}).then(function(res) {
+return res.json();
+}).then(function(data) {
+var items = data && data.suggested_items;
+if (!items || !items.length || !msgDiv.parentNode) return;
+if (suggestDismissed(key)) return;
+var next = msgDiv.nextElementSibling;
+if (next && next.classList && next.classList.contains('stack-suggest')) return;
+msgDiv.parentNode.insertBefore(buildSuggestCard(items, key), msgDiv.nextSibling);
+if (shouldAutoScroll) scrollToBottom();
+}).catch(function() {});
+}
+
+function removeSuggestCard(card) {
+if (card && card.parentNode) card.parentNode.removeChild(card);
+}
+
+function stackNorm(name) {
+return String(name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function sameStackItem(a, b) {
+if (!a || !b) return false;
+if (stackNorm(a.name) !== stackNorm(b.name)) return false;
+var sa = a.source || '';
+var sb = b.source || '';
+if (!sa || !sb) return true;
+return sa === sb;
+}
+
+function newStackId() {
+return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function revealNewStackItems() {
+switchTab('stack');
+requestAnimationFrame(function() {
+var el = document.querySelector('#stack-list .stack-item.is-new');
+var scroller = document.querySelector('#panel-stack .panel-scroll');
+if (!el || !scroller) return;
+var top = el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 12;
+scroller.scrollTop = top > 0 ? top : 0;
+});
+}
+
+function addSelectedFromCard(card) {
+var err = card.querySelector('.suggest-error');
+var boxes = card.querySelectorAll('input[type="checkbox"]');
+var chosen = [];
+for (var i = 0; i < boxes.length; i++) {
+if (!boxes[i].checked) continue;
+var item = card._items[Number(boxes[i].getAttribute('data-index'))];
+if (item) chosen.push(item);
+}
+if (!chosen.length) {
+if (err) err.textContent = 'Select at least one item.';
+return;
+}
+var items = loadStack();
+var added = [];
+var full = false;
+chosen.forEach(function(sug) {
+var existing = null;
+items.forEach(function(item) {
+if (!existing && sameStackItem(item, sug)) existing = item;
+});
+if (existing) return;
+if (items.length >= 40) { full = true; return; }
+items.push({
+id: newStackId(),
+name: sug.name,
+dose: '',
+schedule: '',
+startDate: '',
+notes: '',
+active: true,
+status: 'considering',
+source: sug.source || '',
+sourceLabel: sug.sourceLabel || ''
+});
+added.push(items[items.length - 1].id);
+});
+highlightedStackIds = {};
+added.forEach(function(id) { highlightedStackIds[id] = true; });
+if (added.length) saveStack(items);
+var stackErr = document.getElementById('stack-error');
+if (stackErr) stackErr.textContent = full ? 'Your stack is full. Remove one to add another.' : '';
+rememberSuggestDismissed(card._dismissKey);
+removeSuggestCard(card);
+revealNewStackItems();
 }
 
 function escapeChatText(value) {
@@ -1710,13 +1891,18 @@ knownCloudMsgCount = hist.length;
 maybeWriteSnapshot(userEmail, 'load');
 box.innerHTML = '';
 addMsg('bot', 'Welcome back, <strong>' + rendered.profile.name + '</strong>! Focused on <strong>' + rendered.profile.goal + '</strong>.' + rendered.bloodworkNote + ' How can I help you today?', false);
+var lastOffer = null;
+var previousUser = '';
 hist.slice(2).forEach(function(msg) {
 if (msg.role === 'user') {
+previousUser = msg.content || '';
 addMsg('usr', displayUserMsg(msg.content), false);
 } else {
-addMsg('bot', fmt(msg.content), false);
+var el = addMsg('bot', fmt(msg.content), false);
+lastOffer = { el: el, text: msg.content, userText: previousUser };
 }
 });
+if (lastOffer) offerStackSuggestions(lastOffer.el, lastOffer.text, lastOffer.userText);
 console.log('Loaded conversation history from cloud');
 if (!holdChatMutation(box)) scrollToBottom();
 }
@@ -1816,6 +2002,7 @@ msgDiv._streamText = fullText;
 msgDiv._streamDone = true;
 msgDiv._streamNeedsCopy = true;
 if (paintStreamBubble(msgDiv) && shouldAutoScroll) scrollToBottom();
+offerStackSuggestions(msgDiv, fullText, latestUserText());
 } else if (msgDiv.parentNode) {
 msgDiv.parentNode.removeChild(msgDiv);
 }
@@ -2397,31 +2584,52 @@ else if (monthly != null) bits.push('Add a start / purchase date to project a re
 return bits.join(' · ');
 }
 
+function stackStatus(item) {
+if (item && (item.status === 'considering' || item.status === 'taking' || item.status === 'stopped')) return item.status;
+if (item && item.active === false) return 'stopped';
+return 'taking';
+}
+
 function activeStackPayload() {
-return loadStack().filter(function(item) { return item.active !== false; }).map(function(item) {
+return loadStack().filter(function(item) {
+var status = stackStatus(item);
+return status === 'taking' || status === 'considering';
+}).map(function(item) {
 return {
 name: item.name,
 dose: item.dose || '',
 schedule: item.schedule || '',
 startDate: item.startDate || '',
 notes: item.notes || '',
-active: true
+active: true,
+status: stackStatus(item)
 };
 });
 }
 
-function stackDetail(item) {
+function stackDetail(item, includeNotes) {
 var bits = [];
 if (item.dose) bits.push(item.dose);
 if (item.schedule) bits.push(item.schedule);
 if (item.startDate) bits.push('started ' + item.startDate);
 var line = bits.join(' · ');
+if (includeNotes === false) return line;
+var status = stackStatus(item);
+if (status === 'considering') line = line ? line + ' · considering' : 'considering';
+if (status === 'stopped') line = line ? line + ' · stopped' : 'stopped';
 if (item.notes) line = line ? line + '. ' + item.notes : item.notes;
 return line;
 }
 
+function statusButton(item, status, label) {
+var on = stackStatus(item) === status;
+return '<button type="button" class="status-btn' + (on ? ' on' : '') + '" data-action="status" data-status="' + status + '" data-id="' + escapeHtml(item.id) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + label + '</button>';
+}
+
 function renderStackItem(item) {
-var paused = item.active === false;
+var stopped = stackStatus(item) === 'stopped';
+var fresh = !!highlightedStackIds[item.id];
+var editing = editingStackId === item.id;
 var cost = '';
 if (PRO_PREVIEW_OPEN) {
 var line = stackCostLine(item);
@@ -2432,12 +2640,33 @@ cost = '<div class="cost-grid">' +
 (line ? '<div class="stack-meta">' + escapeHtml(line) + '</div>' : '') +
 (reorderDue(item) ? '<button type="button" class="labs-btn primary reorder-btn" data-action="reorder" data-id="' + escapeHtml(item.id) + '">Reorder</button>' : '');
 }
-return '<article class="stack-item' + (paused ? ' paused' : '') + '">' +
+var edit = '';
+if (editing) {
+edit = '<div class="stack-edit">' +
+'<div class="intake-field"><label>Dose<input type="text" data-edit="dose" data-id="' + escapeHtml(item.id) + '" placeholder="Your notes" value="' + escapeHtml(item.dose || '') + '" autocomplete="off"></label></div>' +
+'<div class="intake-field"><label>Schedule<input type="text" data-edit="schedule" data-id="' + escapeHtml(item.id) + '" value="' + escapeHtml(item.schedule || '') + '" autocomplete="off"></label></div>' +
+'<div class="intake-field"><label>Start / purchase date<input type="date" data-edit="startDate" data-id="' + escapeHtml(item.id) + '" value="' + escapeHtml(item.startDate || '') + '"></label></div>' +
+'</div>';
+}
+var sourceClass = item.source === 'altura' ? 'altura' : (item.source === 'pharmacy' ? 'pharmacy' : 'mentioned');
+var source = item.sourceLabel ? '<div class="suggest-source ' + sourceClass + '">' + escapeHtml(item.sourceLabel) + '</div>' : '';
+var disclaimer = item.source === 'altura' ? '<p class="suggest-disclaimer">' + escapeHtml(ALTURA_STACK_DISCLAIMER) + '</p>' : '';
+var detail = stackDetail(item, false);
+return '<article class="stack-item' + (stopped ? ' paused' : '') + (fresh ? ' is-new' : '') + '">' +
 '<div class="stack-top"><div class="stack-name">' + escapeHtml(item.name) + '</div><div class="stack-actions">' +
-'<button type="button" class="mini-btn" data-action="toggle" data-id="' + escapeHtml(item.id) + '">' + (paused ? 'Paused' : 'Active') + '</button>' +
+'<button type="button" class="mini-btn" data-action="edit" data-id="' + escapeHtml(item.id) + '">' + (editing ? 'Done' : 'Edit') + '</button>' +
 '<button type="button" class="mini-btn danger" data-action="remove" data-id="' + escapeHtml(item.id) + '">Remove</button>' +
 '</div></div>' +
-(stackDetail(item) ? '<div class="stack-meta">' + escapeHtml(stackDetail(item)) + '</div>' : '') +
+source +
+disclaimer +
+'<div class="status-toggle" role="group" aria-label="Status for ' + escapeHtml(item.name) + '">' +
+statusButton(item, 'considering', 'Considering') +
+statusButton(item, 'taking', 'Taking') +
+statusButton(item, 'stopped', 'Stopped') +
+'</div>' +
+'<div class="intake-field stack-note-field"><label>Note<textarea data-note data-id="' + escapeHtml(item.id) + '" placeholder="Your notes">' + escapeHtml(item.notes || '') + '</textarea></label></div>' +
+edit +
+(detail ? '<div class="stack-meta">' + escapeHtml(detail) + '</div>' : '') +
 cost +
 '</article>';
 }
@@ -2476,7 +2705,8 @@ dose: document.getElementById('stack-dose').value.trim(),
 schedule: document.getElementById('stack-schedule').value.trim(),
 startDate: document.getElementById('stack-start').value,
 notes: document.getElementById('stack-notes').value.trim(),
-active: true
+active: true,
+status: 'taking'
 };
 var price = optionalMoney(document.getElementById('stack-price') && document.getElementById('stack-price').value);
 var supplyDays = optionalDays(document.getElementById('stack-supply') && document.getElementById('stack-supply').value);
@@ -2494,12 +2724,29 @@ if (err) err.textContent = '';
 saveStack(items);
 }
 
-function toggleStackItem(id) {
+function setStackStatus(id, status) {
+if (status !== 'considering' && status !== 'taking' && status !== 'stopped') return;
 var items = loadStack();
 items.forEach(function(item) {
-if (item.id === id) item.active = item.active === false;
+if (item.id !== id) return;
+item.status = status;
+item.active = status !== 'stopped';
 });
 saveStack(items);
+}
+
+function toggleStackEdit(id) {
+editingStackId = editingStackId === id ? '' : id;
+renderStack();
+}
+
+function updateStackField(id, field, value) {
+if (field !== 'dose' && field !== 'schedule' && field !== 'startDate' && field !== 'notes') return;
+var items = loadStack();
+items.forEach(function(item) {
+if (item.id === id) item[field] = String(value || '');
+});
+persistStack(items);
 }
 
 function removeStackItem(id) {
@@ -2804,11 +3051,14 @@ if (!active.length) html.push('<p>No active peptides or supplements saved.</p>')
 else {
 html.push('<ul>');
 active.forEach(function(item) {
-html.push('<li><strong>' + escapeHtml(item.name) + '</strong> ' + escapeHtml(stackDetail(item)) + '</li>');
+var detail = stackDetail(item);
+if (item.sourceLabel) detail = detail ? detail + ' · ' + item.sourceLabel : item.sourceLabel;
+if (item.source === 'altura') detail = detail ? detail + '. ' + ALTURA_STACK_DISCLAIMER : ALTURA_STACK_DISCLAIMER;
+html.push('<li><strong>' + escapeHtml(item.name) + '</strong> ' + escapeHtml(detail) + '</li>');
 });
 html.push('</ul>');
 }
-if (paused.length) html.push('<p>Paused: ' + escapeHtml(paused.map(function(item) { return item.name; }).join(', ')) + '</p>');
+if (paused.length) html.push('<p>Stopped: ' + escapeHtml(paused.map(function(item) { return item.name; }).join(', ')) + '</p>');
 html.push('<h2>Saved lab biomarkers</h2>');
 if (!labs.length) html.push('<p>No lab uploads saved on this device.</p>');
 labs.forEach(function(lab) {
@@ -3128,14 +3378,16 @@ var btn = e.target;
 while (btn && btn !== this && !btn.getAttribute('data-action')) btn = btn.parentNode;
 if (!btn || btn === this) return;
 var id = btn.getAttribute('data-id');
-if (btn.getAttribute('data-action') === 'toggle') toggleStackItem(id);
 if (btn.getAttribute('data-action') === 'remove') removeStackItem(id);
 if (btn.getAttribute('data-action') === 'reorder') reorderStackItem();
+if (btn.getAttribute('data-action') === 'edit') toggleStackEdit(id);
+if (btn.getAttribute('data-action') === 'status') setStackStatus(id, btn.getAttribute('data-status'));
 });
 document.getElementById('stack-list').addEventListener('change', function(e) {
 var input = e.target;
-if (!input || !input.getAttribute || !input.getAttribute('data-cost')) return;
+if (!input || !input.getAttribute) return;
 var id = input.getAttribute('data-id');
+if (input.getAttribute('data-cost')) {
 var field = input.getAttribute('data-cost');
 var items = loadStack();
 items.forEach(function(item) {
@@ -3145,6 +3397,23 @@ if (next == null) delete item[field];
 else item[field] = next;
 });
 saveStack(items);
+return;
+}
+if (input.hasAttribute('data-note')) updateStackField(id, 'notes', input.value);
+else if (input.getAttribute('data-edit')) updateStackField(id, input.getAttribute('data-edit'), input.value);
+});
+document.getElementById('msgs').addEventListener('click', function(e) {
+var btn = e.target && e.target.closest ? e.target.closest('[data-suggest]') : null;
+if (!btn) return;
+var card = btn.closest('.stack-suggest');
+if (!card) return;
+e.preventDefault();
+if (btn.getAttribute('data-suggest') === 'dismiss') {
+rememberSuggestDismissed(card._dismissKey);
+removeSuggestCard(card);
+return;
+}
+if (btn.getAttribute('data-suggest') === 'add') addSelectedFromCard(card);
 });
 var costFields = document.getElementById('stack-cost-fields');
 if (costFields) costFields.hidden = !PRO_PREVIEW_OPEN;

@@ -7,7 +7,7 @@ const { Pinecone } = require('@pinecone-database/pinecone');
 const OpenAI = require('openai');
 const fs = require('fs');
 const crypto = require('crypto');
-const { loadCatalogs, catalogSummary, formatModelCatalog } = require('./lib/catalogs');
+const { loadCatalogs, catalogSummary, formatModelCatalog, suggestStackItems } = require('./lib/catalogs');
 
 const app = express();
 app.use(cors());
@@ -612,7 +612,8 @@ function formatActiveStack(activeStack) {
       return;
     }
     if (!item || typeof item !== 'object') return;
-    if (item.active === false || item.paused === true) return;
+    if (item.status === 'stopped' || item.status === 'paused') return;
+    if (!item.status && (item.active === false || item.paused === true)) return;
     const name = clipText(item.name, 80);
     if (!name) return;
     const dose = clipText(item.dose, 60);
@@ -620,6 +621,7 @@ function formatActiveStack(activeStack) {
     const startDate = clipText(item.startDate, 32);
     const notes = clipText(item.notes, 140);
     let line = '- ' + name;
+    if (item.status === 'considering') line += ' (considering)';
     if (dose) line += ' ' + dose;
     if (schedule) line += ', ' + schedule;
     if (startDate) line += ' (started ' + startDate + ')';
@@ -908,6 +910,18 @@ app.post('/api/waitlist', function(req, res) {
 
 app.get('/api/catalogs', function(req, res) {
   res.json(catalogSummary(productCatalogs));
+});
+
+app.post('/api/suggested-items', function(req, res) {
+  const src = jsonBody(req);
+  const reply = String(src.reply == null ? '' : src.reply).slice(0, 24000);
+  const userText = String(src.userText == null ? '' : src.userText).slice(0, 8000);
+  try {
+    res.json({ suggested_items: suggestStackItems(productCatalogs, reply, userText) });
+  } catch (err) {
+    console.error('Suggested items failed:', err.message);
+    res.json({ suggested_items: [] });
+  }
 });
 
 app.get('/api/stats', async function(req, res) {

@@ -5,7 +5,18 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const { loadCatalogs, catalogSummary, formatModelCatalog, ALTURA_DISCLAIMER, PHARMACY_LABEL } = require('../lib/catalogs');
+const {
+  loadCatalogs,
+  catalogSummary,
+  formatModelCatalog,
+  suggestStackItems,
+  ALTURA_DISCLAIMER,
+  PHARMACY_LABEL,
+  STACK_ALTURA_LABEL,
+  STACK_PHARMACY_LABEL,
+  STACK_USER_LABEL,
+  STACK_CARD_DISCLAIMER
+} = require('../lib/catalogs');
 
 const RUO_LABEL = 'For laboratory research use only — not for human or animal consumption. Not a drug, food or cosmetic. Supply is restricted to qualified researchers.';
 const ARA_290_DESCRIPTION = 'An 11-amino-acid peptide derived from the helix B domain of erythropoietin, studied in preclinical work on the innate repair receptor and small-fiber neuropathy models. Research use only.';
@@ -97,6 +108,65 @@ assert.ok(!/\$\d/.test(prompt), 'catalog prompt contains a numeric price');
   'getRelevantContext(question)'
 ].forEach(function(needle) {
   if (serverSource.indexOf(needle) === -1) fail('server.js missing unchanged behavior: ' + needle);
+});
+
+function namesOf(items, source) {
+  return items.filter(function(item) { return !source || item.source === source; }).map(function(item) { return item.name; });
+}
+
+function assertNoProtocolFields(item) {
+  ['dose', 'schedule', 'protocol', 'price', 'supplyDays', 'sizes', 'forms'].forEach(function(key) {
+    assert.ok(!Object.prototype.hasOwnProperty.call(item, key), item.name + ' included ' + key);
+  });
+}
+
+const both = suggestStackItems(catalogs, 'BPC-157 has been studied in tissue-repair models.', '');
+assert.deepStrictEqual(namesOf(both, 'altura'), ['BPC-157']);
+assert.deepStrictEqual(namesOf(both, 'pharmacy'), ['BPC-157']);
+both.forEach(assertNoProtocolFields);
+assert.strictEqual(both.find(function(item) { return item.source === 'altura'; }).sourceLabel, STACK_ALTURA_LABEL);
+assert.strictEqual(both.find(function(item) { return item.source === 'altura'; }).disclaimer, STACK_CARD_DISCLAIMER);
+assert.ok(!both.find(function(item) { return item.source === 'pharmacy'; }).disclaimer);
+assert.strictEqual(both.find(function(item) { return item.source === 'pharmacy'; }).sourceLabel, STACK_PHARMACY_LABEL);
+
+const blendOnly = suggestStackItems(catalogs, 'The blend to read about is BPC-157 + TB-500.', '');
+assert.deepStrictEqual(namesOf(blendOnly), ['BPC-157 + TB-500']);
+
+const blendAndSingle = suggestStackItems(catalogs, 'BPC-157 stands alone. The BPC-157 + TB-500 blend is separate.', '');
+assert.ok(namesOf(blendAndSingle).indexOf('BPC-157') !== -1);
+assert.ok(namesOf(blendAndSingle).indexOf('BPC-157 + TB-500') !== -1);
+
+const reta = suggestStackItems(catalogs, 'RETA is mentioned here without a protocol.', '');
+assert.deepStrictEqual(namesOf(reta), ['Retatrutide']);
+assert.strictEqual(reta[0].source, 'pharmacy');
+
+const glow = suggestStackItems(catalogs, 'A healthy glow is not a product. Glow is the research stack name.', '');
+assert.deepStrictEqual(namesOf(glow, 'altura'), ['Glow']);
+
+const sunset = suggestStackItems(catalogs, 'Watching the sunset is not a catalog hit.', 'I am taking creatine every morning.');
+assert.deepStrictEqual(namesOf(sunset), ['creatine']);
+assert.strictEqual(sunset[0].source, 'mentioned');
+assert.strictEqual(sunset[0].sourceLabel, STACK_USER_LABEL);
+assertNoProtocolFields(sunset[0]);
+
+const takingKnown = suggestStackItems(catalogs, 'Happy to talk that through.', "I'm taking BPC-157 and glow.");
+assert.ok(namesOf(takingKnown, 'altura').indexOf('BPC-157') !== -1);
+assert.ok(namesOf(takingKnown, 'altura').indexOf('Glow') !== -1);
+assert.ok(!takingKnown.some(function(item) { return item.source === 'mentioned'; }));
+
+assert.deepStrictEqual(suggestStackItems(catalogs, '', ''), []);
+
+const html = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+[
+  STACK_CARD_DISCLAIMER,
+  'Add to My Stack?',
+  'Add selected',
+  'Not now',
+  'Your notes',
+  "app.post('/api/suggested-items'"
+].forEach(function(needle) {
+  const haystack = needle.indexOf('app.post') === 0 ? serverSource : html;
+  if (haystack.indexOf(needle) === -1) fail('missing stack suggestion text: ' + needle);
 });
 
 console.log('catalog smoke ok');
