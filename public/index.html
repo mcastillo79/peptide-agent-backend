@@ -38,6 +38,9 @@
 --ok-bg: #ecfdf3;
 --info: #1d4ed8;
 --info-bg: #eff6ff;
+--trend-plot: #f8fafc;
+--trend-grid: #94a3b8;
+--trend-frame: #64748b;
 }
 body.dark {
 --page-bg: #0d1117;
@@ -60,6 +63,9 @@ body.dark {
 --ok-bg: rgba(22,163,74,0.16);
 --info: #93c5fd;
 --info-bg: rgba(37,99,235,0.18);
+--trend-plot: #0d1117;
+--trend-grid: #8b949e;
+--trend-frame: #c9d1d9;
 }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 html, body { height: 100vh; height: 100dvh; overflow: hidden; }
@@ -333,12 +339,20 @@ body.dark .pro-badge { background: var(--accent); color: #04140a; }
 .trend-card { border: 1px solid var(--border-col); border-radius: 12px; padding: 10px 12px; margin: 0 0 10px; background: var(--card-bg); }
 .trend-latest { font-size: 0.875rem; font-weight: 700; color: var(--text-main); }
 .trend-sub { margin-top: 2px; }
-.trend-svg { width: 100%; height: auto; display: block; margin-top: 6px; }
-.trend-band { fill: rgba(26,107,60,0.16); }
-body.dark .trend-band { fill: rgba(63,185,80,0.22); }
-.trend-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.trend-dot { fill: var(--accent); }
-.trend-axis { fill: var(--text-soft); font-size: 0.625rem; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; }
+.trend-frame-wrap { position: relative; width: 100%; margin-top: 8px; min-height: 140px; }
+.trend-frame-wrap::before { content: ""; display: block; padding-top: var(--trend-ratio, 52.5%); }
+.trend-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; overflow: hidden; font-size: 11px; }
+.trend-plot { fill: var(--trend-plot); }
+.trend-grid { stroke: var(--trend-grid); stroke-width: 1; }
+.trend-frame { fill: none; stroke: var(--trend-frame); stroke-width: 1.5; }
+.trend-band { fill: rgba(26,107,60,0.22); }
+body.dark .trend-band { fill: rgba(63,185,80,0.32); }
+.trend-line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.trend-dot { fill: var(--accent); stroke: var(--card-bg); stroke-width: 2; }
+.trend-axis, .trend-value { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; font-size: 11px; }
+.trend-axis { fill: var(--text-soft); font-weight: 650; }
+.trend-value { fill: var(--text-main); font-size: 13px; font-weight: 700; }
+.trend-hint { margin: 6px 0 0; font-size: 0.75rem; line-height: 1.4; color: var(--text-soft); }
 .labs-actions .labs-btn, #lab-trends .labs-btn { margin-bottom: 8px; }
 .reorder-btn { width: 100%; margin-top: 8px; }
 html, body, #msgs, #thread, #wrap, .panel, .panel-scroll, .msg, .msg strong, .msg a, .msg br {
@@ -699,6 +713,7 @@ To personalize my guidance, tell me:<br>
 <button type="button" id="hdr-account" role="menuitem" onclick="openAccountRestore()">Sign in / Switch account</button>
 </div>
 
+<script src="/lab-markers.js"></script>
 <script>
 var firebaseConfig = {
 apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
@@ -3055,6 +3070,59 @@ function removeStackItem(id) {
 saveStack(loadStack().filter(function(item) { return item.id !== id; }));
 }
 
+var catalogMatchNames = [];
+var catalogNamesRequested = false;
+var LAB_NOISE_KEY = 'peptideLabNoiseFiltered';
+
+function productMatchNames() {
+var names = catalogMatchNames.slice();
+loadStack().forEach(function(item) {
+if (item && item.name) names.push(String(item.name));
+});
+return names;
+}
+
+function loadCatalogMatchNames() {
+if (catalogNamesRequested) return;
+catalogNamesRequested = true;
+fetch('/api/catalog-names').then(function(res) {
+if (!res.ok) return null;
+return res.json();
+}).then(function(data) {
+if (!data || !Array.isArray(data.names)) return;
+catalogMatchNames = data.names.filter(function(name) { return typeof name === 'string' && name.trim(); });
+renderLabs();
+}).catch(function() {});
+}
+
+function displayBiomarkers(lab) {
+var items = (lab && lab.biomarkers) || [];
+if (!window.LabMarkers) return items.filter(function(item) { return item && item.name; });
+var names = productMatchNames();
+return items.filter(function(item) {
+return !window.LabMarkers.markerHiddenFromLabs(item, lab, names);
+});
+}
+
+function countHiddenLabMarkers() {
+if (!window.LabMarkers) return 0;
+var names = productMatchNames();
+var hidden = 0;
+loadLabHistory().forEach(function(lab) {
+(lab.biomarkers || []).forEach(function(item) {
+if (window.LabMarkers.markerHiddenFromLabs(item, lab, names)) hidden += 1;
+});
+});
+return hidden;
+}
+
+function noteHiddenLabMarkers(hiddenCount) {
+if (!hiddenCount) return;
+try {
+if (localStorage.getItem(LAB_NOISE_KEY) !== '1') localStorage.setItem(LAB_NOISE_KEY, '1');
+} catch (e) {}
+}
+
 function loadLabHistory() {
 try {
 var raw = JSON.parse(localStorage.getItem('peptideLabHistory') || '[]');
@@ -3102,11 +3170,17 @@ lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
 function recordLabResult(filenames, extractedText, biomarkers) {
 var history = loadLabHistory();
 var summary = String(extractedText || '').replace(/\s+/g, ' ').trim().slice(0, 1200);
+var cleaned = cleanBiomarkers(biomarkers);
+if (window.LabMarkers) cleaned = window.LabMarkers.filterLabMarkers(cleaned);
+if (!cleaned.length && window.LabMarkers && window.LabMarkers.looksLikeSupplementLabel(extractedText)) {
+renderLabs();
+return;
+}
 history.push({
 id: 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
 date: new Date().toISOString(),
 filenames: filenames || [],
-biomarkers: cleanBiomarkers(biomarkers),
+biomarkers: cleaned,
 summary: summary
 });
 if (history.length > 50) history = history.slice(history.length - 50);
@@ -3176,7 +3250,7 @@ var labs = loadLabHistory().slice().sort(function(a, b) { return String(a.date |
 var groups = {};
 var order = [];
 labs.forEach(function(lab) {
-(lab.biomarkers || []).forEach(function(item) {
+displayBiomarkers(lab).forEach(function(item) {
 var name = String(item && item.name || '').trim();
 var y = labNumber(item && item.value);
 if (!name || y == null) return;
@@ -3218,11 +3292,11 @@ return String(bd).localeCompare(String(ad));
 
 function trendChartSvg(points, range) {
 var w = 320;
-var h = 150;
-var padL = 46;
-var padR = 12;
-var padT = 16;
-var padB = 26;
+var h = 168;
+var padL = 52;
+var padR = 14;
+var padT = 18;
+var padB = 28;
 var plotW = w - padL - padR;
 var plotH = h - padT - padB;
 var min = points[0].y;
@@ -3235,10 +3309,12 @@ if (range) {
 if (range.low < min) min = range.low;
 if (range.high > max) max = range.high;
 }
+var nonNegative = min >= 0 && (!range || range.low >= 0);
 if (min === max) { min -= 1; max += 1; }
 var span = max - min;
 min -= span * 0.12;
 max += span * 0.12;
+if (nonNegative && min < 0) min = 0;
 function xAt(index) {
 if (points.length === 1) return padL + plotW / 2;
 return padL + (plotW * index) / (points.length - 1);
@@ -3246,29 +3322,58 @@ return padL + (plotW * index) / (points.length - 1);
 function yAt(value) {
 return padT + ((max - value) / (max - min)) * plotH;
 }
-var parts = ['<svg class="trend-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Saved results over time">'];
+var parts = [];
+parts.push('<rect class="trend-plot" x="' + padL + '" y="' + padT + '" width="' + plotW + '" height="' + plotH + '" rx="4"></rect>');
 if (range) {
 var yHigh = yAt(range.high);
 var yLow = yAt(range.low);
-var top = Math.min(yHigh, yLow);
-parts.push('<rect class="trend-band" x="' + padL + '" y="' + top.toFixed(2) + '" width="' + plotW + '" height="' + Math.abs(yLow - yHigh).toFixed(2) + '"></rect>');
+var top = Math.max(padT, Math.min(yHigh, yLow));
+var bottom = Math.min(padT + plotH, Math.max(yHigh, yLow));
+parts.push('<rect class="trend-band" x="' + padL + '" y="' + top.toFixed(2) + '" width="' + plotW + '" height="' + Math.max(0, bottom - top).toFixed(2) + '"></rect>');
 }
+[0.25, 0.5, 0.75].forEach(function(t) {
+var y = (padT + plotH * t).toFixed(2);
+parts.push('<line class="trend-grid" x1="' + padL + '" y1="' + y + '" x2="' + (padL + plotW) + '" y2="' + y + '"></line>');
+});
+parts.push('<rect class="trend-frame" x="' + padL + '" y="' + padT + '" width="' + plotW + '" height="' + plotH + '" rx="4"></rect>');
+if (points.length > 1) {
 var coords = points.map(function(point, index) { return xAt(index).toFixed(2) + ',' + yAt(point.y).toFixed(2); });
-parts.push('<polyline class="trend-line" points="' + coords.join(' ') + '"></polyline>');
+parts.push('<polyline class="trend-line" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="' + coords.join(' ') + '"></polyline>');
+}
+var radius = points.length === 1 ? 8 : 4.5;
 points.forEach(function(point, index) {
-parts.push('<circle class="trend-dot" cx="' + xAt(index).toFixed(2) + '" cy="' + yAt(point.y).toFixed(2) + '" r="3.5"></circle>');
+parts.push('<circle class="trend-dot" cx="' + xAt(index).toFixed(2) + '" cy="' + yAt(point.y).toFixed(2) + '" r="' + radius + '"></circle>');
 });
 var axisSpan = max - min;
 function axisLabel(n) {
 if (axisSpan >= 20) return String(Math.round(n));
 return formatLabNumber(Math.round(n * 10) / 10);
 }
-parts.push('<text class="trend-axis" x="' + (padL - 6) + '" y="' + (padT + 4) + '" text-anchor="end">' + escapeHtml(axisLabel(max)) + '</text>');
-parts.push('<text class="trend-axis" x="' + (padL - 6) + '" y="' + (padT + plotH) + '" text-anchor="end">' + escapeHtml(axisLabel(min)) + '</text>');
-parts.push('<text class="trend-axis" x="' + xAt(0).toFixed(2) + '" y="' + (h - 6) + '" text-anchor="' + (points.length === 1 ? 'middle' : 'start') + '">' + escapeHtml(points[0].label) + '</text>');
-if (points.length > 1) parts.push('<text class="trend-axis" x="' + xAt(points.length - 1).toFixed(2) + '" y="' + (h - 6) + '" text-anchor="end">' + escapeHtml(points[points.length - 1].label) + '</text>');
-parts.push('</svg>');
-return parts.join('');
+function yLabel(value, y) {
+parts.push('<text class="trend-axis" font-size="11" x="' + (padL - 8) + '" y="' + y.toFixed(2) + '" text-anchor="end">' + escapeHtml(axisLabel(value)) + '</text>');
+}
+yLabel(max, padT + 10);
+yLabel((max + min) / 2, padT + plotH / 2 + 4);
+yLabel(min, padT + plotH - 2);
+points.forEach(function(point, index) {
+if (points.length > 1 && index !== points.length - 1) return;
+var cx = xAt(index);
+var cy = yAt(point.y);
+var ly = cy - (points.length === 1 ? 18 : 16);
+var lx = cx;
+var anchor = 'middle';
+if (points.length > 1) {
+anchor = 'end';
+lx = cx - 12;
+if (lx < padL + 36) { anchor = 'start'; lx = cx + 12; }
+}
+if (ly < padT + 14) ly = Math.min(padT + plotH - 6, cy + 20);
+parts.push('<text class="trend-value" font-size="13" font-weight="700" x="' + lx.toFixed(2) + '" y="' + ly.toFixed(2) + '" text-anchor="' + anchor + '">' + escapeHtml(formatLabNumber(point.y)) + '</text>');
+});
+parts.push('<text class="trend-axis" font-size="11" x="' + xAt(0).toFixed(2) + '" y="' + (h - 8) + '" text-anchor="' + (points.length === 1 ? 'middle' : 'start') + '">' + escapeHtml(points[0].label) + '</text>');
+if (points.length > 1) parts.push('<text class="trend-axis" font-size="11" x="' + xAt(points.length - 1).toFixed(2) + '" y="' + (h - 8) + '" text-anchor="end">' + escapeHtml(points[points.length - 1].label) + '</text>');
+var ratio = (h / w * 100).toFixed(4);
+return '<div class="trend-frame-wrap" style="--trend-ratio:' + ratio + '%"><svg class="trend-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Saved results over time" style="font-size:11px">' + parts.join('') + '</svg></div>';
 }
 
 function renderLabTrends() {
@@ -3280,6 +3385,9 @@ host.innerHTML = html + '</div>';
 return;
 }
 html += '<p class="track-note">For tracking only. Discuss your results with your healthcare provider. A shaded band is the reference range when one was saved with the result.</p>';
+var hiddenMarkers = countHiddenLabMarkers();
+noteHiddenLabMarkers(hiddenMarkers);
+if (hiddenMarkers) html += '<p class="track-note">Supplement doses saved from a product label are hidden here. They are still stored on this device and were not deleted.</p>';
 html += '<button type="button" class="labs-btn" onclick="exportLabSummary()">Export PDF summary</button>';
 var series = labSeries();
 if (!series.length) html += '<p class="empty-note">Upload labs to see a value over time.</p>';
@@ -3292,22 +3400,29 @@ html += '<article class="trend-card"><div class="trend-latest">' + escapeHtml(it
 html += '<p class="trend-sub">Latest ' + escapeHtml(formatLabNumber(last.y)) + unit + (delta ? ' · ' + escapeHtml(delta) : '') + '</p>';
 if (item.range) html += '<p class="trend-sub">Reference range ' + escapeHtml(formatLabNumber(item.range.low)) + '–' + escapeHtml(formatLabNumber(item.range.high)) + unit + '</p>';
 html += trendChartSvg(item.points, item.range);
+if (item.points.length < 2) html += '<p class="trend-hint">Add another result to see a trend</p>';
 html += '</article>';
 });
 host.innerHTML = html + '</div>';
 }
 
 function renderLabs() {
+loadCatalogMatchNames();
 renderLabTrends();
 var list = document.getElementById('labs-list');
 if (!list) return;
 var labs = loadLabHistory().slice().sort(function(a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
+labs = labs.filter(function(lab) {
+var visible = displayBiomarkers(lab);
+if (visible.length) return true;
+return !(lab.biomarkers && lab.biomarkers.length);
+});
 if (!labs.length) {
 list.innerHTML = '<p class="empty-note">No labs saved yet. Upload a PDF or photo of your bloodwork to start a timeline.</p>';
 return;
 }
 list.innerHTML = labs.map(function(lab) {
-var pills = (lab.biomarkers || []).map(function(item) {
+var pills = displayBiomarkers(lab).map(function(item) {
 var unit = item.unit ? ' ' + escapeHtml(item.unit) : '';
 return '<span class="bio-pill flag-' + escapeHtml(item.flag) + '"><span class="bio-name">' + escapeHtml(item.name) + '</span><span class="bio-val">' + escapeHtml(item.value) + unit + '</span><span class="bio-flag">' + escapeHtml(flagLabel(item.flag)) + '</span></span>';
 }).join('');
@@ -3362,13 +3477,20 @@ html.push('</ul>');
 }
 if (paused.length) html.push('<p>Stopped: ' + escapeHtml(paused.map(function(item) { return item.name; }).join(', ')) + '</p>');
 html.push('<h2>Saved lab biomarkers</h2>');
-if (!labs.length) html.push('<p>No lab uploads saved on this device.</p>');
-labs.forEach(function(lab) {
+var printableLabs = labs.filter(function(lab) {
+var markers = displayBiomarkers(lab);
+if (markers.length) return true;
+return !(lab.biomarkers && lab.biomarkers.length);
+});
+if (!printableLabs.length) html.push('<p>No lab uploads saved on this device.</p>');
+printableLabs.forEach(function(lab) {
+var markers = displayBiomarkers(lab);
+if ((lab.biomarkers || []).length && !markers.length) return;
 html.push('<h3>' + escapeHtml(formatWhen(lab.date)) + '</h3>');
 if (lab.filenames && lab.filenames.length) html.push('<p>' + escapeHtml(lab.filenames.join(', ')) + '</p>');
-if (lab.biomarkers && lab.biomarkers.length) {
+if (markers.length) {
 html.push('<ul>');
-lab.biomarkers.forEach(function(item) {
+markers.forEach(function(item) {
 html.push('<li>' + escapeHtml(item.name) + ': ' + escapeHtml(item.value) + (item.unit ? ' ' + escapeHtml(item.unit) : '') + ' (' + escapeHtml(flagLabel(item.flag)) + ')</li>');
 });
 html.push('</ul>');

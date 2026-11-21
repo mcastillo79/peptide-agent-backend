@@ -8,6 +8,7 @@ const OpenAI = require('openai');
 const fs = require('fs');
 const crypto = require('crypto');
 const { loadCatalogs, catalogSummary, formatModelCatalog, suggestStackItems } = require('./lib/catalogs');
+const { looksLikeSupplementLabel, isLabUnit, filterLabMarkers } = require('./lib/lab-markers');
 
 const app = express();
 app.use(cors());
@@ -222,10 +223,26 @@ function splitExtractedText(text) {
   return prose || raw;
 }
 
-function looksLikeUnit(unit) {
-  if (!unit) return false;
-  if (unit === '%') return true;
-  return /\/|(?:mg|mcg|ug|µg|ng|pg|mol|iu|dl|ml|meq|fl)\b/i.test(unit);
+function catalogMatchNames(catalogs) {
+  const names = [];
+  const seen = new Set();
+  function add(value) {
+    const text = String(value || '').replace(/\s+/g, ' ').trim();
+    if (text.length < 3 || text.length > 80) return;
+    const key = text.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    names.push(text);
+  }
+  [catalogs.altura, catalogs.pharmacy].forEach(function(catalog) {
+    (catalog.products || []).forEach(function(product) {
+      add(product.name);
+      (product.variants || []).forEach(function(variant) {
+        add(variant && variant.name);
+      });
+    });
+  });
+  return names;
 }
 
 function parseBiomarkerLines(text) {
@@ -266,8 +283,7 @@ function parseBiomarkerLines(text) {
     if (/^(the|and|with|from|result|results|marker|markers|value|range|reference|lab|labs|test|note|notes)$/i.test(name)) return;
     const value = matched[2];
     const unit = (matched[3] || '').trim();
-    const hadColon = /[:|]/.test(line);
-    if (!hadColon && !flag && !looksLikeUnit(unit)) return;
+    if (!isLabUnit(unit)) return;
     const key = name.toLowerCase() + '|' + value + '|' + unit.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
@@ -279,9 +295,10 @@ function parseBiomarkerLines(text) {
 function parseBiomarkers(text) {
   try {
     if (!text || typeof text !== 'string') return [];
+    if (looksLikeSupplementLabel(text)) return [];
     const fromJson = extractBiomarkerJson(text);
-    if (fromJson && fromJson.length) return fromJson.slice(0, 100);
-    return parseBiomarkerLines(splitExtractedText(text)).slice(0, 100);
+    const parsed = fromJson && fromJson.length ? fromJson : parseBiomarkerLines(splitExtractedText(text));
+    return filterLabMarkers(parsed).slice(0, 100);
   } catch (err) {
     return [];
   }
@@ -301,7 +318,7 @@ function collectBiomarkers(parts) {
   return all.slice(0, 100);
 }
 
-const BIOMARKER_PROMPT_SUFFIX = '\n\nAfter the extraction, end your reply with a machine-readable block and nothing after it:\nBIOMARKERS_JSON\n[{"name":"Marker","value":"0","unit":"","flag":"info","refLow":null,"refHigh":null}]\nflag must be exactly "normal", "high", "low", or "info". Put the measured result in value and the unit separately. refLow and refHigh are the numeric reference range bounds printed on the report, or null when no range is visible. If no markers are visible, end with BIOMARKERS_JSON followed by [].';
+const BIOMARKER_PROMPT_SUFFIX = '\n\nAfter the extraction, end your reply with a machine-readable block and nothing after it:\nBIOMARKERS_JSON\n[{"name":"Marker","value":"0","unit":"","flag":"info","refLow":null,"refHigh":null}]\nflag must be exactly "normal", "high", "low", or "info". Put only a measured blood or lab result in value, and put the laboratory unit separately (for example ng/mL, mg/dL, mmol/L, mIU/L, g/dL, or %). refLow and refHigh are the numeric reference range bounds printed on the report, or null when no range is visible. Do not include supplement facts, product-label ingredients, serving sizes, or doses in mg, mcg, µg, g, or IU. If this is a supplement facts panel, a product label, or anything other than a lab report, end with BIOMARKERS_JSON followed by []. If no lab markers are visible, end with BIOMARKERS_JSON followed by [].';
 
 async function extractLabReport(file) {
   const kind = uploadKind(file);
@@ -312,13 +329,13 @@ async function extractLabReport(file) {
     const imageData = fs.readFileSync(file.path);
     content = [
       { type: 'image', source: { type: 'base64', media_type: imageMediaType(file), data: imageData.toString('base64') } },
-      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results you can see. List each marker with its value and reference range if visible. Be thorough and accurate.' + BIOMARKER_PROMPT_SUFFIX }
+      { type: 'text', text: 'If this is a bloodwork or lab report, extract every measured lab value you can see, with its laboratory unit and reference range when visible. If this is a supplement facts panel, product label, or anything other than a lab report, do not list ingredient doses. Be thorough and accurate.' + BIOMARKER_PROMPT_SUFFIX }
     ];
   } else if (kind === 'pdf') {
     const pdfData = fs.readFileSync(file.path);
     content = [
       { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfData.toString('base64') } },
-      { type: 'text', text: 'This is a bloodwork or lab report. Please extract all the lab values, markers, and results. List each marker with its value and reference range if visible. Be thorough and accurate.' + BIOMARKER_PROMPT_SUFFIX }
+      { type: 'text', text: 'If this is a bloodwork or lab report, extract every measured lab value, with its laboratory unit and reference range when visible. If this is a supplement facts panel, product label, or anything other than a lab report, do not list ingredient doses. Be thorough and accurate.' + BIOMARKER_PROMPT_SUFFIX }
     ];
   } else {
     const err = new Error(name + ' is not supported. Only PDF and image files are supported.');
@@ -912,6 +929,10 @@ app.get('/api/catalogs', function(req, res) {
   res.json(catalogSummary(productCatalogs));
 });
 
+app.get('/api/catalog-names', function(req, res) {
+  res.json({ names: catalogMatchNames(productCatalogs) });
+});
+
 app.post('/api/suggested-items', function(req, res) {
   const src = jsonBody(req);
   const reply = String(src.reply == null ? '' : src.reply).slice(0, 24000);
@@ -936,7 +957,7 @@ app.get('/api/stats', async function(req, res) {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log('Server running on port ' + PORT));
+const server = app.listen(PORT, '0.0.0.0', () => console.log('Server running on port ' + PORT));
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 app.post('/create-checkout-session', async (req, res) => {
   try {
@@ -969,5 +990,7 @@ app.post('/create-checkout-session', async (req, res) => {
 module.exports.prepareMessagesForModel = prepareMessagesForModel;
 module.exports.friendlyAnthropicMessage = friendlyAnthropicMessage;
 module.exports.parseBiomarkers = parseBiomarkers;
+module.exports.server = server;
+module.exports.catalogMatchNames = catalogMatchNames;
 module.exports.splitExtractedText = splitExtractedText;
 module.exports.formatActiveStack = formatActiveStack;
