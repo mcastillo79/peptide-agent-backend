@@ -139,7 +139,12 @@ body.dark #sel-actions #sel-ask:hover, body.dark #sel-actions #sel-ask:focus-vis
 .qb { flex-shrink: 0; padding: 6px 12px; border: 1px solid var(--border-col); border-radius: 20px; font-size: 0.75rem; color: var(--qb-text); background: var(--qb-bg); cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s; }
 .qb:hover { background: var(--header-bg); color: #fff; border-color: var(--header-bg); }
 #inp-area { display: flex; gap: 8px; padding: 14px 16px; background: var(--card-bg); border-top: 1px solid var(--border-col); align-items: flex-end; flex-shrink: 0; }
-#upload-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border-col); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.125rem; flex-shrink: 0; }
+#attach-wrap { position: relative; flex-shrink: 0; }
+#upload-btn { width: 40px; height: 40px; margin: 0; padding: 0; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border-col); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.125rem; font-family: inherit; line-height: 1; color: inherit; flex-shrink: 0; }
+#upload-btn[aria-expanded="true"] { border-color: var(--accent); }
+#attach-menu { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 40; min-width: 190px; max-width: calc(100vw - 24px); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); padding: 6px; }
+#attach-menu button { display: block; width: 100%; text-align: left; margin: 0; background: transparent; border: none; color: var(--text-main); font-family: inherit; font-size: 0.875rem; font-weight: 650; padding: 10px 12px; border-radius: 8px; cursor: pointer; min-height: 44px; }
+#attach-menu button:hover, #attach-menu button:focus-visible { background: var(--input-bg); color: var(--accent); }
 #upload-status { padding: 6px 16px; font-size: 0.75rem; color: var(--accent); background: rgba(26,107,60,0.08); border-top: 1px solid var(--border-col); display: none; flex-shrink: 0; }
 #upload-status.error { color: #c53030; background: #fff5f5; }
 body.dark #upload-status.error { color: #ffb4b4; background: rgba(197,48,48,0.16); }
@@ -221,7 +226,7 @@ body.dark .quiz-next { background: var(--accent); color: #04140a; }
 #intake-signin:hover, #intake-signin:focus-visible { background: rgba(26,107,60,0.08); }
 body.dark #intake-signin:hover, body.dark #intake-signin:focus-visible { background: rgba(63,185,80,0.14); }
 #intake-restore { display: block; width: 100%; background: none; border: none; cursor: pointer; text-align: center; margin-top: 12px; padding: 8px 4px; font-size: 0.8125rem; color: var(--accent); text-decoration: underline; font-family: inherit; }
-#intake-restore-panel[hidden], #intake-quiz[hidden], #quiz-track[hidden], #hdr-menu-panel[hidden], #text-size-popover[hidden], #quote-chip[hidden], #sel-actions[hidden], #intake-restore[hidden] { display: none !important; }
+#intake-restore-panel[hidden], #intake-quiz[hidden], #quiz-track[hidden], #hdr-menu-panel[hidden], #text-size-popover[hidden], #quote-chip[hidden], #sel-actions[hidden], #intake-restore[hidden], #attach-menu[hidden] { display: none !important; }
 .quiz-top, #quiz-track, #quiz-error, #intake-restore { flex-shrink: 0; }
 #restore-error { min-height: 18px; margin: 0 0 8px; color: #c53030; font-size: 0.8125rem; line-height: 1.4; }
 body.dark #restore-error { color: #ffb4b4; }
@@ -554,7 +559,13 @@ To personalize my guidance, tell me:<br>
 </div>
 
 <div id="inp-area">
-<label for="file-upload" id="upload-btn" title="Add bloodwork files" aria-label="Add bloodwork files">📎</label>
+<div id="attach-wrap">
+<button type="button" id="upload-btn" title="Add bloodwork files" aria-label="Add bloodwork files" aria-haspopup="menu" aria-expanded="false" aria-controls="attach-menu">📎</button>
+<div id="attach-menu" hidden role="menu" aria-label="Add files">
+<button type="button" role="menuitem" id="attach-choose">Photos or PDF</button>
+<button type="button" role="menuitem" id="attach-paste">Paste image</button>
+</div>
+</div>
 <textarea id="cinput" placeholder="Ask about peptides or attach labs..." rows="1"></textarea>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
 </div>
@@ -1644,6 +1655,7 @@ pop.style.right = 'auto';
 
 function toggleTextSizePopover(event) {
 if (event) event.stopPropagation();
+closeAttachMenu();
 var btn = event && event.currentTarget;
 var pop = document.getElementById('text-size-popover');
 if (!pop || !btn) return;
@@ -1661,6 +1673,7 @@ for (var i = 0; i < launches.length; i++) launches[i].setAttribute('aria-expande
 function toggleHeaderMenu(event) {
 if (event) event.stopPropagation();
 closeTextSizePopover();
+closeAttachMenu();
 var panel = document.getElementById('hdr-menu-panel');
 var btn = document.getElementById('hdr-menu-btn');
 if (!panel || !btn) return;
@@ -2343,14 +2356,9 @@ document.getElementById('sbtn').disabled = false;
 });
 }
 
-function handleFileUpload(event) {
-var selected = Array.prototype.slice.call(event.target.files || []);
-if (!selected.length) {
-event.target.value = '';
-return;
-}
+function addPendingUploads(selected) {
 var errors = [];
-selected.forEach(function(file) {
+(selected || []).forEach(function(file) {
 if (pendingFiles.length >= MAX_PENDING_FILES) {
 if (errors.indexOf('You can upload up to 10 files at a time.') === -1) {
 errors.push('You can upload up to 10 files at a time.');
@@ -2359,7 +2367,7 @@ return;
 }
 var kind = pendingFileKind(file);
 if (!kind) {
-errors.push(file.name + ' is not supported. Only PDF and image files are supported.');
+errors.push((file && file.name ? file.name : 'That file') + ' is not supported. Only PDF and image files are supported.');
 return;
 }
 if (file.size > MAX_PENDING_BYTES) {
@@ -2377,6 +2385,15 @@ showUploadNote(unique.join(' '), true);
 } else {
 readyUploadNote();
 }
+}
+
+function handleFileUpload(event) {
+var selected = Array.prototype.slice.call(event.target.files || []);
+if (!selected.length) {
+event.target.value = '';
+return;
+}
+addPendingUploads(selected);
 event.target.value = '';
 if (labPickerArmed) {
 labPickerArmed = false;
@@ -2384,7 +2401,292 @@ switchTab('chat');
 }
 }
 
+var pastedImageCount = 0;
+var lastHandledPaste = null;
+
+function extFromMime(type) {
+var mime = String(type || '').toLowerCase();
+if (mime.indexOf('jpeg') !== -1 || mime.indexOf('jpg') !== -1) return 'jpg';
+if (mime.indexOf('png') !== -1) return 'png';
+if (mime.indexOf('gif') !== -1) return 'gif';
+if (mime.indexOf('webp') !== -1) return 'webp';
+if (mime.indexOf('heic') !== -1) return 'heic';
+if (mime.indexOf('heif') !== -1) return 'heif';
+if (mime.indexOf('bmp') !== -1) return 'bmp';
+if (mime.indexOf('tif') !== -1) return 'tiff';
+var part = (mime.split('/')[1] || 'png').split('+')[0].split(';')[0].replace(/[^a-z0-9]/g, '');
+return part || 'png';
+}
+
+function normalizeClipboardImage(file, hintedType) {
+if (!file) return null;
+var type = String(file.type || hintedType || '').toLowerCase().split(';')[0].trim();
+var name = String(file.name || '').trim();
+if (type.indexOf('image/') !== 0) {
+if (/\.png$/i.test(name)) type = 'image/png';
+else if (/\.jpe?g$/i.test(name)) type = 'image/jpeg';
+else if (/\.gif$/i.test(name)) type = 'image/gif';
+else if (/\.webp$/i.test(name)) type = 'image/webp';
+else if (/\.heic$/i.test(name)) type = 'image/heic';
+else if (/\.heif$/i.test(name)) type = 'image/heif';
+else if (/\.bmp$/i.test(name)) type = 'image/bmp';
+else if (/\.tiff?$/i.test(name)) type = 'image/tiff';
+else return null;
+}
+if (!name) {
+pastedImageCount += 1;
+name = 'Pasted image ' + pastedImageCount + '.' + extFromMime(type);
+}
+if (name === String(file.name || '') && type === String(file.type || '').toLowerCase()) return file;
+try {
+return new File([file], name, { type: type, lastModified: file.lastModified || Date.now() });
+} catch (e) {
+return file;
+}
+}
+
+function genericImageName(name) {
+var value = String(name || '').trim();
+if (!value) return true;
+return /^(image|img|pasted image \d+)\.(png|jpe?g|gif|webp|heic|heif|bmp|tiff?)$/i.test(value);
+}
+
+function sameClipboardFile(a, b) {
+if (a === b) return true;
+if (!a || !b || a.size !== b.size) return false;
+if (!a.size) return false;
+var ta = String(a.type || '').toLowerCase();
+var tb = String(b.type || '').toLowerCase();
+if (ta && tb && ta !== tb) return false;
+var na = String(a.name || '');
+var nb = String(b.name || '');
+if (na && nb && na !== nb && !genericImageName(na) && !genericImageName(nb)) return false;
+return true;
+}
+
+function clipboardImageFiles(clipboardData) {
+var found = [];
+if (!clipboardData) return found;
+function pushFile(file, hintedType) {
+var next = normalizeClipboardImage(file, hintedType);
+if (!next) return;
+for (var i = 0; i < found.length; i++) {
+if (!sameClipboardFile(found[i], next)) continue;
+if (genericImageName(found[i].name) && !genericImageName(next.name)) found[i] = next;
+return;
+}
+found.push(next);
+}
+var items = clipboardData.items;
+if (items && items.length) {
+for (var j = 0; j < items.length; j++) {
+var item = items[j];
+if (!item) continue;
+var itemType = String(item.type || '').toLowerCase();
+var imageItem = itemType.indexOf('image/') === 0;
+if (item.kind !== 'file' && !imageItem) continue;
+var fromItem = null;
+try { fromItem = item.getAsFile ? item.getAsFile() : null; } catch (e) { fromItem = null; }
+if (fromItem) pushFile(fromItem, imageItem ? itemType : '');
+}
+}
+var list = clipboardData.files;
+if (list && list.length) {
+for (var k = 0; k < list.length; k++) pushFile(list[k], '');
+}
+return found;
+}
+
+function clipboardPasteText(clipboardData) {
+var text = '';
+var html = '';
+try { text = String(clipboardData.getData('text/plain') || ''); } catch (e) { text = ''; }
+try { html = String(clipboardData.getData('text/html') || ''); } catch (e2) { html = ''; }
+var cleaned = text.replace(/\uFFFC/g, '');
+if (!cleaned.replace(/\s/g, '').length) return '';
+var trimmed = cleaned.trim();
+if (/^(blob:|data:image\/)/i.test(trimmed)) return '';
+if (trimmed.indexOf('data:image/') !== -1 && trimmed.length > 64) return '';
+if (html && /<img\b/i.test(html)) {
+var withoutImgs = html.replace(/<img\b[^>]*>/ig, '');
+var imageOnly = !/<(p|div|span|br|li|td|th|h[1-6]|a|ul|ol|table|blockquote)\b/i.test(withoutImgs);
+if (imageOnly) {
+var alt = '';
+var src = '';
+var altMatch = html.match(/\balt\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+var srcMatch = html.match(/\bsrc\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+if (altMatch) alt = altMatch[1] || altMatch[2] || '';
+if (srcMatch) src = srcMatch[1] || srcMatch[2] || '';
+if (trimmed === String(alt).trim() || trimmed === String(src).trim()) return '';
+if (/^image\.(png|jpe?g|gif|webp|heic|heif|bmp|tiff?)$/i.test(trimmed)) return '';
+}
+}
+return cleaned;
+}
+
+function insertComposerText(text) {
+var el = document.getElementById('cinput');
+if (!el || !text) return;
+var value = el.value || '';
+var start = typeof el.selectionStart === 'number' ? el.selectionStart : value.length;
+var end = typeof el.selectionEnd === 'number' ? el.selectionEnd : start;
+el.value = value.slice(0, start) + text + value.slice(end);
+var caret = start + text.length;
+try { el.selectionStart = el.selectionEnd = caret; } catch (e) {}
+ag(el);
+}
+
+function scrubComposerImageDump(snapshot) {
+var el = document.getElementById('cinput');
+if (!el) return;
+var value = el.value || '';
+if (value === snapshot) return;
+if (value.indexOf('data:image/') !== -1 || value.indexOf('<img') !== -1 || value.indexOf('\uFFFC') !== -1) {
+el.value = snapshot;
+ag(el);
+}
+}
+
+function pasteAlreadyHandled(event) {
+if (!event) return true;
+if (event === lastHandledPaste) return true;
+try { if (event.__scoutPasteSeen) return true; } catch (e) {}
+return false;
+}
+
+function markPasteHandled(event) {
+lastHandledPaste = event;
+try { event.__scoutPasteSeen = true; } catch (e) {}
+}
+
+function onComposerPaste(event) {
+if (pasteAlreadyHandled(event)) return;
+var clipboard = event.clipboardData;
+if (!clipboard && window.clipboardData) clipboard = window.clipboardData;
+if (!clipboard) return;
+var images = clipboardImageFiles(clipboard);
+if (!images.length) return;
+markPasteHandled(event);
+var text = clipboardPasteText(clipboard);
+if (event.cancelable) event.preventDefault();
+if (event.stopPropagation) event.stopPropagation();
+if (text) insertComposerText(text);
+var el = document.getElementById('cinput');
+var snapshot = el ? el.value : '';
+addPendingUploads(images);
+setTimeout(function() { scrubComposerImageDump(snapshot); }, 0);
+if (window.requestAnimationFrame) requestAnimationFrame(function() { scrubComposerImageDump(snapshot); });
+}
+
+function onDocumentPaste(event) {
+var el = document.getElementById('cinput');
+if (!el || !event) return;
+var active = document.activeElement;
+var focused = active === el || (!!active && el.contains(active));
+if (!focused && event.target !== el) return;
+onComposerPaste(event);
+}
+
+function closeAttachMenu() {
+var menu = document.getElementById('attach-menu');
+var btn = document.getElementById('upload-btn');
+if (menu) menu.hidden = true;
+if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+function toggleAttachMenu(event) {
+if (event) {
+event.preventDefault();
+event.stopPropagation();
+}
+closeHeaderMenu();
+closeTextSizePopover();
+var menu = document.getElementById('attach-menu');
+var btn = document.getElementById('upload-btn');
+if (!menu || !btn) return;
+if (!menu.hidden) {
+closeAttachMenu();
+return;
+}
+menu.hidden = false;
+btn.setAttribute('aria-expanded', 'true');
+}
+
+function chooseAttachFiles(event) {
+if (event) {
+event.preventDefault();
+event.stopPropagation();
+}
+closeAttachMenu();
+var input = document.getElementById('file-upload');
+if (input) input.click();
+}
+
+function focusComposer() {
+var el = document.getElementById('cinput');
+if (!el) return;
+try { el.focus({ preventScroll: true }); } catch (e) { try { el.focus(); } catch (e2) {} }
+}
+
+function fileFromClipboardBlob(blob, type) {
+if (!blob) return null;
+var mime = String(type || blob.type || '').toLowerCase().split(';')[0].trim();
+if (mime.indexOf('image/') !== 0) return null;
+pastedImageCount += 1;
+var name = 'Pasted image ' + pastedImageCount + '.' + extFromMime(mime);
+try { return new File([blob], name, { type: mime }); } catch (e) { return null; }
+}
+
+function pasteImageFromClipboard() {
+var blocked = 'The browser blocked clipboard access. Long-press the message box and choose Paste, or allow clipboard permission and try again.';
+var unavailable = 'This browser cannot read a copied image from the button. Long-press the message box and choose Paste.';
+var clip = navigator.clipboard;
+if (!window.isSecureContext || !clip || typeof clip.read !== 'function') {
+showUploadNote(unavailable, true);
+focusComposer();
+return;
+}
+var pending;
+try { pending = clip.read(); } catch (err) {
+showUploadNote(blocked, true);
+focusComposer();
+return;
+}
+if (!pending || typeof pending.then !== 'function') {
+showUploadNote(unavailable, true);
+focusComposer();
+return;
+}
+pending.then(function(items) {
+var jobs = [];
+var files = [];
+Array.prototype.forEach.call(items || [], function(item) {
+var types = item && item.types ? Array.prototype.slice.call(item.types) : [];
+types.forEach(function(mime) {
+if (String(mime || '').toLowerCase().indexOf('image/') !== 0 || !item.getType) return;
+jobs.push(Promise.resolve(item.getType(mime)).then(function(blob) {
+var file = fileFromClipboardBlob(blob, mime);
+if (file) files.push(file);
+}));
+});
+});
+return Promise.all(jobs).then(function() { return files; });
+}).then(function(files) {
+if (!files || !files.length) {
+showUploadNote('No image was on the clipboard. Copy a photo, then try Paste image again, or long-press the message box and choose Paste.', true);
+focusComposer();
+return;
+}
+addPendingUploads(files);
+focusComposer();
+}).catch(function() {
+showUploadNote(blocked, true);
+focusComposer();
+});
+}
+
 function switchTab(name) {
+closeAttachMenu();
 var box = document.getElementById('msgs');
 if (currentTab === 'chat' && box) savedChatScroll = box.scrollTop;
 currentTab = name;
@@ -3359,6 +3661,21 @@ if (shouldAutoScroll) scrollToBottom();
 });
 }
 document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+var uploadBtn = document.getElementById('upload-btn');
+if (uploadBtn) uploadBtn.addEventListener('click', toggleAttachMenu);
+var attachChoose = document.getElementById('attach-choose');
+if (attachChoose) attachChoose.addEventListener('click', chooseAttachFiles);
+var attachPaste = document.getElementById('attach-paste');
+if (attachPaste) attachPaste.addEventListener('click', function(e) {
+if (e) { e.preventDefault(); e.stopPropagation(); }
+closeAttachMenu();
+pasteImageFromClipboard();
+});
+var attachMenu = document.getElementById('attach-menu');
+if (attachMenu) attachMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+var composerInput = document.getElementById('cinput');
+if (composerInput) composerInput.addEventListener('paste', onComposerPaste);
+document.addEventListener('paste', onDocumentPaste, true);
 document.getElementById('msgs').addEventListener('click', function(e) {
 var node = e.target;
 while (node && node !== this && node.tagName !== 'A') node = node.parentNode;
@@ -3523,11 +3840,13 @@ if (!restoreBusy) setRestoreError('');
 document.addEventListener('click', function() {
 closeHeaderMenu();
 closeTextSizePopover();
+closeAttachMenu();
 });
 document.addEventListener('keydown', function(e) {
 if (e.key === 'Escape') {
 closeHeaderMenu();
 closeTextSizePopover();
+closeAttachMenu();
 }
 });
 showQuizStep(1);
