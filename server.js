@@ -166,6 +166,24 @@ function normalizeFlag(raw) {
   return '';
 }
 
+function finiteOrNull(value) {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (value == null) return null;
+  const text = String(value).replace(/,/g, '').trim();
+  if (!text || text.toLowerCase() === 'null' || !/^-?\d+(?:\.\d+)?$/.test(text)) return null;
+  const n = Number(text);
+  return Number.isFinite(n) ? n : null;
+}
+
+function withReferenceRange(item, low, high) {
+  const refLow = finiteOrNull(low);
+  const refHigh = finiteOrNull(high);
+  if (refLow == null || refHigh == null || refHigh < refLow) return item;
+  item.refLow = refLow;
+  item.refHigh = refHigh;
+  return item;
+}
+
 function normalizeBiomarker(item) {
   if (!item || typeof item !== 'object') return null;
   const name = clipText(item.name || item.marker || '', 80);
@@ -173,7 +191,7 @@ function normalizeBiomarker(item) {
   if (!name || !value) return null;
   const unit = clipText(item.unit || '', 24);
   const flag = normalizeFlag(item.flag) || 'info';
-  return { name: name, value: value, unit: unit, flag: flag };
+  return withReferenceRange({ name: name, value: value, unit: unit, flag: flag }, item.refLow, item.refHigh);
 }
 
 function extractBiomarkerJson(text) {
@@ -215,7 +233,22 @@ function parseBiomarkerLines(text) {
     if (!clean || clean.length > 200) return;
     if (!/-?\d+(?:\.\d+)?/.test(clean)) return;
     if (/^(file|based on|user message|please|here is|this is)\b/i.test(clean)) return;
+    let refLow = null;
+    let refHigh = null;
+    const parenRange = clean.match(/\(\s*(-?\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(-?\d+(?:\.\d+)?)\s*\)/);
+    if (parenRange) {
+      refLow = Number(parenRange[1]);
+      refHigh = Number(parenRange[2]);
+    }
     clean = clean.replace(/\((?:[^()]{0,80})\)/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!Number.isFinite(refLow) || !Number.isFinite(refHigh)) {
+      const trail = clean.match(/^(.*?)\s+(-?\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(-?\d+(?:\.\d+)?)$/);
+      if (trail && /\d/.test(trail[1])) {
+        refLow = Number(trail[2]);
+        refHigh = Number(trail[3]);
+        clean = trail[1].trim();
+      }
+    }
     let flag = '';
     const flagMatch = clean.match(/(?:^|[\s(])(high|low|normal|elevated|above|below|hh|ll|h|l|n)\)?\s*$/i);
     if (flagMatch) {
@@ -235,7 +268,7 @@ function parseBiomarkerLines(text) {
     const key = name.toLowerCase() + '|' + value + '|' + unit.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
-    results.push({ name: name, value: value, unit: unit, flag: flag || 'info' });
+    results.push(withReferenceRange({ name: name, value: value, unit: unit, flag: flag || 'info' }, refLow, refHigh));
   });
   return results;
 }
@@ -265,7 +298,7 @@ function collectBiomarkers(parts) {
   return all.slice(0, 100);
 }
 
-const BIOMARKER_PROMPT_SUFFIX = '\n\nAfter the extraction, end your reply with a machine-readable block and nothing after it:\nBIOMARKERS_JSON\n[{"name":"Marker","value":"0","unit":"","flag":"info"}]\nflag must be exactly "normal", "high", "low", or "info". Put the measured result in value and the unit separately. If no markers are visible, end with BIOMARKERS_JSON followed by [].';
+const BIOMARKER_PROMPT_SUFFIX = '\n\nAfter the extraction, end your reply with a machine-readable block and nothing after it:\nBIOMARKERS_JSON\n[{"name":"Marker","value":"0","unit":"","flag":"info","refLow":null,"refHigh":null}]\nflag must be exactly "normal", "high", "low", or "info". Put the measured result in value and the unit separately. refLow and refHigh are the numeric reference range bounds printed on the report, or null when no range is visible. If no markers are visible, end with BIOMARKERS_JSON followed by [].';
 
 async function extractLabReport(file) {
   const kind = uploadKind(file);
