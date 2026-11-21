@@ -113,7 +113,20 @@ body.dark .usr { background: #1f6feb; }
 .msg-copy { position: absolute; top: 6px; right: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-soft); padding: 0; margin: 0; cursor: pointer; font-family: inherit; opacity: 1; visibility: visible; z-index: 1; }
 .msg-copy:hover, .msg-copy:focus-visible { color: var(--accent); border-color: var(--accent); }
 .usr .msg-copy { background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.45); }
+.msg-quote { margin: 0 0 8px; padding: 6px 8px; border-left: 3px solid rgba(255,255,255,0.55); background: rgba(255,255,255,0.14); border-radius: 6px; color: rgba(255,255,255,0.86); font-size: 0.8125rem; line-height: 1.45; }
+.msg-quote-body { white-space: normal; }
 body.dark #copy-toast { background: #e6edf3; color: #0d1117; }
+#quote-chip { display: flex; gap: 8px; align-items: flex-start; margin: 8px 16px 0; padding: 8px 8px 8px 10px; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-col); border-left: 3px solid var(--accent); border-radius: 10px; flex-shrink: 0; }
+#quote-chip-text { flex: 1; min-width: 0; color: var(--text-soft); font-size: 0.8125rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+#quote-chip-remove { width: 32px; height: 32px; border: none; background: transparent; color: var(--text-soft); font-size: 1.25rem; line-height: 1; cursor: pointer; font-family: inherit; flex-shrink: 0; padding: 0; border-radius: 8px; }
+#quote-chip-remove:hover, #quote-chip-remove:focus-visible { color: var(--text-main); background: var(--border-col); }
+#sel-actions { position: fixed; z-index: 1250; display: flex; gap: 6px; padding: 4px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.22); max-width: calc(100vw - 16px); }
+#sel-actions button { appearance: none; border: none; background: var(--input-bg); color: var(--text-main); font-family: inherit; font-size: 0.8125rem; font-weight: 700; border-radius: 8px; min-height: 36px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+#sel-actions button:hover, #sel-actions button:focus-visible { color: var(--accent); }
+#sel-actions #sel-ask { background: var(--header-bg); color: #fff; }
+body.dark #sel-actions #sel-ask { background: var(--accent); color: #04140a; }
+#sel-actions #sel-ask:hover, #sel-actions #sel-ask:focus-visible { color: #fff; }
+body.dark #sel-actions #sel-ask:hover, body.dark #sel-actions #sel-ask:focus-visible { color: #04140a; }
 #copy-toast { position: fixed; z-index: 3000; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(8px); background: #0a2540; color: #fff; border-radius: 999px; padding: 8px 14px; font-size: 0.8125rem; font-weight: 650; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; }
 #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
@@ -208,7 +221,7 @@ body.dark .quiz-next { background: var(--accent); color: #04140a; }
 #intake-signin:hover, #intake-signin:focus-visible { background: rgba(26,107,60,0.08); }
 body.dark #intake-signin:hover, body.dark #intake-signin:focus-visible { background: rgba(63,185,80,0.14); }
 #intake-restore { display: block; width: 100%; background: none; border: none; cursor: pointer; text-align: center; margin-top: 12px; padding: 8px 4px; font-size: 0.8125rem; color: var(--accent); text-decoration: underline; font-family: inherit; }
-#intake-restore-panel[hidden], #intake-quiz[hidden], #quiz-track[hidden], #hdr-menu-panel[hidden], #text-size-popover[hidden], #intake-restore[hidden] { display: none !important; }
+#intake-restore-panel[hidden], #intake-quiz[hidden], #quiz-track[hidden], #hdr-menu-panel[hidden], #text-size-popover[hidden], #quote-chip[hidden], #sel-actions[hidden], #intake-restore[hidden] { display: none !important; }
 .quiz-top, #quiz-track, #quiz-error, #intake-restore { flex-shrink: 0; }
 #restore-error { min-height: 18px; margin: 0 0 8px; color: #c53030; font-size: 0.8125rem; line-height: 1.4; }
 body.dark #restore-error { color: #ffb4b4; }
@@ -329,7 +342,7 @@ input, textarea, select { font-size: max(16px, 1rem); }
 @page { size: letter; margin: 0.5in; }
 html { font-size: 100% !important; }
 html, body { height: auto !important; min-height: 0 !important; overflow: visible !important; display: block !important; background: #fff !important; padding: 0 !important; }
-#wrap, #intake-overlay, #save-conv-overlay, #copy-toast, #hdr-menu-panel, #text-size-popover { display: none !important; }
+#wrap, #intake-overlay, #save-conv-overlay, #copy-toast, #hdr-menu-panel, #text-size-popover, #sel-actions, #quote-chip { display: none !important; }
 #print-report, #lab-print { display: none !important; color: #111; background: #fff; padding: 0; font-family: Georgia, serif; }
 body.print-labs #lab-print { display: block !important; }
 body.print-doctor #print-report, body:not(.print-labs):not(.print-doctor) #print-report { display: block !important; }
@@ -513,6 +526,10 @@ To personalize my guidance, tell me:<br>
 
 <div id="upload-status"></div>
 <div id="file-chips"></div>
+<div id="quote-chip" hidden>
+<div id="quote-chip-text"></div>
+<button type="button" id="quote-chip-remove" aria-label="Remove quote" title="Remove quote">×</button>
+</div>
 
 <div id="inp-area">
 <label for="file-upload" id="upload-btn" title="Add bloodwork files" aria-label="Add bloodwork files">📎</label>
@@ -621,6 +638,10 @@ To personalize my guidance, tell me:<br>
 <div id="print-report"></div>
 <div id="lab-print"></div>
 <div id="copy-toast" role="status" aria-live="polite"></div>
+<div id="sel-actions" hidden role="toolbar" aria-label="Selection">
+<button type="button" id="sel-ask">Ask about this</button>
+<button type="button" id="sel-copy">Copy</button>
+</div>
 <div id="text-size-popover" hidden role="dialog" aria-label="Text size">
 <div class="text-size" role="group" aria-label="Text size">
 <div class="text-size-label">Text size</div>
@@ -892,6 +913,11 @@ var msgsPointerTimer = null;
 var deferredChatRebuild = null;
 var flushingStreams = false;
 var textSizeAnchor = null;
+var pendingQuote = '';
+var selBarText = '';
+var selGestureDown = false;
+var selBarTimer = null;
+var selBarHandledAt = 0;
 var currentTab = 'chat';
 var savedChatScroll = 0;
 var STICKY_BOTTOM_PX = 120;
@@ -950,6 +976,133 @@ msgsPointerDown = false;
 setTimeout(function() {
 if (!hasTextSelection()) flushStreamBubbles();
 }, 50);
+}
+
+function isIOSDevice() {
+var ua = navigator.userAgent || '';
+if (/iPad|iPhone|iPod/.test(ua)) return true;
+if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return true;
+return false;
+}
+
+function closestFrom(node, selector) {
+var el = selectionHost(node);
+if (!el || !el.closest) return null;
+return el.closest(selector);
+}
+
+function selectionAllowedText() {
+var sel;
+try { sel = window.getSelection(); } catch (e) { return ''; }
+if (!sel || sel.isCollapsed || !sel.rangeCount) return '';
+var text = String(sel.toString() || '').replace(/\u00a0/g, ' ');
+if (!String(text).replace(/\s/g, '').length) return '';
+var el = selectionHost(sel.anchorNode || sel.getRangeAt(0).commonAncestorContainer);
+if (!el) return '';
+if (closestFrom(el, '#sel-actions, #quote-chip, button, textarea, input, select, #cinput')) return '';
+var zone = closestFrom(el, '#msgs .msg, #panel-labs, #panel-stack, #panel-sources');
+if (!zone) return '';
+return text;
+}
+
+function hideSelBar() {
+var bar = document.getElementById('sel-actions');
+if (bar) bar.hidden = true;
+}
+
+function dockSelBarTop(bh, margin) {
+var top = window.innerHeight - bh - margin;
+if (currentTab === 'chat') {
+var inp = document.getElementById('inp-area');
+if (inp) {
+var ir = inp.getBoundingClientRect();
+if (ir.top > bh + margin * 2) top = Math.min(top, ir.top - bh - margin);
+}
+}
+return Math.max(margin, top);
+}
+
+function placeSelBar(bar) {
+var sel = window.getSelection();
+if (!sel || !sel.rangeCount) return;
+var range = sel.getRangeAt(0);
+var rects = range.getClientRects();
+var first = null;
+var last = null;
+for (var i = 0; i < rects.length; i++) {
+if (rects[i].width < 1 && rects[i].height < 1) continue;
+if (!first) first = rects[i];
+last = rects[i];
+}
+if (!first) return;
+bar.hidden = false;
+var bw = bar.offsetWidth || 220;
+var bh = bar.offsetHeight || 44;
+var margin = 8;
+var left = first.left;
+var top;
+if (isIOSDevice()) {
+top = last.bottom + margin;
+if (top + bh > window.innerHeight - margin) top = dockSelBarTop(bh, margin);
+} else {
+top = first.top - bh - margin;
+if (top < margin) top = last.bottom + margin;
+if (top + bh > window.innerHeight - margin) top = dockSelBarTop(bh, margin);
+}
+if (left + bw > window.innerWidth - margin) left = window.innerWidth - margin - bw;
+if (left < margin) left = margin;
+if (top < margin) top = margin;
+bar.style.left = Math.round(left) + 'px';
+bar.style.top = Math.round(top) + 'px';
+}
+
+function updateSelBar() {
+var bar = document.getElementById('sel-actions');
+if (!bar) return;
+if (selGestureDown) return;
+var text = selectionAllowedText();
+if (!text) {
+bar.hidden = true;
+return;
+}
+selBarText = text;
+placeSelBar(bar);
+}
+
+function scheduleSelBar() {
+clearTimeout(selBarTimer);
+selBarTimer = setTimeout(updateSelBar, 180);
+}
+
+function runSelAction(id) {
+if (id === 'sel-copy') {
+var value = String(selBarText || '').trim();
+if (value) copyPlainText(value);
+return;
+}
+if (id === 'sel-ask') askAboutSelection();
+}
+
+function askAboutSelection() {
+var live = selectionAllowedText();
+if (live) selBarText = live;
+var excerpt = capExcerpt(selBarText);
+if (!excerpt) return;
+pendingQuote = excerpt;
+renderQuoteChip();
+hideSelBar();
+try {
+var sel = window.getSelection();
+if (sel) sel.removeAllRanges();
+} catch (e) {}
+if (currentTab !== 'chat') switchTab('chat');
+setTimeout(function() {
+var input = document.getElementById('cinput');
+if (!input) return;
+input.focus();
+var len = input.value.length;
+try { input.setSelectionRange(len, len); } catch (e2) {}
+}, 40);
 }
 
 function updateJumpButton() {
@@ -1023,6 +1176,22 @@ var s = String(value === null || value === undefined ? '' : value);
 return s.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split(String.fromCharCode(10)).join('<br>');
 }
 
+function splitQuotedMessage(text) {
+var marker = 'Regarding this part: "';
+if (String(text || '').indexOf(marker) !== 0) return null;
+var rest = String(text).slice(marker.length);
+var sep = '"\n\n';
+var idx = rest.indexOf(sep);
+if (idx === -1) return null;
+return { excerpt: rest.slice(0, idx), body: rest.slice(idx + sep.length) };
+}
+
+function quoteBlockHtml(excerpt, body) {
+var html = '<blockquote class="msg-quote">' + escapeChatText(excerpt) + '</blockquote>';
+if (body) html += '<div class="msg-quote-body">' + escapeChatText(body) + '</div>';
+return html;
+}
+
 function displayUserMsg(text) {
 var t = String(text === null || text === undefined ? '' : text);
 var prefix = 'I have uploaded my file. Here is the extracted data:';
@@ -1045,9 +1214,15 @@ var fileEnd = fileRest.indexOf('\n');
 attached = fileEnd === -1 ? fileRest : fileRest.slice(0, fileEnd);
 }
 var label = attached.trim() ? '[File uploaded and saved: ' + escapeChatText(attached.trim()) + ']' : '[File uploaded and saved]';
-if (note.trim()) return escapeChatText(note.trim()) + '<br>' + label;
+if (note.trim()) {
+var quotedNote = splitQuotedMessage(note.trim());
+if (quotedNote) return quoteBlockHtml(quotedNote.excerpt, quotedNote.body) + '<br>' + label;
+return escapeChatText(note.trim()) + '<br>' + label;
+}
 return label;
 }
+var quoted = splitQuotedMessage(t);
+if (quoted) return quoteBlockHtml(quoted.excerpt, quoted.body);
 return escapeChatText(t);
 }
 
@@ -1697,20 +1872,59 @@ document.getElementById('sbtn').disabled = false;
 });
 }
 
+function capExcerpt(text) {
+var clean = String(text || '').replace(/\s+/g, ' ').trim().split('"').join("'");
+if (!clean) return '';
+if (clean.length <= 500) return clean;
+var cut = clean.slice(0, 500);
+var trimmed = cut.replace(/\s+\S*$/, '');
+if (trimmed.length < 400) trimmed = cut;
+return trimmed + '\u2026';
+}
+
+function composeOutgoing(txt) {
+var typed = String(txt || '').trim();
+if (!pendingQuote) return typed;
+var body = typed || 'Can you explain this in more detail?';
+return 'Regarding this part: "' + pendingQuote + '"\n\n' + body;
+}
+
+function renderQuoteChip() {
+var chip = document.getElementById('quote-chip');
+var text = document.getElementById('quote-chip-text');
+if (!chip || !text) return;
+if (!pendingQuote) {
+chip.hidden = true;
+text.textContent = '';
+return;
+}
+text.textContent = pendingQuote;
+chip.hidden = false;
+}
+
+function clearPendingQuote() {
+pendingQuote = '';
+renderQuoteChip();
+}
+
 function sendMsgFromInput() {
 if (busy) return;
 var el = document.getElementById('cinput');
 var txt = el.value.trim();
 if (pendingFiles.length) {
+var note = composeOutgoing(txt);
 el.value = '';
 el.style.height = 'auto';
-submitBloodwork(txt);
+clearPendingQuote();
+submitBloodwork(note);
 return;
 }
-if (!txt) return;
+if (!txt && !pendingQuote) return;
+var outgoing = composeOutgoing(txt);
 el.value = '';
 el.style.height = 'auto';
-sendMsg(txt);
+clearPendingQuote();
+sendMsg(outgoing);
 }
 
 function saveEmailAndConversation() {
@@ -2965,9 +3179,58 @@ document.addEventListener('pointercancel', noteMsgsPointerUp, { passive: true })
 document.addEventListener('touchend', noteMsgsPointerUp, { passive: true });
 document.addEventListener('touchcancel', noteMsgsPointerUp, { passive: true });
 document.addEventListener('selectionchange', function() {
+scheduleSelBar();
 if (hasTextSelection() || msgsPointerDown) return;
 flushStreamBubbles();
 });
+document.addEventListener('pointerdown', function(e) {
+if (e.target && e.target.closest && e.target.closest('#sel-actions')) return;
+selGestureDown = true;
+hideSelBar();
+}, { passive: true });
+document.addEventListener('pointerup', function() {
+selGestureDown = false;
+scheduleSelBar();
+}, { passive: true });
+document.addEventListener('pointercancel', function() {
+selGestureDown = false;
+scheduleSelBar();
+}, { passive: true });
+document.addEventListener('mouseup', scheduleSelBar, { passive: true });
+document.addEventListener('touchend', scheduleSelBar, { passive: true });
+var selBar = document.getElementById('sel-actions');
+if (selBar) {
+selBar.addEventListener('pointerdown', function(e) {
+e.preventDefault();
+e.stopPropagation();
+});
+selBar.addEventListener('pointerup', function(e) {
+e.preventDefault();
+e.stopPropagation();
+var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+if (!btn) return;
+selBarHandledAt = Date.now();
+runSelAction(btn.id);
+});
+selBar.addEventListener('click', function(e) {
+e.preventDefault();
+e.stopPropagation();
+var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+if (!btn) return;
+if (Date.now() - selBarHandledAt < 500) return;
+runSelAction(btn.id);
+});
+}
+var quoteRemove = document.getElementById('quote-chip-remove');
+if (quoteRemove) quoteRemove.addEventListener('click', function(e) {
+e.preventDefault();
+e.stopPropagation();
+clearPendingQuote();
+});
+var scrollZones = document.querySelectorAll('#msgs, .panel-scroll');
+for (var z = 0; z < scrollZones.length; z++) {
+scrollZones[z].addEventListener('scroll', scheduleSelBar, { passive: true });
+}
 window.addEventListener('resize', function() {
 var pop = document.getElementById('text-size-popover');
 if (pop && !pop.hidden && textSizeAnchor) placeTextPopover(pop, textSizeAnchor);
