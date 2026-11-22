@@ -922,6 +922,7 @@ To personalize my guidance, tell me:<br>
 
 <script src="/lab-markers.js"></script>
 <script src="/lab-compare.js"></script>
+<script src="/routine-stack.js"></script>
 <script>
 var firebaseConfig = {
 apiKey: "AIzaSyAHFCT6TJycKe_IGDKz00aa5gqxx1FqLL0",
@@ -3085,121 +3086,9 @@ if (SCHEDULE_GROUPS[i].id === v) return SCHEDULE_GROUPS[i].label;
 return '';
 }
 
-function routineSourceText(content) {
-if (typeof content === 'string') return content;
-if (Array.isArray(content)) {
-return content.map(function(part) {
-if (typeof part === 'string') return part;
-if (part && typeof part.text === 'string') return part.text;
-return '';
-}).join('\n');
-}
-return '';
-}
-
-function routineHeaderText(line) {
-var match = String(line || '').trim().match(/^\*\*([^*]+)\*\*\s*:?\s*$/);
-if (!match) return '';
-return match[1].replace(/\s*:\s*$/, '').trim();
-}
-
-function routineBulletBody(line) {
-var match = String(line || '').trim().match(/^[-*•–—]\s+(.+)$/);
-if (!match) return '';
-return match[1].trim();
-}
-
-function colonOutsideParens(text) {
-var depth = 0;
-for (var i = 0; i < text.length; i++) {
-var ch = text.charAt(i);
-if (ch === '(') depth += 1;
-else if (ch === ')' && depth) depth -= 1;
-else if (ch === ':' && depth === 0) return i;
-}
-return -1;
-}
-
-function splitTimeFromDetails(details) {
-var text = String(details || '');
-if (!text) return null;
-var re = /(?:\s[—–-]\s*|[—–]\s*)(\d{1,2}(?::\d{2})?\s*(?:a\.?\s*m\.?|p\.?\s*m\.?)|\d{1,2}:\d{2})\b/gi;
-var match = null;
-var found;
-while ((found = re.exec(text))) match = found;
-if (!match) return null;
-return {
-dose: text.slice(0, match.index).replace(/[\s—–-]+$/g, '').trim(),
-time: match[1].replace(/\s+/g, ' ').trim()
-};
-}
-
-function frequencyPhrase(text) {
-var source = String(text || '');
-if (!source) return '';
-var patterns = [
-/\b\d+\s*[–-]\s*\d+\s*x\s*(?:daily|weekly|a\s+week|per\s+week|a\s+day|per\s+day)\b/i,
-/\b\d+\s*x\s*(?:daily|weekly|a\s+week|per\s+week|a\s+day|per\s+day|\/day|\/week)\b/i,
-/\b(?:once|twice|three\s+times|\d+\s+times)\s+(?:daily|a\s+day|per\s+day|weekly|a\s+week|per\s+week)\b/i,
-/\bevery\s+other\s+day\b/i,
-/\bevery\s+day\b/i,
-/\b(?:daily|weekly|nightly)\b/i
-];
-for (var i = 0; i < patterns.length; i++) {
-var found = source.match(patterns[i]);
-if (found) return found[0].replace(/\s+/g, ' ').trim();
-}
-return '';
-}
-
-function parseRoutineBullet(body, header) {
-var text = String(body || '').replace(/\*\*/g, '').trim();
-if (!text) return null;
-var name = '';
-var details = '';
-var colon = colonOutsideParens(text);
-if (colon > 0) {
-name = text.slice(0, colon).trim();
-details = text.slice(colon + 1).trim();
-} else {
-var wrapped = text.match(/^([^():]+?)\s*\(([^)]*)\)\s*(.*)$/);
-if (!wrapped) return null;
-name = wrapped[1].trim();
-details = wrapped[2].trim();
-var tail = wrapped[3].trim();
-if (tail) details = details ? (details + ' ' + tail) : tail;
-}
-if (!name || !/[A-Za-z0-9]/.test(name)) return null;
-var split = splitTimeFromDetails(details);
-var dose = split ? split.dose : details;
-var schedule = frequencyPhrase(details) || header;
-return { name: name, dose: dose, time: split ? split.time : '', group: header, schedule: schedule };
-}
-
 function parseRoutineReply(content) {
-var raw = routineSourceText(content).replace(/\r\n/g, '\n');
-if (!raw.trim()) return null;
-var lines = raw.split('\n');
-var header = '';
-var sawHeader = false;
-var items = [];
-for (var i = 0; i < lines.length; i++) {
-var line = lines[i].trim();
-if (!line) continue;
-var nextHeader = routineHeaderText(line);
-if (nextHeader) {
-header = nextHeader;
-sawHeader = true;
-continue;
-}
-if (!header) continue;
-var body = routineBulletBody(line);
-if (!body) continue;
-var parsed = parseRoutineBullet(body, header);
-if (parsed && parsed.name) items.push(parsed);
-}
-if (!sawHeader || items.length < 3) return null;
-return items;
+if (typeof RoutineStack === 'undefined' || !RoutineStack.parseRoutineReply) return null;
+return RoutineStack.parseRoutineReply(content);
 }
 
 function attachRoutineAdd(msgDiv, content) {

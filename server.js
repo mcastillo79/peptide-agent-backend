@@ -120,6 +120,10 @@ app.get('/lab-compare.js', function(req, res) {
   sendLibScript(res, 'lab-compare.js');
 });
 
+app.get('/routine-stack.js', function(req, res) {
+  sendLibScript(res, 'routine-stack.js');
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
