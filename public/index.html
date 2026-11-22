@@ -117,6 +117,46 @@ body.dark #save-conv-submit { background: var(--accent); }
 #jump-bottom { position: absolute; right: 14px; bottom: 14px; z-index: 5; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-main); box-shadow: 0 2px 10px rgba(0,0,0,0.18); cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 1.125rem; line-height: 1; padding: 0; font-family: inherit; }
 #jump-bottom.visible { display: flex; }
 #jump-bottom:hover { border-color: var(--accent); color: var(--accent); }
+#panel-chat { position: relative; }
+#schedule-btn { position: absolute; right: 12px; bottom: calc(var(--composer-h, 72px) + 8px); z-index: 25; min-width: 44px; min-height: 44px; height: auto; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border-col); background: var(--card-bg); color: var(--text-main); box-shadow: 0 2px 10px rgba(0,0,0,0.18); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8125rem; font-weight: 700; line-height: 1.2; font-family: inherit; max-width: calc(100% - 24px); }
+#schedule-btn[hidden] { display: none !important; }
+#schedule-btn:hover, #schedule-btn:focus-visible { border-color: var(--accent); color: var(--accent); }
+#schedule-btn[aria-expanded="true"] { background: var(--header-bg); color: #fff; border-color: var(--header-bg); }
+body.dark #schedule-btn[aria-expanded="true"] { background: var(--accent); color: #04140a; border-color: var(--accent); }
+body.dark #schedule-btn[aria-expanded="true"]:hover, body.dark #schedule-btn[aria-expanded="true"]:focus-visible { color: #04140a; }
+#schedule-layer { position: absolute; left: 0; right: 0; top: 0; bottom: calc(var(--composer-h, 72px) + var(--schedule-btn-h, 44px) + 16px); z-index: 20; display: flex; flex-direction: column; justify-content: flex-end; }
+#schedule-layer[hidden] { display: none !important; }
+#schedule-backdrop { position: absolute; inset: 0; border: 0; margin: 0; padding: 0; background: rgba(10, 37, 64, 0.45); cursor: pointer; opacity: 0; transition: opacity 0.22s ease; }
+body.dark #schedule-backdrop { background: rgba(0, 0, 0, 0.55); }
+#schedule-layer.open #schedule-backdrop { opacity: 1; }
+#schedule-panel { position: relative; z-index: 1; max-height: calc(100% - 28px); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-bottom: none; border-radius: 16px 16px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.22); display: flex; flex-direction: column; min-height: 0; transform: translateY(110%); transition: transform 0.22s ease; outline: none; }
+#schedule-layer.open #schedule-panel { transform: translateY(0); }
+.schedule-head { display: flex; align-items: flex-start; gap: 8px; padding: 8px 8px 4px 16px; flex-shrink: 0; }
+.schedule-head-copy { min-width: 0; flex: 1; }
+.schedule-head h2 { font-size: 1rem; line-height: 1.3; color: var(--text-main); margin: 0; }
+.schedule-sub { margin: 2px 0 0; font-size: 0.75rem; line-height: 1.4; color: var(--text-soft); }
+#schedule-close { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); font-size: 1.375rem; line-height: 1; cursor: pointer; font-family: inherit; padding: 0; }
+#schedule-close:hover, #schedule-close:focus-visible { border-color: var(--accent); color: var(--accent); }
+#schedule-body { overflow-y: auto; padding: 2px 16px 4px; min-height: 0; -webkit-overflow-scrolling: touch; }
+.schedule-group { margin: 0 0 4px; }
+.schedule-group h3 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em; color: var(--text-soft); margin: 0 0 2px; }
+.schedule-row { padding: 3px 0; border-top: 1px solid var(--border-col); }
+.schedule-name { font-weight: 700; font-size: 0.875rem; line-height: 1.25; color: var(--text-main); overflow-wrap: anywhere; }
+.schedule-note { margin-top: 1px; font-size: 0.8125rem; line-height: 1.25; color: var(--text-soft); white-space: pre-wrap; overflow-wrap: anywhere; }
+.schedule-empty { font-size: 0.875rem; color: var(--text-soft); line-height: 1.45; margin: 8px 0 12px; }
+#schedule-foot { flex-shrink: 0; margin: 0; padding: 8px 16px 10px; border-top: 1px solid var(--border-col); font-size: 0.75rem; line-height: 1.4; color: var(--text-soft); }
+#panel-chat.schedule-btn-on #quote-chip,
+#panel-chat.schedule-btn-on #upload-status,
+html.schedule-btn-on #quote-chip,
+html.schedule-btn-on #upload-status { padding-right: 7.75rem; }
+html.schedule-btn-off #schedule-btn { display: none !important; }
+#stack-time, .stack-edit select { text-transform: none; letter-spacing: 0; }
+.hdr-switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; margin-top: 4px; padding: 8px 12px; border: none; border-radius: 8px; background: transparent; color: var(--text-main); font-family: inherit; font-size: 0.9375rem; font-weight: 650; text-align: left; cursor: pointer; line-height: 1.3; }
+.hdr-switch:hover, .hdr-switch:focus-visible { background: var(--input-bg); }
+.switch-ui { width: 44px; height: 26px; border-radius: 999px; background: var(--border-col); position: relative; flex-shrink: 0; }
+.switch-ui::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.25); transition: transform 0.15s ease; }
+.hdr-switch[aria-checked="true"] .switch-ui { background: var(--accent); }
+.hdr-switch[aria-checked="true"] .switch-ui::after { transform: translateX(18px); }
 .msg { max-width: 88%; min-width: 0; padding: 12px 16px; font-size: 0.875rem; line-height: 1.7; overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 .bot { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 4px 16px 16px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .usr { align-self: flex-end; background: var(--header-bg); color: #fff; border-radius: 16px 4px 16px 16px; }
@@ -148,7 +188,10 @@ body.dark #sel-actions #sel-ask:hover, body.dark #sel-actions #sel-ask:focus-vis
 #typer span:nth-child(2) { animation-delay: 0.2s; }
 #typer span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes bb { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
-#qps { display: flex; gap: 6px; padding: 10px 16px; overflow-x: auto; background: var(--card-bg); border-top: 1px solid var(--border-col); flex-shrink: 0; scrollbar-width: none; }
+#qps-slot { display: flex; background: var(--card-bg); border-top: 1px solid var(--border-col); flex-shrink: 0; }
+#qps { display: flex; gap: 6px; padding: 10px 16px; overflow-x: auto; background: transparent; border-top: none; flex: 1; min-width: 0; scrollbar-width: none; }
+#panel-chat.schedule-btn-on #qps-slot,
+html.schedule-btn-on #qps-slot { padding-right: 7.75rem; }
 #qps::-webkit-scrollbar { display: none; }
 .qb { flex-shrink: 0; padding: 6px 12px; border: 1px solid var(--border-col); border-radius: 20px; font-size: 0.75rem; color: var(--qb-text); background: var(--qb-bg); cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s; }
 .qb:hover { background: var(--header-bg); color: #fff; border-color: var(--header-bg); }
@@ -162,7 +205,10 @@ body.dark #sel-actions #sel-ask:hover, body.dark #sel-actions #sel-ask:focus-vis
 #upload-status { padding: 6px 16px; font-size: 0.75rem; color: var(--accent); background: rgba(26,107,60,0.08); border-top: 1px solid var(--border-col); display: none; flex-shrink: 0; }
 #upload-status.error { color: #c53030; background: #fff5f5; }
 body.dark #upload-status.error { color: #ffb4b4; background: rgba(197,48,48,0.16); }
-#file-chips { display: none; gap: 8px; padding: 10px 16px 0; background: var(--card-bg); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
+#file-slot { display: flex; background: var(--card-bg); flex-shrink: 0; }
+#file-chips { display: none; gap: 8px; padding: 10px 16px 0; background: var(--card-bg); overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+#panel-chat.schedule-btn-on #file-slot,
+html.schedule-btn-on #file-slot { padding-right: 7.75rem; }
 #file-chips::-webkit-scrollbar { display: none; }
 #file-chips.has-files { display: flex; }
 .file-chip { display: flex; align-items: center; gap: 6px; max-width: 230px; padding: 4px 4px 4px 4px; border: 1px solid var(--border-col); border-radius: 999px; background: var(--input-bg); flex-shrink: 0; }
@@ -274,7 +320,9 @@ body.dark #restore-submit { background: var(--accent); color: #04140a; }
 .state-row, .source-actions, .labs-actions, .stack-actions { display: flex; gap: 8px; }
 .state-row, .source-actions { margin-top: 12px; }
 .source-actions, .stack-form { flex-direction: column; }
-.stack-form { display: grid; gap: 8px; }
+.stack-form { display: grid; gap: 8px; margin-bottom: 28px; }
+.stack-form .quiz-next { margin-top: 18px; }
+#stack-pro:not(:empty) { margin-top: 8px; }
 .stack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .state-btn, .source-go, .copy-code, .pro-join, .labs-btn { font-family: inherit; cursor: pointer; border-radius: 10px; font-weight: 650; font-size: 0.8125rem; }
 .state-btn, .source-go, .pro-join, .labs-btn.primary { background: var(--header-bg); color: #fff; border: none; padding: 10px 8px; }
@@ -430,7 +478,7 @@ body.dark .compare-filters button[aria-pressed="true"] { background: var(--accen
 html, body, #msgs, #thread, #wrap, .panel, .panel-scroll, .msg, .msg strong, .msg a, .msg br, .lab-row-text, .compare-table, .year-grid, .lab-excluded, .lab-group-meta {
 -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important;
 }
-button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, .stack-suggest button, .stack-suggest input, .status-btn, #sbtn, #upload-btn, #theme-toggle, #text-size-btn, #quiz-text-size-btn, #hdr-menu-btn, #jump-bottom, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
+button, button *, [role="tab"], [role="menuitem"], .pill, .qb, .mini-btn, .labs-btn, .state-btn, .source-go, .copy-code, .pro-join, .pro-banner-link, .msg-copy, .stack-suggest button, .stack-suggest input, .status-btn, #sbtn, #upload-btn, #theme-toggle, #text-size-btn, #quiz-text-size-btn, #hdr-menu-btn, #jump-bottom, #schedule-btn, #schedule-close, #schedule-show-toggle, #intake-skip, #intake-signin, #intake-restore, #restore-cancel, #hdr-account {
 -webkit-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important;
 }
 input, textarea, select, .msg, .msg strong, .msg a {
@@ -449,7 +497,7 @@ input, textarea, select { font-size: max(16px, 1rem); }
 .cost-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-.quiz-step.on, #quiz-bar { animation: none; transition: none; }
+.quiz-step.on, #quiz-bar, #schedule-panel, #schedule-backdrop, .switch-ui::after { animation: none; transition: none; }
 }
 @media print {
 @page { size: letter; margin: 0.5in; }
@@ -474,6 +522,8 @@ try {
 if (localStorage.getItem('peptideUserProfile') || localStorage.getItem('peptideUserEmail')) {
 document.documentElement.classList.add('skip-intake');
 }
+if (localStorage.getItem('peptideScheduleShow') === '0') document.documentElement.classList.add('schedule-btn-off');
+else document.documentElement.classList.add('schedule-btn-on');
 var savedTextSize = localStorage.getItem('peptideTextSize');
 if (savedTextSize === '87.5' || savedTextSize === '112.5' || savedTextSize === '125' || savedTextSize === '150') {
 document.documentElement.style.fontSize = savedTextSize + '%';
@@ -625,7 +675,7 @@ To personalize my guidance, tell me:<br>
 
 <div id="typer"><span></span><span></span><span></span></div>
 
-<div id="qps">
+<div id="qps-slot"><div id="qps">
 <button class="qb" onclick="sendMsg('Please provide a concise, brief version of your previous response in a few sentences, keeping only the most important points.')">Concise version</button>
 <button class="qb" onclick="sendMsg('What peptides are best for fat loss?')">Fat loss</button>
 <button class="qb" onclick="sendMsg('Tell me about the Wolverine Stack')">Wolverine Stack</button>
@@ -635,10 +685,10 @@ To personalize my guidance, tell me:<br>
 <button class="qb" onclick="sendMsg('Best beginner peptide stack?')">Beginner stack</button>
 <button class="qb" onclick="sendMsg('Tell me everything about BPC-157')">BPC-157</button>
 <button class="qb" onclick="sendMsg('What does Jay Campbell recommend for muscle building?')">Jay Campbell</button>
-</div>
+</div></div>
 
 <div id="upload-status"></div>
-<div id="file-chips"></div>
+<div id="file-slot"><div id="file-chips"></div></div>
 <div id="quote-chip" hidden>
 <div id="quote-chip-text"></div>
 <button type="button" id="quote-chip-remove" aria-label="Remove quote" title="Remove quote">×</button>
@@ -654,6 +704,21 @@ To personalize my guidance, tell me:<br>
 </div>
 <textarea id="cinput" placeholder="Ask about peptides or attach labs..." rows="1"></textarea>
 <button id="sbtn" onclick="sendMsgFromInput()">↑</button>
+</div>
+<button type="button" id="schedule-btn" aria-expanded="false" aria-controls="schedule-panel">Schedule</button>
+<div id="schedule-layer" hidden>
+<button type="button" id="schedule-backdrop" tabindex="-1" aria-label="Close"></button>
+<div id="schedule-panel" role="dialog" aria-modal="true" aria-labelledby="schedule-title" tabindex="-1">
+<div class="schedule-head">
+<div class="schedule-head-copy">
+<h2 id="schedule-title">Your example day</h2>
+<p class="schedule-sub">Built from the schedule you entered in My Stack.</p>
+</div>
+<button type="button" id="schedule-close" aria-label="Close">×</button>
+</div>
+<div id="schedule-body"></div>
+<p id="schedule-foot">For illustrative purposes only. Not medical advice.</p>
+</div>
 </div>
 </section>
 <section id="panel-stack" class="panel" role="tabpanel">
@@ -674,6 +739,16 @@ To personalize my guidance, tell me:<br>
 <label for="stack-schedule">Schedule</label>
 <input type="text" id="stack-schedule" placeholder="e.g. daily" autocomplete="off">
 </div>
+</div>
+<div class="intake-field">
+<label for="stack-time">Time of day</label>
+<select id="stack-time">
+<option value="morning">Morning</option>
+<option value="midday">Midday</option>
+<option value="evening">Evening</option>
+<option value="bedtime">Bedtime</option>
+<option value="" selected>Anytime</option>
+</select>
 </div>
 <div class="intake-field">
 <label for="stack-start">Start / purchase date</label>
@@ -785,6 +860,10 @@ To personalize my guidance, tell me:<br>
 </div>
 <button type="button" id="text-reset" class="text-size-reset" data-text-reset>Reset</button>
 </div>
+<button type="button" id="schedule-show-toggle" class="hdr-switch" role="switch" aria-checked="true">
+<span>Show Schedule button</span>
+<span class="switch-ui" aria-hidden="true"></span>
+</button>
 <button type="button" id="hdr-account" role="menuitem" onclick="openAccountRestore()">Sign in / Switch account</button>
 </div>
 
@@ -816,6 +895,8 @@ var SUGGEST_DISMISS_KEY = 'peptideSuggestDismissed';
 var hist = [];
 var busy = false;
 var CHAT_STORAGE_KEY = 'peptideChatHistory';
+var SCHEDULE_OPEN_KEY = 'peptideScheduleOpen';
+var SCHEDULE_SHOW_KEY = 'peptideScheduleShow';
 var historyReady = false;
 var knownCloudMsgCount = 0;
 var userMessageCount = 0;
@@ -859,6 +940,7 @@ bloodwork: bloodwork,
 stack: loadStack(),
 labHistory: loadLabHistory(),
 proWaitlist: localStorage.getItem('proWaitlist') === 'true',
+scheduleUi: scheduleUiPayload(),
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).then(function() {
 knownCloudMsgCount = hist.length;
@@ -1849,6 +1931,8 @@ localStorage.removeItem('peptideLabHistory');
 localStorage.removeItem('proWaitlist');
 localStorage.removeItem('peptideLastSnapshotAt');
 localStorage.removeItem(CHAT_STORAGE_KEY);
+localStorage.removeItem(SCHEDULE_OPEN_KEY);
+localStorage.removeItem(SCHEDULE_SHOW_KEY);
 localStorage.setItem('peptideUserEmail', email);
 if (data.profile) localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
 if (data.bloodwork) localStorage.setItem('peptideBloodwork', data.bloodwork);
@@ -1856,6 +1940,7 @@ if (Array.isArray(data.stack)) localStorage.setItem('peptideUserStack', JSON.str
 if (Array.isArray(data.labHistory)) localStorage.setItem('peptideLabHistory', JSON.stringify(data.labHistory));
 if (data.proWaitlist) localStorage.setItem('proWaitlist', 'true');
 if (Array.isArray(data.messages)) localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(data.messages));
+applyScheduleUiFromCloud(data.scheduleUi);
 }
 
 function restoreAccount() {
@@ -1962,6 +2047,7 @@ if (data) {
 if (Array.isArray(data.stack)) localStorage.setItem('peptideUserStack', JSON.stringify(data.stack));
 if (Array.isArray(data.labHistory)) localStorage.setItem('peptideLabHistory', JSON.stringify(data.labHistory));
 if (data.proWaitlist) localStorage.setItem('proWaitlist', 'true');
+applyScheduleUiFromCloud(data.scheduleUi);
 if (data.profile) {
 localStorage.setItem('peptideUserProfile', JSON.stringify(data.profile));
 } else if (!localStorage.getItem('peptideUserProfile')) {
@@ -2239,6 +2325,7 @@ bloodwork: bloodwork,
 stack: loadStack(),
 labHistory: loadLabHistory(),
 proWaitlist: localStorage.getItem('proWaitlist') === 'true',
+scheduleUi: scheduleUiPayload(),
 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).then(function() {
 console.log('Conversation saved to cloud');
@@ -2842,6 +2929,231 @@ var err = document.getElementById('quiz-error');
 if (err) err.textContent = '';
 }
 
+var schedulePrefsTouched = false;
+var scheduleAnim = 0;
+var SCHEDULE_GROUPS = [
+{ id: 'morning', label: 'Morning' },
+{ id: 'midday', label: 'Midday' },
+{ id: 'evening', label: 'Evening' },
+{ id: 'bedtime', label: 'Bedtime' },
+{ id: '', label: 'Anytime' }
+];
+
+function readSchedulePrefs() {
+var open = false;
+var showButton = true;
+try {
+open = localStorage.getItem(SCHEDULE_OPEN_KEY) === '1';
+if (localStorage.getItem(SCHEDULE_SHOW_KEY) === '0') showButton = false;
+} catch (e) {}
+return { open: !!open, showButton: showButton };
+}
+
+function storeSchedulePrefs(prefs, sync) {
+var open = !!(prefs && prefs.open);
+var showButton = !(prefs && prefs.showButton === false);
+if (!showButton) open = false;
+try {
+localStorage.setItem(SCHEDULE_OPEN_KEY, open ? '1' : '0');
+localStorage.setItem(SCHEDULE_SHOW_KEY, showButton ? '1' : '0');
+} catch (e) {}
+if (sync) {
+schedulePrefsTouched = true;
+syncSchedulePrefs();
+}
+}
+
+function scheduleUiPayload() {
+var prefs = readSchedulePrefs();
+return { open: !!prefs.open, showButton: prefs.showButton !== false };
+}
+
+function syncSchedulePrefs() {
+var email = '';
+try { email = localStorage.getItem('peptideUserEmail') || ''; } catch (e) { email = ''; }
+if (!email || !window.firebase || !firebase.apps || !firebase.apps.length || !firebase.firestore) return;
+firebase.firestore().collection('users').doc(email).set({
+scheduleUi: scheduleUiPayload(),
+lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).catch(function() {});
+}
+
+function applyScheduleUiFromCloud(scheduleUi) {
+if (schedulePrefsTouched) return false;
+if (!scheduleUi || typeof scheduleUi !== 'object') return false;
+var showButton = scheduleUi.showButton !== false;
+var open = scheduleUi.open === true && showButton;
+storeSchedulePrefs({ open: open, showButton: showButton }, false);
+applyScheduleChrome({ source: 'restore' });
+return true;
+}
+
+function normalizeTimeOfDay(value) {
+var v = String(value || '');
+if (v === 'morning' || v === 'midday' || v === 'evening' || v === 'bedtime') return v;
+return '';
+}
+
+function timeOfDayOptions(selected) {
+var current = normalizeTimeOfDay(selected);
+var opts = [
+['morning', 'Morning'],
+['midday', 'Midday'],
+['evening', 'Evening'],
+['bedtime', 'Bedtime'],
+['', 'Anytime']
+];
+return opts.map(function(pair) {
+return '<option value="' + pair[0] + '"' + (pair[0] === current ? ' selected' : '') + '>' + pair[1] + '</option>';
+}).join('');
+}
+
+function renderSchedulePanel() {
+var body = document.getElementById('schedule-body');
+if (!body) return;
+var items = loadStack().filter(function(item) {
+var status = stackStatus(item);
+return status === 'taking' || status === 'considering';
+});
+if (!items.length) {
+body.innerHTML = '<p class="schedule-empty">Add items in My Stack to see an example day.</p>';
+return;
+}
+var buckets = { morning: [], midday: [], evening: [], bedtime: [], '': [] };
+items.forEach(function(item) {
+buckets[normalizeTimeOfDay(item.timeOfDay)].push(item);
+});
+var html = '';
+SCHEDULE_GROUPS.forEach(function(group) {
+var rows = buckets[group.id];
+if (!rows || !rows.length) return;
+html += '<section class="schedule-group"><h3>' + escapeHtml(group.label) + '</h3>';
+rows.forEach(function(item) {
+html += '<div class="schedule-row"><div class="schedule-name">' + escapeHtml(item.name) + '</div>';
+if (item.schedule) html += '<div class="schedule-note">' + escapeHtml(item.schedule) + '</div>';
+if (item.notes) html += '<div class="schedule-note">' + escapeHtml(item.notes) + '</div>';
+html += '</div>';
+});
+html += '</section>';
+});
+body.innerHTML = html;
+}
+
+function placeScheduleButton() {
+var area = document.getElementById('inp-area');
+var btn = document.getElementById('schedule-btn');
+var chat = document.getElementById('panel-chat');
+if (!area || !chat) return;
+var composer = area.offsetHeight || 72;
+var btnH = 44;
+if (btn && !btn.hidden) btnH = Math.max(44, btn.offsetHeight || 44);
+chat.style.setProperty('--composer-h', composer + 'px');
+chat.style.setProperty('--schedule-btn-h', btnH + 'px');
+}
+
+function scheduleOpenNow() {
+var prefs = readSchedulePrefs();
+return !!(prefs.showButton && prefs.open);
+}
+
+function applyScheduleChrome(opts) {
+opts = opts || {};
+var prefs = readSchedulePrefs();
+var show = prefs.showButton !== false;
+var open = !!(show && prefs.open);
+var btn = document.getElementById('schedule-btn');
+var layer = document.getElementById('schedule-layer');
+var chat = document.getElementById('panel-chat');
+var toggle = document.getElementById('schedule-show-toggle');
+if (chat) chat.classList.toggle('schedule-btn-on', show);
+document.documentElement.classList.toggle('schedule-btn-on', show);
+document.documentElement.classList.toggle('schedule-btn-off', !show);
+if (btn) {
+btn.hidden = !show;
+btn.textContent = open ? 'Close' : 'Schedule';
+btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+if (toggle) toggle.setAttribute('aria-checked', show ? 'true' : 'false');
+placeScheduleButton();
+if (!layer) return;
+var token = ++scheduleAnim;
+if (open) {
+renderSchedulePanel();
+layer.hidden = false;
+requestAnimationFrame(function() {
+requestAnimationFrame(function() {
+if (token !== scheduleAnim) return;
+layer.classList.add('open');
+});
+});
+var takeFocus = !!opts.focusPanel;
+if (!takeFocus && opts.source === 'restore' && open && currentTab === 'chat') {
+var overlay = document.getElementById('intake-overlay');
+var overlayOpen = false;
+try { overlayOpen = !!(overlay && getComputedStyle(overlay).display !== 'none'); } catch (e) { overlayOpen = false; }
+takeFocus = !overlayOpen;
+}
+if (takeFocus) {
+var panel = document.getElementById('schedule-panel');
+if (panel) panel.focus();
+}
+return;
+}
+var wasOpen = !layer.hidden;
+layer.classList.remove('open');
+var finish = function() {
+if (token !== scheduleAnim) return;
+if (!scheduleOpenNow()) layer.hidden = true;
+};
+var reduce = false;
+try { reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { reduce = false; }
+if (!wasOpen || reduce) finish();
+else {
+var panelEl = document.getElementById('schedule-panel');
+var timer = setTimeout(finish, 280);
+if (panelEl) {
+panelEl.addEventListener('transitionend', function onEnd(e) {
+if (e.target !== panelEl || e.propertyName !== 'transform') return;
+panelEl.removeEventListener('transitionend', onEnd);
+clearTimeout(timer);
+finish();
+});
+}
+}
+if (opts.restoreFocus && btn && !btn.hidden) btn.focus();
+}
+
+function setScheduleOpen(open, source) {
+var prefs = readSchedulePrefs();
+if (!prefs.showButton) open = false;
+prefs.open = !!open;
+storeSchedulePrefs(prefs, source !== 'restore');
+applyScheduleChrome({
+focusPanel: !!open && source !== 'restore',
+restoreFocus: !open && source !== 'hide-button' && source !== 'restore'
+});
+}
+
+function toggleSchedulePanel() {
+closeHeaderMenu();
+closeTextSizePopover();
+closeAttachMenu();
+setScheduleOpen(!readSchedulePrefs().open, 'toggle');
+}
+
+function toggleScheduleButtonShown() {
+var prefs = readSchedulePrefs();
+prefs.showButton = !prefs.showButton;
+if (!prefs.showButton) prefs.open = false;
+storeSchedulePrefs(prefs, true);
+applyScheduleChrome({ restoreFocus: false });
+}
+
+function closeSchedulePanel() {
+if (!scheduleOpenNow()) return;
+setScheduleOpen(false, 'close');
+}
+
 function loadStack() {
 try {
 var raw = JSON.parse(localStorage.getItem('peptideUserStack') || '[]');
@@ -3038,6 +3350,7 @@ if (editing) {
 edit = '<div class="stack-edit">' +
 '<div class="intake-field"><label>Dose<input type="text" data-edit="dose" data-id="' + escapeHtml(item.id) + '" placeholder="Your notes" value="' + escapeHtml(item.dose || '') + '" autocomplete="off"></label></div>' +
 '<div class="intake-field"><label>Schedule<input type="text" data-edit="schedule" data-id="' + escapeHtml(item.id) + '" value="' + escapeHtml(item.schedule || '') + '" autocomplete="off"></label></div>' +
+'<div class="intake-field"><label>Time of day<select data-edit="timeOfDay" data-id="' + escapeHtml(item.id) + '">' + timeOfDayOptions(item.timeOfDay) + '</select></label></div>' +
 '<div class="intake-field"><label>Start / purchase date<input type="date" data-edit="startDate" data-id="' + escapeHtml(item.id) + '" value="' + escapeHtml(item.startDate || '') + '"></label></div>' +
 '</div>';
 }
@@ -3074,9 +3387,11 @@ var items = loadStack();
 if (pro) pro.innerHTML = stackProMarkup(items);
 if (!items.length) {
 list.innerHTML = '<p class="empty-note">Nothing in your stack yet. Add a peptide or supplement you are using.</p>';
+renderSchedulePanel();
 return;
 }
 list.innerHTML = items.map(renderStackItem).join('');
+renderSchedulePanel();
 }
 
 function addStackFromForm() {
@@ -3098,6 +3413,7 @@ dose: document.getElementById('stack-dose').value.trim(),
 schedule: document.getElementById('stack-schedule').value.trim(),
 startDate: document.getElementById('stack-start').value,
 notes: document.getElementById('stack-notes').value.trim(),
+timeOfDay: normalizeTimeOfDay(document.getElementById('stack-time') && document.getElementById('stack-time').value),
 active: true,
 status: 'taking'
 };
@@ -3109,6 +3425,7 @@ items.push(nextItem);
 document.getElementById('stack-name').value = '';
 document.getElementById('stack-dose').value = '';
 document.getElementById('stack-schedule').value = '';
+if (document.getElementById('stack-time')) document.getElementById('stack-time').value = '';
 document.getElementById('stack-start').value = '';
 document.getElementById('stack-notes').value = '';
 if (document.getElementById('stack-price')) document.getElementById('stack-price').value = '';
@@ -3134,12 +3451,15 @@ renderStack();
 }
 
 function updateStackField(id, field, value) {
-if (field !== 'dose' && field !== 'schedule' && field !== 'startDate' && field !== 'notes') return;
+if (field !== 'dose' && field !== 'schedule' && field !== 'startDate' && field !== 'notes' && field !== 'timeOfDay') return;
 var items = loadStack();
 items.forEach(function(item) {
-if (item.id === id) item[field] = String(value || '');
+if (item.id !== id) return;
+if (field === 'timeOfDay') item.timeOfDay = normalizeTimeOfDay(value);
+else item[field] = String(value || '');
 });
 persistStack(items);
+renderSchedulePanel();
 }
 
 function removeStackItem(id) {
@@ -4186,6 +4506,10 @@ if (localStorage.getItem('proWaitlist') === 'true' && !(data && data.proWaitlist
 patch.proWaitlist = true;
 need = true;
 }
+if (!data || !data.scheduleUi || typeof data.scheduleUi !== 'object') {
+patch.scheduleUi = scheduleUiPayload();
+need = true;
+}
 if (!need) return;
 patch.lastUpdated = firebase.firestore.FieldValue.serverTimestamp();
 firebase.firestore().collection('users').doc(email).set(patch, { merge: true }).catch(function() {});
@@ -4360,6 +4684,7 @@ sendMsgFromInput();
 });
 document.getElementById('cinput').addEventListener('input', function() {
 ag(this);
+placeScheduleButton();
 if (shouldAutoScroll) scrollToBottom();
 });
 document.getElementById('msgs').addEventListener('scroll', onMsgsScroll, { passive: true });
@@ -4548,6 +4873,34 @@ restoreEmail.addEventListener('input', function() {
 if (!restoreBusy) setRestoreError('');
 });
 }
+var scheduleBtn = document.getElementById('schedule-btn');
+if (scheduleBtn) scheduleBtn.addEventListener('click', function(e) {
+e.stopPropagation();
+toggleSchedulePanel();
+});
+var scheduleClose = document.getElementById('schedule-close');
+if (scheduleClose) scheduleClose.addEventListener('click', function(e) {
+e.stopPropagation();
+closeSchedulePanel();
+});
+var scheduleBackdrop = document.getElementById('schedule-backdrop');
+if (scheduleBackdrop) scheduleBackdrop.addEventListener('click', function(e) {
+e.stopPropagation();
+closeSchedulePanel();
+});
+var schedulePanel = document.getElementById('schedule-panel');
+if (schedulePanel) schedulePanel.addEventListener('click', function(e) { e.stopPropagation(); });
+var scheduleShow = document.getElementById('schedule-show-toggle');
+if (scheduleShow) scheduleShow.addEventListener('click', function(e) {
+e.stopPropagation();
+toggleScheduleButtonShown();
+});
+applyScheduleChrome({ source: 'restore' });
+if (window.ResizeObserver) {
+var composer = document.getElementById('inp-area');
+if (composer) new ResizeObserver(placeScheduleButton).observe(composer);
+}
+window.addEventListener('resize', placeScheduleButton);
 document.addEventListener('click', function() {
 closeHeaderMenu();
 closeTextSizePopover();
@@ -4555,6 +4908,8 @@ closeAttachMenu();
 });
 document.addEventListener('keydown', function(e) {
 if (e.key === 'Escape') {
+var scheduleLayer = document.getElementById('schedule-layer');
+if (scheduleLayer && !scheduleLayer.hidden && currentTab === 'chat') closeSchedulePanel();
 closeHeaderMenu();
 closeTextSizePopover();
 closeAttachMenu();
