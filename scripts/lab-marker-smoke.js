@@ -120,7 +120,7 @@ function startServer() {
   const publicDir = path.join(ROOT, 'public');
   const server = http.createServer(function(req, res) {
     const urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
-    if (urlPath === '/lab-markers.js' || urlPath === '/lab-compare.js') {
+    if (urlPath === '/lab-markers.js' || urlPath === '/lab-compare.js' || urlPath === '/routine-stack.js') {
       res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
       res.end(fs.readFileSync(path.join(ROOT, 'lib', path.basename(urlPath))));
       return;

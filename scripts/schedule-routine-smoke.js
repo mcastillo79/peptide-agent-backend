@@ -27,6 +27,34 @@ const ROUTINE = [
   '- L-glutamine: 5\u201310 g daily'
 ].join('\n');
 
+const POSITIVE = [
+  '**Morning**',
+  '- BPC-157: 250 mcg \u2014 8:00 AM',
+  '- TB-500: 2 mg \u2014 2x weekly',
+  '**Bedtime**',
+  '- Magnesium glycinate: 400 mg'
+].join('\n');
+
+const NOISE = [
+  '**Option B: Reduce to maintenance dose**',
+  '- Best for: Cost savings, maintenance-phase immune support',
+  '**What to Expect (Side Effects)**',
+  '- \u2705 Nothing \u2014 silent efficacy',
+  '- \u2705 Better sleep \u2014 immune system calming',
+  '- \u2705 Reduced anxiety',
+  '**Unlikely but possible (usually indicates dose too high or reconstitution issue)**',
+  '- Mild local reaction at injection site \u2014 redness, itching',
+  '- Mild systemic response \u2014 fatigue, body ache \u2014 reduce to 0.25 mg and then resume if it settles'
+].join('\n');
+
+const SIDE_EFFECTS = [
+  '**Option B: Reduce to maintenance dose**',
+  '- Thymosin Alpha-1: 0.5 mg \u2014 2x weekly',
+  NOISE.split('\n').slice(1).join('\n'),
+  '**Bedtime**',
+  '- Magnesium glycinate: 400 mg'
+].join('\n');
+
 function fail(message) {
   console.error('FAIL ' + message);
   process.exit(1);
@@ -74,6 +102,11 @@ function startServer() {
   const publicDir = path.join(ROOT, 'public');
   const server = http.createServer(function(req, res) {
     const urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+    if (urlPath === '/lab-markers.js' || urlPath === '/lab-compare.js' || urlPath === '/routine-stack.js') {
+      res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
+      res.end(fs.readFileSync(path.join(ROOT, 'lib', path.basename(urlPath))));
+      return;
+    }
     const rel = urlPath === '/' ? '/index.html' : urlPath;
     const full = path.normalize(path.join(publicDir, rel));
     if (!full.startsWith(publicDir)) {
@@ -271,27 +304,30 @@ async function main() {
     const parsed = await evaluate(cdp, `(function() {
       var routine = ${JSON.stringify(ROUTINE)};
       var items = parseRoutineReply(routine);
-      var tooFew = parseRoutineReply('**Daily:**\\n- A: 1 mg\\n- B: 2 mg');
+      var tooFew = parseRoutineReply('**Daily:**\\n- A: 1 mg');
+      var pair = parseRoutineReply('**Daily:**\\n- A: 1 mg\\n- B: 2 mg');
       var noHeader = parseRoutineReply('- A: 1\\n- B: 2\\n- C: 3');
       var paren = parseRoutineReply('**Evening:**\\n- Magnesium (400 mg)\\n- Vitamin D (5000 IU) \\u2014 8 PM\\n- Zinc (25 mg, daily)');
       var nameless = parseRoutineReply('**Daily:**\\n- : missing\\n- OK: 1 mg\\n- Also (2 mg)\\n- Third: 3 mg');
-      var el = addMsg('bot', fmt('**Daily:**\\n- A: 1 mg\\n- B: 2 mg'), false);
-      attachRoutineAdd(el, '**Daily:**\\n- A: 1 mg\\n- B: 2 mg');
+      var el = addMsg('bot', fmt('**Daily:**\\n- A: 1 mg'), false);
+      attachRoutineAdd(el, '**Daily:**\\n- A: 1 mg');
       var shortButton = !!(el.nextElementSibling && el.nextElementSibling.classList.contains('routine-add'));
       if (el.parentNode) el.parentNode.removeChild(el);
       return {
         count: items && items.length,
         items: items,
         tooFew: tooFew,
+        pair: pair && pair.map(function(item) { return item.name; }),
         noHeader: noHeader,
         paren: paren,
         nameless: nameless && nameless.map(function(item) { return item.name; }),
         shortButton: shortButton
       };
     })()`);
-    assert(parsed.tooFew === null, 'two bullets should not count as a routine');
+    assert(parsed.tooFew === null, 'one bullet should not count as a routine');
+    assert(parsed.pair && parsed.pair.join('|') === 'A|B', 'two dosed bullets should count ' + JSON.stringify(parsed.pair));
     assert(parsed.noHeader === null, 'bullets without a header should not count');
-    assert(parsed.shortButton === false, 'short reply rendered an Add all button');
+    assert(parsed.shortButton === false, 'one-line reply rendered an Add all button');
     assert(parsed.count === 5, 'expected 5 routine items, got ' + parsed.count + ' ' + JSON.stringify(parsed.items));
     const byName = {};
     parsed.items.forEach(function(item) { byName[item.name] = item; });
@@ -305,6 +341,110 @@ async function main() {
     assert(parsed.paren[1].name === 'Vitamin D' && parsed.paren[1].dose === '5000 IU' && parsed.paren[1].time === '8 PM', 'vitamin D ' + JSON.stringify(parsed.paren[1]));
     assert(parsed.paren[2].schedule === 'daily', 'zinc schedule ' + JSON.stringify(parsed.paren[2]));
     assert(parsed.nameless && parsed.nameless.join('|') === 'OK|Also|Third', 'nameless lines were kept ' + JSON.stringify(parsed.nameless));
+
+    const positiveSheet = await evaluate(cdp, `(function() {
+      hideSaveModal();
+      var text = ${JSON.stringify(POSITIVE)};
+      var el = addMsg('bot', fmt(text), false);
+      el.id = 'shot-positive';
+      attachRoutineAdd(el, text);
+      var btn = el.nextElementSibling && el.nextElementSibling.querySelector('button');
+      if (!btn) return { ok: false };
+      btn.click();
+      var names = Array.prototype.map.call(document.querySelectorAll('#routine-sheet .suggest-name'), function(node) { return node.textContent; });
+      var metas = Array.prototype.map.call(document.querySelectorAll('#routine-sheet .routine-item-meta'), function(node) { return node.textContent; });
+      var groups = Array.prototype.map.call(document.querySelectorAll('#routine-sheet .routine-item-group'), function(node) { return node.textContent; });
+      return {
+        ok: true,
+        hidden: document.getElementById('routine-sheet').hidden,
+        names: names,
+        metas: metas,
+        groups: groups,
+        checked: document.querySelectorAll('#routine-sheet input:checked').length
+      };
+    })()`);
+    assert(positiveSheet.ok && positiveSheet.hidden === false, 'positive sheet did not open ' + JSON.stringify(positiveSheet));
+    assert(positiveSheet.names.join('|') === 'BPC-157|TB-500|Magnesium glycinate', 'positive names ' + positiveSheet.names.join('|'));
+    assert(positiveSheet.metas.join('|') === '250 mcg \u2014 8:00 AM|2 mg \u2014 2x weekly|400 mg', 'positive lines ' + positiveSheet.metas.join('|'));
+    assert(positiveSheet.groups.join('|') === 'Morning|Morning|Bedtime', 'positive groups ' + positiveSheet.groups.join('|'));
+    assert(positiveSheet.checked === 3, 'positive checked ' + positiveSheet.checked);
+    await shot(cdp, 'routine_positive_confirm_390.png');
+
+    const sideSheet = await evaluate(cdp, `(function() {
+      closeRoutineSheet(false);
+      var previous = document.getElementById('shot-positive');
+      if (previous) {
+        var extra = previous.nextElementSibling;
+        if (extra && extra.classList.contains('routine-add')) extra.parentNode.removeChild(extra);
+        previous.parentNode.removeChild(previous);
+      }
+      var text = ${JSON.stringify(SIDE_EFFECTS)};
+      var el = addMsg('bot', fmt(text), false);
+      el.id = 'shot-side';
+      attachRoutineAdd(el, text);
+      var btn = el.nextElementSibling && el.nextElementSibling.querySelector('button');
+      if (!btn) return { ok: false, buttons: document.querySelectorAll('.routine-add').length };
+      btn.click();
+      var names = Array.prototype.map.call(document.querySelectorAll('#routine-sheet .suggest-name'), function(node) { return node.textContent; });
+      var body = document.getElementById('routine-sheet-body').textContent;
+      var msgs = document.getElementById('msgs');
+      var anchor = null;
+      el.querySelectorAll('strong').forEach(function(node) {
+        if (!anchor && node.textContent.indexOf('What to Expect') !== -1) anchor = node;
+      });
+      if (anchor) {
+        var top = anchor.getBoundingClientRect().top;
+        msgs.scrollTop += top - 72;
+      }
+      return {
+        ok: true,
+        hidden: document.getElementById('routine-sheet').hidden,
+        names: names,
+        body: body,
+        chat: el.textContent,
+        buttons: document.querySelectorAll('.routine-add').length
+      };
+    })()`);
+    assert(sideSheet.ok && sideSheet.hidden === false, 'protocol sheet did not open ' + JSON.stringify(sideSheet));
+    assert(sideSheet.names.join('|') === 'Thymosin Alpha-1|Magnesium glycinate', 'protocol sheet names ' + sideSheet.names.join('|'));
+    assert(sideSheet.body.indexOf('Best for') === -1 && sideSheet.body.indexOf('Nothing') === -1 && sideSheet.body.indexOf('Mild') === -1, 'sheet kept non-items ' + sideSheet.body);
+    assert(sideSheet.chat.indexOf('What to Expect') !== -1 && sideSheet.chat.indexOf('Best for') !== -1 && sideSheet.chat.indexOf('reduce to 0.25 mg') !== -1, 'protocol text missing ' + sideSheet.chat.slice(0, 240));
+    await shot(cdp, 'routine_protocol_side_effects_390.png');
+
+    const noiseOnly = await evaluate(cdp, `(function() {
+      closeRoutineSheet(false);
+      var previous = document.getElementById('shot-side');
+      if (previous) {
+        var extra = previous.nextElementSibling;
+        if (extra && extra.classList.contains('routine-add')) extra.parentNode.removeChild(extra);
+        previous.parentNode.removeChild(previous);
+      }
+      var text = ${JSON.stringify(NOISE)};
+      var parsed = parseRoutineReply(text);
+      var el = addMsg('bot', fmt(text), false);
+      el.id = 'shot-noise';
+      attachRoutineAdd(el, text);
+      var msgs = document.getElementById('msgs');
+      el.scrollIntoView({ block: 'start' });
+      msgs.scrollTop = Math.max(0, el.offsetTop - 8);
+      return {
+        parsed: parsed,
+        button: !!(el.nextElementSibling && el.nextElementSibling.classList.contains('routine-add')),
+        hasExpect: el.textContent.indexOf('What to Expect') !== -1,
+        hasBest: el.textContent.indexOf('Best for') !== -1,
+        hasMild: el.textContent.indexOf('Mild local reaction') !== -1
+      };
+    })()`);
+    assert(noiseOnly.parsed === null && noiseOnly.button === false, 'side-effect-only reply showed the button ' + JSON.stringify(noiseOnly));
+    assert(noiseOnly.hasExpect && noiseOnly.hasBest && noiseOnly.hasMild, 'side-effect reply did not render ' + JSON.stringify(noiseOnly));
+    await shot(cdp, 'routine_side_effects_no_button_390.png');
+
+    await evaluate(cdp, `(function() {
+      closeRoutineSheet(false);
+      var el = document.getElementById('shot-noise');
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+      return document.querySelectorAll('.routine-add').length;
+    })()`);
 
     await evaluate(cdp, `window.__routine = ${JSON.stringify(ROUTINE)};
       window.fetch = function(url) {
