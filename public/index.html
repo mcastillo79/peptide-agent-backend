@@ -138,12 +138,46 @@ body.dark #schedule-backdrop { background: rgba(0, 0, 0, 0.55); }
 #schedule-close { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); font-size: 1.375rem; line-height: 1; cursor: pointer; font-family: inherit; padding: 0; }
 #schedule-close:hover, #schedule-close:focus-visible { border-color: var(--accent); color: var(--accent); }
 #schedule-body { overflow-y: auto; padding: 2px 16px 4px; min-height: 0; -webkit-overflow-scrolling: touch; }
-.schedule-group { margin: 0 0 4px; }
-.schedule-group h3 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em; color: var(--text-soft); margin: 0 0 2px; }
-.schedule-row { padding: 3px 0; border-top: 1px solid var(--border-col); }
-.schedule-name { font-weight: 700; font-size: 0.875rem; line-height: 1.25; color: var(--text-main); overflow-wrap: anywhere; }
-.schedule-note { margin-top: 1px; font-size: 0.8125rem; line-height: 1.25; color: var(--text-soft); white-space: pre-wrap; overflow-wrap: anywhere; }
+.schedule-group { margin: 0 0 8px; }
+.schedule-group h3 { font-size: 0.875rem; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--text-main); margin: 8px 0 2px; line-height: 1.35; }
+.schedule-group ul { margin: 0; padding: 0 0 0 1.15rem; }
+.schedule-group li { margin: 0; padding: 0; }
+.schedule-line { display: flex; align-items: center; gap: 6px; min-height: 44px; }
+.schedule-line-text { flex: 1; min-width: 0; font-size: 0.875rem; line-height: 1.35; color: var(--text-main); overflow-wrap: anywhere; }
+.schedule-name { font-weight: 700; }
+.schedule-detail { font-weight: 400; }
+.schedule-edit, .schedule-add, .schedule-remove, .routine-add-btn, .schedule-form button { font-family: inherit; cursor: pointer; }
+.schedule-edit { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 44px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border-col); background: var(--input-bg); color: var(--text-main); font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+.schedule-edit svg { display: block; }
+.schedule-add { width: 100%; min-height: 44px; margin: 6px 0 10px; border-radius: 10px; border: 1px dashed var(--border-col); background: var(--input-bg); color: var(--text-main); font-size: 0.875rem; font-weight: 700; }
+.schedule-form { margin: 0 0 8px; min-width: 0; }
+.schedule-form .intake-field { margin-bottom: 6px; }
+.schedule-form .intake-field label { margin-bottom: 2px; }
+.schedule-form input, .schedule-form select, .schedule-form button { min-height: 44px; }
+#schedule-panel, #routine-sheet-panel, .schedule-group, .schedule-line { min-width: 0; }
+.schedule-form-actions { display: flex; flex-direction: column; gap: 8px; }
+.schedule-form-actions .quiz-next, .schedule-form-actions .quiz-back, .schedule-remove { width: 100%; margin-top: 0; min-height: 44px; }
+.schedule-remove { border-radius: 10px; border: 1px solid var(--border-col); background: var(--input-bg); color: #c53030; font-size: 0.875rem; font-weight: 700; }
+body.dark .schedule-remove { color: #ffb4b4; }
+.schedule-edit:focus-visible, .schedule-add:focus-visible, .schedule-remove:focus-visible, .schedule-form button:focus-visible, .routine-add-btn:focus-visible, #routine-sheet button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .schedule-empty { font-size: 0.875rem; color: var(--text-soft); line-height: 1.45; margin: 8px 0 12px; }
+.routine-add { align-self: stretch; max-width: 100%; }
+.routine-add-btn { width: 100%; min-height: 44px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--accent); background: var(--card-bg); color: var(--accent); font-size: 0.875rem; font-weight: 700; }
+.routine-add-btn:hover, .routine-add-btn:focus-visible { background: rgba(26,107,60,0.08); }
+body.dark .routine-add-btn:hover, body.dark .routine-add-btn:focus-visible { background: rgba(63,185,80,0.14); }
+#routine-sheet { position: fixed; inset: 0; z-index: 1500; display: flex; align-items: flex-end; justify-content: center; }
+#routine-sheet[hidden] { display: none !important; }
+#routine-sheet-backdrop { position: absolute; inset: 0; margin: 0; padding: 0; border: 0; background: rgba(10, 37, 64, 0.45); cursor: pointer; }
+body.dark #routine-sheet-backdrop { background: rgba(0, 0, 0, 0.55); }
+#routine-sheet-panel { position: relative; z-index: 1; width: min(480px, 100%); max-height: min(86dvh, 720px); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); border-bottom: none; border-radius: 16px 16px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.22); display: flex; flex-direction: column; outline: none; }
+#routine-sheet-body { overflow-y: auto; padding: 0 16px 8px; min-height: 0; -webkit-overflow-scrolling: touch; }
+#routine-sheet .stack-suggest-item { min-height: 44px; align-items: center; }
+#routine-sheet .stack-suggest-item input { width: 44px; height: 44px; margin-top: 0; flex-shrink: 0; }
+.routine-item-meta { display: block; margin-top: 2px; font-size: 0.8125rem; line-height: 1.35; color: var(--text-main); overflow-wrap: anywhere; font-weight: 400; }
+.routine-item-group { display: block; margin-top: 2px; font-size: 0.75rem; line-height: 1.35; color: var(--text-soft); }
+#routine-sheet-error { margin: 0 16px; }
+.routine-sheet-actions { display: flex; flex-direction: column; gap: 8px; padding: 8px 16px 16px; flex-shrink: 0; }
+.routine-sheet-actions .quiz-next, .routine-sheet-actions .quiz-back { width: 100%; margin-top: 0; min-height: 44px; }
 #schedule-foot { flex-shrink: 0; margin: 0; padding: 8px 16px 10px; border-top: 1px solid var(--border-col); font-size: 0.75rem; line-height: 1.4; color: var(--text-soft); }
 #panel-chat.schedule-btn-on #quote-chip,
 #panel-chat.schedule-btn-on #upload-status,
@@ -181,7 +215,7 @@ body.dark #copy-toast { background: #e6edf3; color: #0d1117; }
 body.dark #sel-actions #sel-ask { background: var(--accent); color: #04140a; }
 #sel-actions #sel-ask:hover, #sel-actions #sel-ask:focus-visible { color: #fff; }
 body.dark #sel-actions #sel-ask:hover, body.dark #sel-actions #sel-ask:focus-visible { color: #04140a; }
-#copy-toast { position: fixed; z-index: 3000; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(8px); background: #0a2540; color: #fff; border-radius: 999px; padding: 8px 14px; font-size: 0.8125rem; font-weight: 650; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; }
+#copy-toast { position: fixed; z-index: 3000; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(8px); background: #0a2540; color: #fff; border-radius: 999px; padding: 8px 14px; font-size: 0.8125rem; font-weight: 650; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; max-width: calc(100vw - 24px); text-align: center; }
 #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #typer { align-self: flex-start; background: var(--bot-bg); border: 1px solid var(--border-col); border-radius: 4px 16px 16px 16px; padding: 12px 16px; display: none; gap: 5px; align-items: center; }
 #typer span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-soft); animation: bb 1s infinite; display: inline-block; }
@@ -503,7 +537,7 @@ input, textarea, select { font-size: max(16px, 1rem); }
 @page { size: letter; margin: 0.5in; }
 html { font-size: 100% !important; }
 html, body { height: auto !important; min-height: 0 !important; overflow: visible !important; display: block !important; background: #fff !important; padding: 0 !important; }
-#wrap, #intake-overlay, #save-conv-overlay, #copy-toast, #hdr-menu-panel, #text-size-popover, #sel-actions, #quote-chip { display: none !important; }
+#wrap, #intake-overlay, #save-conv-overlay, #copy-toast, #hdr-menu-panel, #text-size-popover, #sel-actions, #quote-chip, #routine-sheet { display: none !important; }
 #print-report, #lab-print { display: none !important; color: #111; background: #fff; padding: 0; font-family: Georgia, serif; }
 body.print-labs #lab-print { display: block !important; }
 body.print-doctor #print-report, body:not(.print-labs):not(.print-doctor) #print-report { display: block !important; }
@@ -835,6 +869,25 @@ To personalize my guidance, tell me:<br>
 <div id="print-report"></div>
 <div id="lab-print"></div>
 <div id="copy-toast" role="status" aria-live="polite"></div>
+<datalist id="stack-group-options"></datalist>
+<div id="routine-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="routine-sheet-title">
+<button type="button" id="routine-sheet-backdrop" tabindex="-1" aria-label="Close"></button>
+<div id="routine-sheet-panel" tabindex="-1">
+<div class="schedule-head">
+<div class="schedule-head-copy">
+<h2 id="routine-sheet-title">Add all to My Stack</h2>
+<p class="schedule-sub">Checked items are saved as Taking.</p>
+</div>
+<button type="button" id="routine-sheet-close" aria-label="Close">×</button>
+</div>
+<div id="routine-sheet-body"></div>
+<p id="routine-sheet-error" class="suggest-error" role="alert"></p>
+<div class="routine-sheet-actions">
+<button type="button" class="quiz-next" id="routine-sheet-confirm">Add to My Stack</button>
+<button type="button" class="quiz-back" id="routine-sheet-cancel">Cancel</button>
+</div>
+</div>
+</div>
 <div id="sel-actions" hidden role="toolbar" aria-label="Selection">
 <button type="button" id="sel-ask">Ask about this</button>
 <button type="button" id="sel-copy">Copy</button>
@@ -891,6 +944,8 @@ var PRO_PREVIEW_OPEN = true;
 var ALTURA_STACK_DISCLAIMER = 'Third-party research-use-only product (Altura). Not medical advice. Not for human consumption.';
 var highlightedStackIds = {};
 var editingStackId = '';
+var scheduleEdit = null;
+var routineSheetReturn = null;
 var SUGGEST_DISMISS_KEY = 'peptideSuggestDismissed';
 var hist = [];
 var busy = false;
@@ -1062,13 +1117,17 @@ for (var i = 0; i < extras.length; i++) extras[i].parentNode.removeChild(extras[
 return (clone.innerText || clone.textContent || '').replace(/\u00a0/g, ' ').trim();
 }
 
-function showCopiedToast() {
+function showToast(message, duration) {
 var toast = document.getElementById('copy-toast');
 if (!toast) return;
-toast.textContent = 'Copied';
+toast.textContent = message;
 toast.classList.add('show');
-clearTimeout(showCopiedToast.timer);
-showCopiedToast.timer = setTimeout(function() { toast.classList.remove('show'); }, 1600);
+clearTimeout(showToast.timer);
+showToast.timer = setTimeout(function() { toast.classList.remove('show'); }, duration || 1600);
+}
+
+function showCopiedToast() {
+showToast('Copied', 1600);
 }
 
 function prefersSyncCopy() {
@@ -1451,8 +1510,9 @@ var items = data && data.suggested_items;
 if (!items || !items.length || !msgDiv.parentNode) return;
 if (suggestDismissed(key)) return;
 var next = msgDiv.nextElementSibling;
+if (next && next.classList && next.classList.contains('routine-add')) next = next.nextElementSibling;
 if (next && next.classList && next.classList.contains('stack-suggest')) return;
-msgDiv.parentNode.insertBefore(buildSuggestCard(items, key), msgDiv.nextSibling);
+msgDiv.parentNode.insertBefore(buildSuggestCard(items, key), next);
 if (shouldAutoScroll) scrollToBottom();
 }).catch(function() {});
 }
@@ -2089,6 +2149,7 @@ previousUser = msg.content || '';
 addMsg('usr', displayUserMsg(msg.content), false);
 } else {
 var el = addMsg('bot', fmt(msg.content), false);
+attachRoutineAdd(el, msg.content);
 lastOffer = { el: el, text: msg.content, userText: previousUser };
 }
 });
@@ -2110,6 +2171,10 @@ scrollToBottom();
 
 function escapeHtml(s) {
 return String(s == null ? '' : s).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;');
+}
+
+function escapeAttr(s) {
+return escapeHtml(s).split('"').join('&quot;');
 }
 
 function showStreamError(message) {
@@ -2193,6 +2258,7 @@ msgDiv._streamDone = true;
 msgDiv._streamNeedsCopy = true;
 if (paintStreamBubble(msgDiv) && shouldAutoScroll) scrollToBottom();
 offerStackSuggestions(msgDiv, fullText, latestUserText());
+attachRoutineAdd(msgDiv, fullText);
 } else if (msgDiv.parentNode) {
 msgDiv.parentNode.removeChild(msgDiv);
 }
@@ -3008,35 +3074,528 @@ return '<option value="' + pair[0] + '"' + (pair[0] === current ? ' selected' : 
 }).join('');
 }
 
+var SCHEDULE_PENCIL = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path></svg>';
+
+function timeOfDayLabel(value) {
+var v = normalizeTimeOfDay(value);
+if (!v) return '';
+for (var i = 0; i < SCHEDULE_GROUPS.length; i++) {
+if (SCHEDULE_GROUPS[i].id === v) return SCHEDULE_GROUPS[i].label;
+}
+return '';
+}
+
+function routineSourceText(content) {
+if (typeof content === 'string') return content;
+if (Array.isArray(content)) {
+return content.map(function(part) {
+if (typeof part === 'string') return part;
+if (part && typeof part.text === 'string') return part.text;
+return '';
+}).join('\n');
+}
+return '';
+}
+
+function routineHeaderText(line) {
+var match = String(line || '').trim().match(/^\*\*([^*]+)\*\*\s*:?\s*$/);
+if (!match) return '';
+return match[1].replace(/\s*:\s*$/, '').trim();
+}
+
+function routineBulletBody(line) {
+var match = String(line || '').trim().match(/^[-*•–—]\s+(.+)$/);
+if (!match) return '';
+return match[1].trim();
+}
+
+function colonOutsideParens(text) {
+var depth = 0;
+for (var i = 0; i < text.length; i++) {
+var ch = text.charAt(i);
+if (ch === '(') depth += 1;
+else if (ch === ')' && depth) depth -= 1;
+else if (ch === ':' && depth === 0) return i;
+}
+return -1;
+}
+
+function splitTimeFromDetails(details) {
+var text = String(details || '');
+if (!text) return null;
+var re = /(?:\s[—–-]\s*|[—–]\s*)(\d{1,2}(?::\d{2})?\s*(?:a\.?\s*m\.?|p\.?\s*m\.?)|\d{1,2}:\d{2})\b/gi;
+var match = null;
+var found;
+while ((found = re.exec(text))) match = found;
+if (!match) return null;
+return {
+dose: text.slice(0, match.index).replace(/[\s—–-]+$/g, '').trim(),
+time: match[1].replace(/\s+/g, ' ').trim()
+};
+}
+
+function frequencyPhrase(text) {
+var source = String(text || '');
+if (!source) return '';
+var patterns = [
+/\b\d+\s*[–-]\s*\d+\s*x\s*(?:daily|weekly|a\s+week|per\s+week|a\s+day|per\s+day)\b/i,
+/\b\d+\s*x\s*(?:daily|weekly|a\s+week|per\s+week|a\s+day|per\s+day|\/day|\/week)\b/i,
+/\b(?:once|twice|three\s+times|\d+\s+times)\s+(?:daily|a\s+day|per\s+day|weekly|a\s+week|per\s+week)\b/i,
+/\bevery\s+other\s+day\b/i,
+/\bevery\s+day\b/i,
+/\b(?:daily|weekly|nightly)\b/i
+];
+for (var i = 0; i < patterns.length; i++) {
+var found = source.match(patterns[i]);
+if (found) return found[0].replace(/\s+/g, ' ').trim();
+}
+return '';
+}
+
+function parseRoutineBullet(body, header) {
+var text = String(body || '').replace(/\*\*/g, '').trim();
+if (!text) return null;
+var name = '';
+var details = '';
+var colon = colonOutsideParens(text);
+if (colon > 0) {
+name = text.slice(0, colon).trim();
+details = text.slice(colon + 1).trim();
+} else {
+var wrapped = text.match(/^([^():]+?)\s*\(([^)]*)\)\s*(.*)$/);
+if (!wrapped) return null;
+name = wrapped[1].trim();
+details = wrapped[2].trim();
+var tail = wrapped[3].trim();
+if (tail) details = details ? (details + ' ' + tail) : tail;
+}
+if (!name || !/[A-Za-z0-9]/.test(name)) return null;
+var split = splitTimeFromDetails(details);
+var dose = split ? split.dose : details;
+var schedule = frequencyPhrase(details) || header;
+return { name: name, dose: dose, time: split ? split.time : '', group: header, schedule: schedule };
+}
+
+function parseRoutineReply(content) {
+var raw = routineSourceText(content).replace(/\r\n/g, '\n');
+if (!raw.trim()) return null;
+var lines = raw.split('\n');
+var header = '';
+var sawHeader = false;
+var items = [];
+for (var i = 0; i < lines.length; i++) {
+var line = lines[i].trim();
+if (!line) continue;
+var nextHeader = routineHeaderText(line);
+if (nextHeader) {
+header = nextHeader;
+sawHeader = true;
+continue;
+}
+if (!header) continue;
+var body = routineBulletBody(line);
+if (!body) continue;
+var parsed = parseRoutineBullet(body, header);
+if (parsed && parsed.name) items.push(parsed);
+}
+if (!sawHeader || items.length < 3) return null;
+return items;
+}
+
+function attachRoutineAdd(msgDiv, content) {
+if (!msgDiv || !msgDiv.parentNode) return;
+var items = parseRoutineReply(content);
+var existing = msgDiv.nextElementSibling;
+if (!items) {
+if (existing && existing.classList && existing.classList.contains('routine-add')) existing.parentNode.removeChild(existing);
+return;
+}
+if (existing && existing.classList && existing.classList.contains('routine-add')) {
+var kept = existing.querySelector('.routine-add-btn');
+if (kept) kept._items = items;
+return;
+}
+var wrap = document.createElement('div');
+wrap.className = 'routine-add';
+var button = document.createElement('button');
+button.type = 'button';
+button.className = 'routine-add-btn';
+button.textContent = 'Add all to My Stack';
+button._items = items;
+wrap.appendChild(button);
+msgDiv.parentNode.insertBefore(wrap, msgDiv.nextSibling);
+}
+
+function routineFocusables(panel) {
+return Array.prototype.filter.call(panel.querySelectorAll('button, input, select, textarea'), function(el) {
+return !el.disabled && el.getAttribute('tabindex') !== '-1';
+});
+}
+
+function closeRoutineSheet(restore) {
+var sheet = document.getElementById('routine-sheet');
+if (sheet) sheet.hidden = true;
+var back = routineSheetReturn;
+routineSheetReturn = null;
+if (restore && back && typeof back.focus === 'function') back.focus();
+}
+
+function openRoutineSheet(items, fromBtn) {
+var body = document.getElementById('routine-sheet-body');
+var sheet = document.getElementById('routine-sheet');
+var err = document.getElementById('routine-sheet-error');
+if (!body || !sheet || !items || !items.length) return;
+if (err) err.textContent = '';
+var html = '';
+items.forEach(function(item, index) {
+var line = '';
+if (item.dose && item.time) line = item.dose + ' \u2014 ' + item.time;
+else if (item.dose) line = item.dose;
+else if (item.time) line = item.time;
+html += '<label class="stack-suggest-item"><input type="checkbox" checked data-index="' + index + '"><span>';
+html += '<span class="suggest-name">' + escapeHtml(item.name) + '</span>';
+if (line) html += '<span class="routine-item-meta">' + escapeHtml(line) + '</span>';
+if (item.group) html += '<span class="routine-item-group">' + escapeHtml(item.group) + '</span>';
+html += '</span></label>';
+});
+body.innerHTML = html;
+body._items = items;
+routineSheetReturn = fromBtn || document.activeElement;
+sheet.hidden = false;
+var box = body.querySelector('input[type="checkbox"]');
+if (box) box.focus();
+else {
+var panel = document.getElementById('routine-sheet-panel');
+if (panel) panel.focus();
+}
+}
+
+function routineResultMessage(added, updated, skipped) {
+var message = '';
+if (added && updated) message = 'Added ' + added + ' to My Stack. Updated ' + updated + '.';
+else if (added) message = 'Added ' + added + ' to My Stack.';
+else if (updated) message = 'Updated ' + updated + ' in My Stack.';
+if (skipped) {
+var limit = 'Your stack is full (40 items). ' + skipped + (skipped === 1 ? ' item was not added.' : ' items were not added.');
+message = message ? (message + ' ' + limit) : limit;
+}
+if (!message) message = 'Your stack is full. Remove one to add another.';
+return message;
+}
+
+function applyRoutineItems(chosen) {
+var items = loadStack();
+var added = 0;
+var updated = 0;
+var skipped = 0;
+var addedIds = [];
+(chosen || []).forEach(function(sug) {
+var name = String(sug && sug.name || '').trim();
+if (!name) return;
+var existing = null;
+var key = stackNorm(name);
+items.forEach(function(item) {
+if (!existing && stackNorm(item.name) === key) existing = item;
+});
+if (existing) {
+existing.name = name;
+existing.dose = String(sug.dose || '');
+existing.time = String(sug.time || '');
+existing.group = String(sug.group || '');
+existing.schedule = String(sug.schedule || '');
+existing.status = 'taking';
+existing.active = true;
+updated += 1;
+return;
+}
+if (items.length >= 40) {
+skipped += 1;
+return;
+}
+var id = newStackId();
+items.push({
+id: id,
+name: name,
+dose: String(sug.dose || ''),
+schedule: String(sug.schedule || ''),
+time: String(sug.time || ''),
+group: String(sug.group || ''),
+startDate: '',
+notes: '',
+timeOfDay: '',
+active: true,
+status: 'taking'
+});
+addedIds.push(id);
+added += 1;
+});
+if (added || updated) {
+highlightedStackIds = {};
+addedIds.forEach(function(id) { highlightedStackIds[id] = true; });
+saveStack(items);
+}
+return { added: added, updated: updated, skipped: skipped, message: routineResultMessage(added, updated, skipped) };
+}
+
+function confirmRoutineSheet() {
+var body = document.getElementById('routine-sheet-body');
+var err = document.getElementById('routine-sheet-error');
+if (!body || !body._items) return;
+var boxes = body.querySelectorAll('input[type="checkbox"]');
+var chosen = [];
+for (var i = 0; i < boxes.length; i++) {
+if (!boxes[i].checked) continue;
+var item = body._items[Number(boxes[i].getAttribute('data-index'))];
+if (item && item.name) chosen.push(item);
+}
+if (!chosen.length) {
+if (err) err.textContent = 'Select at least one item.';
+return;
+}
+var result = applyRoutineItems(chosen);
+if (!result.added && !result.updated) {
+if (err) err.textContent = result.message;
+return;
+}
+closeRoutineSheet(false);
+showToast(result.message, 3200);
+}
+
+function refreshGroupList(items) {
+var list = document.getElementById('stack-group-options');
+if (!list) return;
+var seen = Object.create(null);
+var html = '';
+(items || []).forEach(function(item) {
+var group = String(item && item.group || '').trim();
+if (!group || seen[group]) return;
+seen[group] = true;
+html += '<option value="' + escapeAttr(group) + '"></option>';
+});
+list.innerHTML = html;
+}
+
+function scheduleLineText(item, customGroup) {
+var dose = String(item.dose || '').trim();
+var schedule = String(item.schedule || '').trim();
+var group = String(item.group || '').trim();
+var detail = dose;
+if (!detail && schedule && schedule !== group) detail = schedule;
+var timeText = String(item.time || '').trim();
+if (!timeText && customGroup) timeText = timeOfDayLabel(item.timeOfDay);
+if (detail && timeText) return ': ' + detail + ' \u2014 ' + timeText;
+if (detail) return ': ' + detail;
+if (timeText) return ' \u2014 ' + timeText;
+return '';
+}
+
+function scheduleField(id, label, value, placeholder, listId) {
+var list = listId ? ' list="' + listId + '"' : '';
+return '<div class="intake-field"><label for="' + id + '">' + escapeHtml(label) + '<input id="' + id + '" type="text" value="' + escapeAttr(value || '') + '" placeholder="' + escapeAttr(placeholder || '') + '"' + list + ' autocomplete="off"></label></div>';
+}
+
+function renderScheduleForm(item) {
+var isNew = !item;
+var formKey = isNew ? 'new' : item.id;
+var html = '<form class="schedule-form" id="schedule-form-' + escapeAttr(formKey) + '" data-schedule-form="' + escapeAttr(formKey) + '">';
+html += scheduleField('schedule-edit-name', 'Name', item && item.name, 'e.g. BPC-157');
+html += scheduleField('schedule-edit-dose', 'Dose', item && item.dose, 'e.g. 500 mcg');
+html += scheduleField('schedule-edit-schedule', 'Schedule', item && item.schedule, 'e.g. daily');
+html += scheduleField('schedule-edit-time', 'Time', item && item.time, 'e.g. 7 AM');
+html += '<div class="intake-field"><label for="schedule-edit-tod">Time of day<select id="schedule-edit-tod">' + timeOfDayOptions(item && item.timeOfDay) + '</select></label></div>';
+html += scheduleField('schedule-edit-group', 'Group', item && item.group, 'e.g. Daily peptides', 'stack-group-options');
+html += '<p id="schedule-edit-error" class="suggest-error" role="alert"></p>';
+html += '<div class="schedule-form-actions">';
+html += '<button type="submit" class="quiz-next">Save</button>';
+html += '<button type="button" class="quiz-back" data-schedule-action="cancel">Cancel</button>';
+if (!isNew) html += '<button type="button" class="schedule-remove" data-schedule-action="stop" data-id="' + escapeAttr(item.id) + '">Remove from schedule</button>';
+html += '</div></form>';
+return html;
+}
+
+function renderScheduleLine(item, customGroup) {
+var detail = scheduleLineText(item, customGroup);
+var editing = scheduleEdit === item.id;
+var html = '<li class="schedule-item"><div class="schedule-line"><div class="schedule-line-text"><span class="schedule-name">' + escapeHtml(item.name) + '</span>';
+if (detail) html += '<span class="schedule-detail">' + escapeHtml(detail) + '</span>';
+html += '</div><button type="button" class="schedule-edit" data-schedule-action="edit" data-id="' + escapeAttr(item.id) + '" aria-expanded="' + (editing ? 'true' : 'false') + '"';
+if (editing) html += ' aria-controls="schedule-form-' + escapeAttr(item.id) + '"';
+html += ' aria-label="' + escapeAttr('Edit ' + item.name) + '">' + SCHEDULE_PENCIL + '<span>Edit</span></button></div>';
+if (editing) html += renderScheduleForm(item);
+html += '</li>';
+return html;
+}
+
+function renderScheduleSection(title, rows, customGroup) {
+var html = '<section class="schedule-group"><h3>' + escapeHtml(title) + '</h3><ul>';
+rows.forEach(function(item) { html += renderScheduleLine(item, customGroup); });
+html += '</ul></section>';
+return html;
+}
+
 function renderSchedulePanel() {
 var body = document.getElementById('schedule-body');
 if (!body) return;
-var items = loadStack().filter(function(item) {
+var all = loadStack();
+refreshGroupList(all);
+var items = all.filter(function(item) {
 var status = stackStatus(item);
 return status === 'taking' || status === 'considering';
 });
-if (!items.length) {
-body.innerHTML = '<p class="schedule-empty">Add items in My Stack to see an example day.</p>';
-return;
-}
-var buckets = { morning: [], midday: [], evening: [], bedtime: [], '': [] };
+var html = '';
+if (!items.length) html += '<p class="schedule-empty">Add items in My Stack to see an example day.</p>';
+var sections = [];
+var ungrouped = [];
 items.forEach(function(item) {
+var group = String(item.group || '').trim();
+if (!group) { ungrouped.push(item); return; }
+var section = null;
+for (var i = 0; i < sections.length; i++) {
+if (sections[i].title === group) { section = sections[i]; break; }
+}
+if (!section) {
+section = { title: group, rows: [] };
+sections.push(section);
+}
+section.rows.push(item);
+});
+sections.forEach(function(section) {
+html += renderScheduleSection(section.title, section.rows, true);
+});
+var buckets = { morning: [], midday: [], evening: [], bedtime: [], '': [] };
+ungrouped.forEach(function(item) {
 buckets[normalizeTimeOfDay(item.timeOfDay)].push(item);
 });
-var html = '';
 SCHEDULE_GROUPS.forEach(function(group) {
 var rows = buckets[group.id];
 if (!rows || !rows.length) return;
-html += '<section class="schedule-group"><h3>' + escapeHtml(group.label) + '</h3>';
-rows.forEach(function(item) {
-html += '<div class="schedule-row"><div class="schedule-name">' + escapeHtml(item.name) + '</div>';
-if (item.schedule) html += '<div class="schedule-note">' + escapeHtml(item.schedule) + '</div>';
-if (item.notes) html += '<div class="schedule-note">' + escapeHtml(item.notes) + '</div>';
-html += '</div>';
+html += renderScheduleSection(group.label, rows, false);
 });
-html += '</section>';
-});
+if (scheduleEdit === 'new') html += renderScheduleForm(null);
+else html += '<button type="button" class="schedule-add" id="schedule-add" data-schedule-action="add">+ Add item</button>';
 body.innerHTML = html;
+}
+
+function focusScheduleEditor() {
+var input = document.getElementById('schedule-edit-name');
+if (!input) return;
+input.focus();
+var scroller = document.getElementById('schedule-body');
+var form = input.closest ? input.closest('form') : null;
+if (scroller && form) scroller.scrollTop = Math.max(0, form.offsetTop - 8);
+}
+
+function openScheduleEditor(id) {
+scheduleEdit = id || 'new';
+renderSchedulePanel();
+focusScheduleEditor();
+}
+
+function focusScheduleControl(id) {
+var target = null;
+if (id && id !== 'new') {
+var buttons = document.querySelectorAll('#schedule-body .schedule-edit');
+for (var i = 0; i < buttons.length; i++) {
+if (buttons[i].getAttribute('data-id') === id) { target = buttons[i]; break; }
+}
+}
+if (!target) target = document.getElementById('schedule-add');
+if (!target) target = document.getElementById('schedule-close');
+if (target && target.focus) target.focus();
+}
+
+function cancelScheduleEditor() {
+var id = scheduleEdit;
+scheduleEdit = null;
+renderSchedulePanel();
+focusScheduleControl(id);
+}
+
+function readScheduleForm() {
+function val(id) {
+var el = document.getElementById(id);
+return el ? String(el.value || '').trim() : '';
+}
+return {
+name: val('schedule-edit-name'),
+dose: val('schedule-edit-dose'),
+schedule: val('schedule-edit-schedule'),
+time: val('schedule-edit-time'),
+timeOfDay: normalizeTimeOfDay(val('schedule-edit-tod')),
+group: val('schedule-edit-group')
+};
+}
+
+function saveScheduleEditor() {
+var data = readScheduleForm();
+var err = document.getElementById('schedule-edit-error');
+if (!data.name) {
+if (err) err.textContent = 'Enter a name.';
+var nameInput = document.getElementById('schedule-edit-name');
+if (nameInput) nameInput.focus();
+return;
+}
+var items = loadStack();
+var id = scheduleEdit;
+var isNew = id === 'new';
+if (isNew && items.length >= 40) {
+if (err) err.textContent = 'Your stack is full. Remove one to add another.';
+return;
+}
+if (isNew) {
+id = newStackId();
+items.push({
+id: id,
+name: data.name,
+dose: data.dose,
+schedule: data.schedule,
+time: data.time,
+timeOfDay: data.timeOfDay,
+group: data.group,
+startDate: '',
+notes: '',
+active: true,
+status: 'taking'
+});
+highlightedStackIds = {};
+highlightedStackIds[id] = true;
+} else {
+var found = false;
+items.forEach(function(item) {
+if (item.id !== id) return;
+found = true;
+item.name = data.name;
+item.dose = data.dose;
+item.schedule = data.schedule;
+item.time = data.time;
+item.timeOfDay = data.timeOfDay;
+item.group = data.group;
+});
+if (!found) {
+if (err) err.textContent = 'That item is no longer in My Stack.';
+return;
+}
+}
+scheduleEdit = null;
+saveStack(items);
+focusScheduleControl(id);
+}
+
+function stopScheduleItem(id) {
+scheduleEdit = null;
+setStackStatus(id, 'stopped');
+focusScheduleControl('');
+}
+
+function onSchedulePanelClick(e) {
+e.stopPropagation();
+var btn = e.target && e.target.closest ? e.target.closest('[data-schedule-action]') : null;
+if (!btn) return;
+var action = btn.getAttribute('data-schedule-action');
+if (action === 'edit') openScheduleEditor(btn.getAttribute('data-id'));
+else if (action === 'add') openScheduleEditor('new');
+else if (action === 'cancel') cancelScheduleEditor();
+else if (action === 'stop') stopScheduleItem(btn.getAttribute('data-id'));
 }
 
 function placeScheduleButton() {
@@ -3126,6 +3685,7 @@ if (opts.restoreFocus && btn && !btn.hidden) btn.focus();
 function setScheduleOpen(open, source) {
 var prefs = readSchedulePrefs();
 if (!prefs.showButton) open = false;
+if (!open) scheduleEdit = null;
 prefs.open = !!open;
 storeSchedulePrefs(prefs, source !== 'restore');
 applyScheduleChrome({
@@ -3316,6 +3876,8 @@ function stackDetail(item, includeNotes) {
 var bits = [];
 if (item.dose) bits.push(item.dose);
 if (item.schedule) bits.push(item.schedule);
+if (item.time) bits.push(item.time);
+if (item.group) bits.push(item.group);
 if (item.startDate) bits.push('started ' + item.startDate);
 var line = bits.join(' · ');
 if (includeNotes === false) return line;
@@ -3351,6 +3913,8 @@ edit = '<div class="stack-edit">' +
 '<div class="intake-field"><label>Dose<input type="text" data-edit="dose" data-id="' + escapeHtml(item.id) + '" placeholder="Your notes" value="' + escapeHtml(item.dose || '') + '" autocomplete="off"></label></div>' +
 '<div class="intake-field"><label>Schedule<input type="text" data-edit="schedule" data-id="' + escapeHtml(item.id) + '" value="' + escapeHtml(item.schedule || '') + '" autocomplete="off"></label></div>' +
 '<div class="intake-field"><label>Time of day<select data-edit="timeOfDay" data-id="' + escapeHtml(item.id) + '">' + timeOfDayOptions(item.timeOfDay) + '</select></label></div>' +
+'<div class="intake-field"><label>Time<input type="text" data-edit="time" data-id="' + escapeHtml(item.id) + '" placeholder="e.g. 7 AM" value="' + escapeAttr(item.time || '') + '" autocomplete="off"></label></div>' +
+'<div class="intake-field"><label>Group<input type="text" data-edit="group" data-id="' + escapeHtml(item.id) + '" list="stack-group-options" placeholder="e.g. Daily peptides" value="' + escapeAttr(item.group || '') + '" autocomplete="off"></label></div>' +
 '<div class="intake-field"><label>Start / purchase date<input type="date" data-edit="startDate" data-id="' + escapeHtml(item.id) + '" value="' + escapeHtml(item.startDate || '') + '"></label></div>' +
 '</div>';
 }
@@ -3384,6 +3948,7 @@ var costFields = document.getElementById('stack-cost-fields');
 if (costFields) costFields.hidden = !PRO_PREVIEW_OPEN;
 if (!list) return;
 var items = loadStack();
+refreshGroupList(items);
 if (pro) pro.innerHTML = stackProMarkup(items);
 if (!items.length) {
 list.innerHTML = '<p class="empty-note">Nothing in your stack yet. Add a peptide or supplement you are using.</p>';
@@ -3451,11 +4016,12 @@ renderStack();
 }
 
 function updateStackField(id, field, value) {
-if (field !== 'dose' && field !== 'schedule' && field !== 'startDate' && field !== 'notes' && field !== 'timeOfDay') return;
+if (field !== 'dose' && field !== 'schedule' && field !== 'startDate' && field !== 'notes' && field !== 'timeOfDay' && field !== 'time' && field !== 'group') return;
 var items = loadStack();
 items.forEach(function(item) {
 if (item.id !== id) return;
 if (field === 'timeOfDay') item.timeOfDay = normalizeTimeOfDay(value);
+else if (field === 'time' || field === 'group') item[field] = String(value || '').trim();
 else item[field] = String(value || '');
 });
 persistStack(items);
@@ -4889,7 +5455,53 @@ e.stopPropagation();
 closeSchedulePanel();
 });
 var schedulePanel = document.getElementById('schedule-panel');
-if (schedulePanel) schedulePanel.addEventListener('click', function(e) { e.stopPropagation(); });
+if (schedulePanel) {
+schedulePanel.addEventListener('click', onSchedulePanelClick);
+schedulePanel.addEventListener('submit', function(e) {
+if (!e.target || !e.target.getAttribute || !e.target.getAttribute('data-schedule-form')) return;
+e.preventDefault();
+saveScheduleEditor();
+});
+}
+var routineSheet = document.getElementById('routine-sheet');
+if (routineSheet) {
+routineSheet.addEventListener('click', function(e) {
+e.stopPropagation();
+var id = e.target && e.target.id;
+if (id === 'routine-sheet-backdrop' || id === 'routine-sheet-close' || id === 'routine-sheet-cancel') closeRoutineSheet(true);
+if (id === 'routine-sheet-confirm') confirmRoutineSheet();
+});
+routineSheet.addEventListener('keydown', function(e) {
+if (e.key === 'Escape') {
+e.preventDefault();
+e.stopPropagation();
+closeRoutineSheet(true);
+return;
+}
+if (e.key !== 'Tab') return;
+var panel = document.getElementById('routine-sheet-panel');
+if (!panel) return;
+var items = routineFocusables(panel);
+if (!items.length) return;
+var first = items[0];
+var last = items[items.length - 1];
+var active = document.activeElement;
+if (e.shiftKey && (active === first || !panel.contains(active))) {
+e.preventDefault();
+last.focus();
+} else if (!e.shiftKey && active === last) {
+e.preventDefault();
+first.focus();
+}
+});
+}
+document.getElementById('msgs').addEventListener('click', function(e) {
+var routineBtn = e.target && e.target.closest ? e.target.closest('.routine-add-btn') : null;
+if (!routineBtn) return;
+e.preventDefault();
+if (!routineBtn._items || !routineBtn._items.length) return;
+openRoutineSheet(routineBtn._items, routineBtn);
+});
 var scheduleShow = document.getElementById('schedule-show-toggle');
 if (scheduleShow) scheduleShow.addEventListener('click', function(e) {
 e.stopPropagation();
@@ -4908,8 +5520,13 @@ closeAttachMenu();
 });
 document.addEventListener('keydown', function(e) {
 if (e.key === 'Escape') {
+var routineSheetEl = document.getElementById('routine-sheet');
+if (routineSheetEl && !routineSheetEl.hidden) closeRoutineSheet(true);
+else if (scheduleEdit && currentTab === 'chat') cancelScheduleEditor();
+else {
 var scheduleLayer = document.getElementById('schedule-layer');
 if (scheduleLayer && !scheduleLayer.hidden && currentTab === 'chat') closeSchedulePanel();
+}
 closeHeaderMenu();
 closeTextSizePopover();
 closeAttachMenu();
